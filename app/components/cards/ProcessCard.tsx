@@ -62,7 +62,7 @@ const ProcessCard = ({
       />
 
       <p
-        className={`text-[261px] leading-[140%] font-semibold absolute -top-18 right-4 ${classes.step}`}
+        className={` text-[200px] lg:text-[261px] leading-[140%] font-semibold absolute -top-10 lg:-top-18 right-4 ${classes.step}`}
       >
         {step}
       </p>
