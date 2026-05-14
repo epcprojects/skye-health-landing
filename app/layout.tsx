@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "@radix-ui/themes/styles.css";
 import "./globals.css";
-import { Manrope} from "next/font/google";
-import { Footer, Header } from "./components";
+import { Manrope } from "next/font/google";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,12 +34,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className={`min-h-full flex flex-col ${manrope.variable}`}>
-        <Header/>
-         <main className="flex-1">
-          {children}
-        </main>
-        <Footer/>
-        </body>
+        {children}
+      </body>
     </html>
   );
 }

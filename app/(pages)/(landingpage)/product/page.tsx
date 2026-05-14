@@ -1,7 +1,6 @@
 "use client";
 import { CrossIcon, SearchFieldIcon } from "@/public/icons";
 import React, { useState } from "react";
-import { images } from "@/app/ui";
 import { ProductsDataCard, ThemeButton } from "@/app/components";
 import { productsdata } from "@/app/constants/constants";
 const Page = () => {

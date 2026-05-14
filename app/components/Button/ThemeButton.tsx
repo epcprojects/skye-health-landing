@@ -10,7 +10,7 @@ type ThemeButtonVariant =
   | "whiteOutlined"
   ;
 
-type ThemeButtonSize = "sm" | "md" | "lg"|"xl"|"xxl"| "extralarge";
+type ThemeButtonSize = "sm" | "md" | "lg"|"xl"|"xxl"| "extralarge" |"ultrasmall";
 
 type IconPosition = "start" | "end";
 
@@ -45,7 +45,8 @@ const sizeClasses: Record<ThemeButtonSize, string> = {
   lg: "px-10 py-4 text-lg gap-2.5",
   xl: "py-4 px-4 md:px-8 text-base md:text-[22px] gap-4",
   xxl: "py-4 px-11 text-lg gap-2.5",
-  extralarge: "py-2 lg:py-[26px] px-4 lg:px-10 text-base lg:text-xl "
+  extralarge: "py-2 lg:py-[26px] px-4 lg:px-10 text-base lg:text-xl",
+  ultrasmall: "py-3 px-6 text-lg gap-2.5"
 };
 
 const ThemeButton = ({

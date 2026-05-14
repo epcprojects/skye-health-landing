@@ -1,2 +1,3 @@
 import { landingpageimages } from "./landingpage";
-export const images = {landingpageimages}
+import { innerImages } from "./innerpages";
+export const images = {landingpageimages,innerImages}

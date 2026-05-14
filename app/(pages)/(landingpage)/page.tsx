@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { images } from "./ui";
+import { images } from "@/app/ui";
 import {
   ArrowRightIcon,
 } from "@/public/icons";
@@ -13,7 +13,7 @@ import {
   ThemeButton,
   TherapyCard,
   WellnessCarousel,
-} from "./components";
+} from "@/app/components";
 import {
   featureCards,
   processCards,
@@ -21,11 +21,13 @@ import {
   steps,
   TherapyCardId,
   therapyCards,
-} from "./constants/constants";
+} from "@/app/constants/constants";
 import { useState } from "react";
-import ProcessCard from "./components/cards/ProcessCard";
+
 import Link from "next/link";
-import CommunitySwiper from "./components/cards/CommunitySwiper";
+import ProcessCard from "@/app/components/cards/ProcessCard";
+import CommunitySwiper from "@/app/components/cards/CommunitySwiper";
+
 
 export default function Home() {
   const cardActions: Record<TherapyCardId, () => void> = {

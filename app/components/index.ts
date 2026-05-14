@@ -12,7 +12,15 @@ import FeatureCard from "./cards/FeatureCard";
 import FAQAccordion from "./cards/FAQAccordion";
 import MobileMenu from "./layout/MobileMenu";
 import ProductsDataCard from "./cards/ProductsDataCard";
+import HeaderInner from "./layout/HeaderInner";
+import FooterInner from "./layout/FooterInner";
+import HeroSection from "./cards/HeroSection";
+import CategoryCard from "./cards/CategoryCard";
 export {
+    CategoryCard,
+    HeroSection,
+    FooterInner,
+    HeaderInner,
     ProductsDataCard,
     MobileMenu,
     FAQAccordion,

@@ -23,7 +23,21 @@ import HeartIcon from "./HeartIcon";
 import SearchFieldIcon from "./SearchFieldIcon";
 import InfoIcon from "./InfoIcon";
 import PlusIcon from "./PlusIcon";
+import ButtonArrowIcon from "./ButtonArrowIcon";
+import TickIcon from "./TickIcon";
+import RecoveryCardIcon from "./RecoveryCardIcon";
+import RegenerativeIcon from "./RegenerativeIcon";
+import PerformanceIcon from "./PerformanceIcon";
+import SingleTickIcon from "./SingleTickIcon";
+import DocumentationIcon from "./DocumentationIcon";
+
 export {
+  SingleTickIcon,
+  RegenerativeIcon,
+  PerformanceIcon,
+  RecoveryCardIcon,
+  TickIcon,
+  ButtonArrowIcon,
   PlusIcon,
   InfoIcon,
   SearchFieldIcon,
