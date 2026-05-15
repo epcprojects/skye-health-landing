@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusIcon } from "@/public/icons";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { Images } from "../images";
 import { useState } from "react";
 
@@ -11,7 +11,7 @@ export type Product = {
   category: string;
   stock: boolean;
   price: string | number;
-  image: string;
+  image: string | StaticImageData;
   // size: string;
   dosing: string;
   timing: string;
@@ -48,7 +48,7 @@ export default function ProductCard({
     z-10
     before:rounded-full
     before:inline-block
-    ${product.stock ? "before:bg-success-500" : "before:bg-error-400"}
+    ${product.stock ? "before:bg-green-600" : "before:bg-red-400"}
   `}
       >
         {product.stock ? "In Stock" : "Out of Stock"}
@@ -115,7 +115,7 @@ export default function ProductCard({
                 }}
                 className="text-sm md:text-lg font-medium text-black hover:bg-neutral-200 cursor-pointer flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-full flex-1  justify-center"
               >
-                <PlusIcon fill="currentColor" /> Add to Cart
+                <PlusIcon /> Add to Cart
               </button>
 
               <h2 className="text-gunmetal font-bold text-sm md:text-lg lg:text-[28px] min-w-16 text-end">

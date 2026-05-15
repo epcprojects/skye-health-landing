@@ -43,6 +43,7 @@ import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
 import TrocheImage from "@/public/images/Troche.png";
 import VialImage from "@/public/images/Vial.png";
 import HomePageProductCard from "@/app/components/HomePageProductsCard";
+import ProductCard from "@/app/components/ProductCard";
 
 const Page = () => {
   const router = useRouter();
@@ -128,29 +129,51 @@ const Page = () => {
     return formImageMap[form] || Images.landingPage.product;
   };
 
+  const extractMg = (strength?: string) => {
+    if (!strength) return null;
+    const m = strength.match(/(\d+(\.\d+)?)/);
+    return m ? Number(m[1]) : null;
+  };
+
   return (
     <>
-      <SectionHeroCTA
-        title={product.name}
-        tags={[product.form, product.strength]}
-        width="max-w-7xl"
-        titleSize="text-4xl"
-      />
+      <section className="bg-primary pb-12 lg:pb-24 pt-44 lg:pt-59">
+        <div className="container max-w-7xl mx-auto px-4 lg:px-8 flex flex-col items-center gap-5">
+          <h2 className="text-white text-2xl leading-14  md:text-4xl text-center font-semibold">
+            {product.name}
+          </h2>
 
-      <section className="container mx-auto px-4 lg:px-8 max-w-7xl space-y-8 lg:space-y-13 py-8 sm:py-16">
+          {[product.form, product.strength].length > 0 && (
+            <div className="flex items-center justify-center flex-wrap gap-2">
+              {[product.form, product.strength].map((tag, index) =>
+                tag ? (
+                  <span
+                    key={index}
+                    className="block w-fit rounded-full bg-white border border-gray-200 py-1 px-3 text-gray-700 font-medium text-xs md:text-sm"
+                  >
+                    {tag}
+                  </span>
+                ) : null,
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 lg:px-8 max-w-7xl space-y-4 lg:space-y-8 py-8 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="border border-neutral-200 rounded-xl flex items-center justify-center">
+          <div className="border border-neutral-200 rounded-xl md:max-h-120 flex items-center justify-center">
             <Image
               alt=""
               src={getProductImage(product)}
-              width={240}
-              height={376}
+              width={340}
+              height={476}
             />
           </div>
 
           <div className="space-y-3 lg:space-y-6">
-            <div className="space-y-4.5">
-              <h2 className="text-xl wrap-anywhere lg:text-2xl font-semibold text-gunmetal">
+            <div className="space-y-2.5">
+              <h2 className="text-xl wrap-anywhere lg:text-3xl font-semibold text-gunmetal">
                 {product.name}
               </h2>
 
@@ -167,7 +190,7 @@ const Page = () => {
     before:h-2.5 before:w-2.5
     before:rounded-full
     before:inline-block
-    ${1 === 1 ? "before:bg-success-500" : "before:bg-error-400"}
+    ${1 === 1 ? "before:bg-green-600" : "before:bg-red-500"}
   `}
                 >
                   {product.inStock ? "In Stock" : "Out of Stock"}
@@ -198,10 +221,10 @@ const Page = () => {
                         key={option.id}
                         type="button"
                         onClick={() => setSelectedPricingId(option.id)}
-                        className={`rounded-xl border bg-white text-left p-3 cursor-pointer transition ${
+                        className={`rounded-xl border  text-left p-3 cursor-pointer transition ${
                           isActive
-                            ? " border-secondary"
-                            : " border-gray-200 hover:bg-white"
+                            ? " border-primary-light bg-blue-50"
+                            : " border-gray-200 hover:bg-white bg-white"
                         }`}
                       >
                         <p className="text-lg mb-3 font-semibold text-neutral-800 break-all">
@@ -265,7 +288,7 @@ const Page = () => {
         </div>
 
         {product.description && (
-          <div className="space-y-5 lg:space-y-9.5">
+          <div className="space-y-5 lg:space-y-4.5">
             <h2 className="font-extrabold text-2xl lg:text-3xl text-neutral-900">
               About This Product
             </h2>
@@ -281,7 +304,7 @@ const Page = () => {
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           <h2 className="font-extrabold text-2xl lg:text-3xl text-neutral-900">
             Customers Also Bought
           </h2>
@@ -316,40 +339,44 @@ const Page = () => {
                 swiperRef2.current = swiper;
               }}
             >
-              {relatedProducts.map((p: ProductType, index) => (
-                <SwiperSlide key={index} className="max-w-sm! px-0!">
-                  <div
-                    className="h-full cursor-pointer"
-                    onClick={(event) => {
-                      const target = event.target as HTMLElement;
+              {relatedProducts.map((p: ProductType, index) => {
+                const mg = extractMg(p.strength);
+                const image = getProductImage(p);
+                const cardProduct = {
+                  id: p.id,
+                  title: p.name,
+                  category: p.category,
+                  stock: p.status === "IN_STOCK",
+                  price:
+                    Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
+                      ? Number(p.retailPrice ? p.retailPrice : p.price)
+                      : Number(p.retailPrice ? p.retailPrice : p.price).toFixed(
+                          2,
+                        ),
+                  image: image || "",
+                  size: p.strength,
+                  dosing: mg ? `${mg} mg` : "",
+                  timing: "",
+                  type: p.form,
+                  warnings: "",
+                };
 
-                      if (target.closest("button")) {
-                        return;
-                      }
-
-                      router.push(`/products/${p.id}`);
-                    }}
-                  >
-                    <HomePageProductCard
-                      category={p.category}
-                      title={p.name}
-                      image={getProductImage(p)}
-                      tags={[p.strength, p.form].filter((tag): tag is string =>
-                        Boolean(tag),
-                      )}
-                      price={
-                        Number(p.retailPrice || p.price) % 1 === 0
-                          ? `$${Number(p.retailPrice || p.price)}`
-                          : `$${Number(p.retailPrice || p.price).toFixed(2)}`
+                return (
+                  <SwiperSlide key={index} className="max-w-sm! px-0!">
+                    <ProductCard
+                      key={p.id}
+                      product={cardProduct}
+                      onCardClick={(id: string) =>
+                        router.push(`/products/${p.id}`)
                       }
                       onAddToCart={() => {
                         dispatch(addProductToCart({ product: p }));
                         toastAlert("Added to Cart Successfully", true);
                       }}
                     />
-                  </div>
-                </SwiperSlide>
-              ))}
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </div>
         </div>
