@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React from "react";
 import { usePathname } from "next/navigation";
-import CharRollText from "../CharRollText";
+import CharRollText from "../Animations/CharRollText";
 
 export interface MenuItem {
   label: string;
