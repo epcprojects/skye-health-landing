@@ -12,6 +12,7 @@ interface CartStepContentProps {
   ) => void;
   onTextChange: (questionId: string, value: string) => void;
   onComplete: () => void;
+  onQuestionIndexChange?: (index: number) => void;
 }
 
 export const CartStepContent = ({
@@ -21,6 +22,7 @@ export const CartStepContent = ({
   onMultiSelect,
   onTextChange,
   onComplete,
+  onQuestionIndexChange,
 }: CartStepContentProps) => {
   console.log("survey", survey);
 
@@ -35,6 +37,7 @@ export const CartStepContent = ({
           onMultiSelect={onMultiSelect}
           onTextChange={onTextChange}
           onComplete={onComplete}
+          onQuestionIndexChange={onQuestionIndexChange}
         />
       )}
     </div>

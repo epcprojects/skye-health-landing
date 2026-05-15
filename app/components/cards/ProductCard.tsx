@@ -21,7 +21,7 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const showDemandHover = isInDemand && bgImage;
   return (
-    <div className="rounded-xl relative p-4 flex flex-col group justify-between overflow-hidden lg:p-5  gap-4 bg-[#F7F9F9] group border-transparent border hover:border-[#EFEFEF]">
+    <div className="rounded-xl relative p-4 flex flex-col group w-full justify-between overflow-hidden lg:p-5  gap-4 bg-[#F7F9F9] group border-transparent border hover:border-[#EFEFEF]">
       {showDemandHover && (
         <Image
           src={bgImage}
@@ -63,7 +63,11 @@ const ProductCard = ({
           label="Buy Product"
           variant="outlinedBluish"
           className="w-full"
-          onClick={onBuyClick}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onBuyClick();
+          }}
         />
       </div>
     </div>

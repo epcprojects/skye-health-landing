@@ -51,7 +51,7 @@ const HeaderInner = () => {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-            className="flex h-7 w-7 items-center justify-center bg-white 2xl:hidden"
+            className="flex h-7 w-7 items-center justify-center bg-white md:hidden"
             aria-label="Toggle mobile menu"
             aria-expanded={isMobileMenuOpen}
           >
@@ -60,9 +60,9 @@ const HeaderInner = () => {
           <Image
             src={images.landingpageimages.HeaderLogo}
             alt={"skyhealth logo"}
-            className="shrink-0 md:w-auto md:h-auto h-10 w-50"
+            className="shrink-0 md:w-auto md:h-40 h-10 w-50"
           />
-          <div className="2xl:block hidden">
+          <div className="md:block hidden">
             <DesktopMenu />
           </div>
         </div>

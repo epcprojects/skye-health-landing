@@ -241,9 +241,9 @@ export default function Home() {
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8  flex flex-col gap-8 lg:gap-25">
           <div className="flex flex-col gap-4 lg:gap-7.5">
-            <p className="text-[40px] xl:text-[90px] font-semibold text-center lg:text-start text-white">
+            <p className="text-[40px] leading-26  xl:text-[90px] font-semibold text-center lg:text-start text-white">
               Your Health.{" "}
-              <span className="text-white/40">
+              <span className="text-white/40 inline-block pt-2">
                 <CharRollText as="span" text="Elevated." auto />
               </span>
             </p>
@@ -266,7 +266,7 @@ export default function Home() {
         </div>
       </section>
       <section className="py-12 lg:py-24 flex flex-col gap-12">
-        <div className="container max-w-360 mx-auto flex flex-col items-center gap-12">
+        <div className="container max-w-360 px-4 md:px-8 mx-auto flex flex-col items-center gap-12">
           <div className="flex flex-col items-center gap-5">
             <p className="text-4xl text-center px-4 lg:px-0 lg:text-start lg:text-[64px] font-semibold text-black tracking-[-2%]">
               Discover Our Products
@@ -345,11 +345,11 @@ export default function Home() {
             <div className="text-neutral-600 text-center">No Product Found</div>
           )}
 
-          <div className="container max-w-390 mx-auto grid grid-cols-1 md:grid-cols-2   px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
+          <div className="container max-w-390 mx-auto grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5   px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
             {allProducts.map((product: ProductType) => (
               <div
                 key={product.id}
-                className="h-full flex"
+                className="h-full flex w-full"
                 onClick={() => router.push(`/products/${product.id}`)}
               >
                 <ProductCard
@@ -437,9 +437,9 @@ export default function Home() {
         <Image
           src={images.landingpageimages.SkyeHealthMobile}
           alt={"Mobile App"}
-          className="hidden 2xl:block 2xl:absolute bottom-0 right-0"
+          className="hidden sm:absolute bottom-0 2xl:right-0 -right-40"
         />
-        <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-16">
+        <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-16 relative">
           <div className="flex flex-col gap-4 ">
             <p className="text-3xl lg:text-[54px] font-semibold text-black">
               Get Started in 3 Simple Steps

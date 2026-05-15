@@ -2,7 +2,13 @@
 
 import { menuItems } from "@/app/constants/constants";
 import { images } from "@/app/ui";
-import { CartIcon, CrossIcon, DownArrow, HeartIcon, SearchIcon } from "@/public/icons";
+import {
+  CartIcon,
+  CrossIcon,
+  DownArrow,
+  HeartIcon,
+  SearchIcon,
+} from "@/public/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -23,7 +29,7 @@ const MobileMenu = ({ isOpen, onClose, showCart = false }: MobileMenuProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 2xl:hidden ${
+      className={`fixed inset-0 z-50 md:hidden ${
         isOpen ? "pointer-events-auto" : "pointer-events-none"
       }`}
     >

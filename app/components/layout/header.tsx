@@ -103,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({ menuItems }) => {
           </div>
 
           <div className="flex items-center flex-row-reverse xl:flex-row gap-3">
-            <div className="flex xl:hidden relative">
+            <div className="flex md:hidden relative">
               <button
                 type="button"
                 className="inline-flex items-center justify-center w-8 h-8 md:h-11 md:w-11  bg-black/40 rounded-full text-black"
@@ -159,7 +159,7 @@ const Header: React.FC<HeaderProps> = ({ menuItems }) => {
           </div>
         </nav>
         <div
-          className={`xl:hidden relative ${isMenuOpen ? "block" : "hidden"}`}
+          className={`md:hidden relative ${isMenuOpen ? "block" : "hidden"}`}
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation menu"
@@ -249,7 +249,7 @@ const Header: React.FC<HeaderProps> = ({ menuItems }) => {
         cancelLabel="Close"
         bodyPaddingClasses="p-0"
       >
-        <div className="z-50 w-full bg-white focus:outline-none">
+        <div className="z-50 w-full bg-white focus:outline-none h-full">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-b-gray-200 p-4">
             <p className="text-base font-semibold text-gray-900">Products</p>
@@ -259,7 +259,7 @@ const Header: React.FC<HeaderProps> = ({ menuItems }) => {
           </div>
 
           {/* Items */}
-          <div className="overflow-auto p-5">
+          <div className="overflow-auto p-5 h-full">
             <div className="space-y-4">
               {items.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-600">

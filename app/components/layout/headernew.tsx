@@ -144,7 +144,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
           </div>
 
           <div className="flex items-center flex-row-reverse xl:flex-row gap-2">
-            <div className="flex xl:hidden relative">
+            <div className="flex md:hidden relative">
               <button
                 type="button"
                 className="inline-flex items-center justify-center w-9 h-9 bg-white rounded-[5px]"
@@ -299,7 +299,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
         cancelLabel="Close"
         bodyPaddingClasses="p-0"
       >
-        <div className="z-50 w-full bg-white focus:outline-none">
+        <div className="z-50 w-full bg-white focus:outline-none h-full">
           <div className="flex items-center justify-between border-b border-b-gray-200 p-4">
             <p className="text-base font-semibold text-gray-900">Products</p>
             <p className="text-xl font-bold text-secondary">
@@ -307,7 +307,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
             </p>
           </div>
 
-          <div className="overflow-auto p-5">
+          <div className="overflow-auto p-5 h-full">
             <div className="space-y-4">
               {items.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-600">
@@ -372,14 +372,14 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
                             />
 
                             {(item.pricingOptions?.length ?? 0) > 1 && (
-                              <div className="max-w-36 min-w-30">
+                              <div className="md:max-w-36 w-full md:min-w-30">
                                 <Menu as="div" className="relative w-full">
                                   <MenuButton className="w-full text-xs px-2.5 py-2 border border-slate-200 justify-between flex gap-1 md:gap-2 items-center rounded-full outline-none text-slate-900 bg-white">
                                     <span className="text-gray-700 truncate text-start">
                                       {item.pricingOptions?.find(
                                         (pricing) =>
                                           pricing.id === item.selectedPricingId,
-                                      )?.label || "Select option"}
+                                      )?.strength || "Select option"}
                                     </span>
                                     <span>
                                       <svg
@@ -423,7 +423,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
                                                     : "",
                                                 ].join(" ")}
                                               >
-                                                <span>{pricing.label}</span>
+                                                <span>{pricing.strength}</span>
                                                 {isSelected && (
                                                   <span className="text-sky-500 text-base leading-none">
                                                     ✓

@@ -155,7 +155,7 @@ export default function CartPopover() {
                                       variant="sm"
                                     />
                                     {(item.pricingOptions?.length ?? 0) > 1 && (
-                                      <div className=" min-w-36 max-w-36">
+                                      <div className=" md:min-w-36 w-full md:max-w-36">
                                         <Menu
                                           as="div"
                                           className="relative w-full"
@@ -166,7 +166,7 @@ export default function CartPopover() {
                                                 (pricing) =>
                                                   pricing.id ===
                                                   item.selectedPricingId,
-                                              )?.label || "Select option"}
+                                              )?.strength || "Select option"}
                                             </span>
                                             <span>
                                               <svg
@@ -227,7 +227,7 @@ export default function CartPopover() {
                                                           ].join(" ")}
                                                         >
                                                           <span>
-                                                            {pricing.label}
+                                                            {pricing.strength}
                                                           </span>
                                                           {isSelected && (
                                                             <span className="text-sky-500 text-base leading-none">

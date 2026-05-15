@@ -1,5 +1,7 @@
 "use client";
 import { ThemeButton } from "@/app/components";
+import ThemeInput, { InputType } from "@/app/components/inputs/ThemeInput";
+import AppModal from "@/app/components/modals/AppModal";
 import { CartStepContent } from "@/app/components/serveys/CartStepContent";
 import { SurveyAnswers } from "@/app/components/serveys/SurveyQuestionnaire";
 import { CREATE_OR_UPDATE_SURVEY_RESPONSE } from "@/app/graphql/mutations/survey";
@@ -27,6 +29,8 @@ import {
 } from "@/app/graphql/mutations/cart";
 import { useRouter } from "next/navigation";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
   const dispatch = useAppDispatch();
@@ -46,6 +50,11 @@ const Page = () => {
   const [surveyAnswers, setSurveyAnswers] = useState<SurveyAnswers>({});
   const [showInfoPage, setShowInfoPage] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [surveyFromState, setSurveyFromState] = useState<
     SurveyType | undefined
   >(undefined);
@@ -66,6 +75,9 @@ const Page = () => {
   }, [surveyFromQuery]);
 
   const survey = surveyFromState;
+  const trimmedEmail = email.trim();
+  const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
+  const shouldShowEmailError = emailTouched && !isEmailValid;
 
   //servey functions
 
@@ -258,7 +270,41 @@ const Page = () => {
     queueMicrotask(() => setSurveyFromState(surveyFromQuery));
   }, [surveyFromQuery]);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEmail("");
+    setEmailTouched(false);
+    setHasCapturedEmail(false);
+    setCurrentQuestionIndex(0);
+    setIsEmailModalOpen(false);
+  }, [survey?.id]);
+
+  useEffect(() => {
+    if (
+      loading ||
+      !survey ||
+      showInfoPage ||
+      hasCapturedEmail ||
+      currentQuestionIndex !== 0
+    ) {
+      return;
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsEmailModalOpen(true);
+  }, [currentQuestionIndex, hasCapturedEmail, loading, showInfoPage, survey]);
+
   const router = useRouter();
+
+  const handleEmailConfirm = () => {
+    setEmailTouched(true);
+
+    if (!isEmailValid) return;
+
+    setEmail(trimmedEmail);
+    setHasCapturedEmail(true);
+    setIsEmailModalOpen(false);
+  };
 
   useEffect(() => {
     if (loading || isRedirecting) return;
@@ -361,6 +407,40 @@ const Page = () => {
 
       {!showInfoPage && (
         <div className="container mx-auto max-w-7xl px-4 pt-16 md:pt-24 md:px-8 space-y-12">
+          {/* <AppModal
+            isOpen={isEmailModalOpen}
+            onClose={() => undefined}
+            onConfirm={() => handleEmailConfirm()}
+            title="Please enter your email to continue."
+            confirmLabel="Continue"
+            confirmBtnVarient="primary"
+            hideCancelBtn
+            hideCrossButton
+            disableCloseButton
+            outSideClickClose={false}
+            scrollNeeded={false}
+            bodyPaddingClasses="p-4 md:p-6"
+            confimBtnDisable={!isEmailValid}
+          >
+            <div className="space-y-4">
+              <p className="text-sm leading-6 text-neutral-600 md:text-base">
+                You&apos;ll create your account after answering a couple
+                questions from the Doctor
+              </p>
+              <ThemeInput
+                type={InputType.EMAIL}
+                label="Email address"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setEmailTouched(true)}
+                error={shouldShowEmailError}
+                errorMessage="Please enter a valid email address."
+                autoComplete="email"
+              />
+            </div>
+          </AppModal> */}
+
           <CartStepContent
             survey={survey}
             surveyAnswers={surveyAnswers}
@@ -368,6 +448,7 @@ const Page = () => {
             onMultiSelect={handleMultiSelect}
             onTextChange={setTextAnswer}
             onComplete={() => handleDeferConfirmAccept()}
+            onQuestionIndexChange={setCurrentQuestionIndex}
           />
 
           <div className="flex items-center gap-2 justify-center ">

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { QuestionType, SurveyType } from "@/app/graphql/queries/survey";
 import ThemeInput from "../inputs/ThemeInput";
 import CustomCheckbox from "../CustomCheckBox";
@@ -23,6 +23,7 @@ interface SurveyQuestionnaireProps {
   ) => void;
   onTextChange: (questionId: string, value: string) => void;
   onComplete: () => void;
+  onQuestionIndexChange?: (index: number) => void;
 }
 
 interface SurveyQuestionProps {
@@ -67,7 +68,7 @@ function SurveyQuestion({
                   className={[
                     "w-full rounded-xl border p-3 text-left cursor-pointer transition sm:p-4 flex items-center justify-between gap-3",
                     optionIds.includes(opt.id)
-                      ? "border-secondary border-2 bg-primary-light"
+                      ? "border-primary/30 border-2 bg-lightblue"
                       : "border-neutral-300 bg-white hover:bg-neutral-50",
                   ].join(" ")}
                 >
@@ -80,7 +81,7 @@ function SurveyQuestion({
         )}
 
         {question.questionType === "multi_select" && (
-          <div className="flex flex-col gap-2 md:gap-5">
+          <div className="flex flex-col justify-start gap-2 md:gap-5">
             {question.questionOptions
               ?.slice()
               .sort((a, b) => a.position - b.position)
@@ -90,7 +91,7 @@ function SurveyQuestion({
                   className={[
                     "w-full rounded-xl border transition flex items-center justify-between gap-3",
                     optionIds.includes(opt.id)
-                      ? "border-secondary border-2 bg-primary-light"
+                      ? "border-primary/30 border-2 bg-lightblue"
                       : "border-neutral-300 bg-white hover:bg-neutral-50",
                   ].join(" ")}
                 >
@@ -99,7 +100,7 @@ function SurveyQuestion({
                     label={opt.optionText}
                     direction="flex-row-reverse"
                     checked={optionIds.includes(opt.id)}
-                    width="w-full"
+                    width={`w-full`}
                     fullWidth="w-full p-3 md:p-4"
                     onChange={(e) => onMultiSelect(opt.id, e)}
                   />
@@ -126,7 +127,7 @@ function SurveyQuestion({
                     className={[
                       "w-full rounded-xl border p-3 text-left transition sm:p-4 flex items-center justify-between gap-3",
                       optionIds.includes(opt.id)
-                        ? "border-secondary border-2 bg-primary-light"
+                        ? "border-primary/30 border-2 bg-lightblue"
                         : "border-neutral-300 bg-white hover:bg-neutral-50",
                     ].join(" ")}
                   >
@@ -159,7 +160,7 @@ function SurveyQuestion({
                     className={[
                       "w-full rounded-xl border transition flex items-center justify-between gap-3",
                       optionIds.includes(opt.id)
-                        ? "border-secondary border-2 bg-primary-light"
+                        ? "border-primary/30 border-2 bg-lightblue"
                         : "border-neutral-300 bg-white hover:bg-neutral-50",
                     ].join(" ")}
                   >
@@ -207,6 +208,7 @@ export function SurveyQuestionnaire({
   onMultiSelect,
   onTextChange,
   onComplete,
+  onQuestionIndexChange,
 }: SurveyQuestionnaireProps) {
   const sortedQuestions = useMemo(
     () =>
@@ -215,6 +217,10 @@ export function SurveyQuestionnaire({
   );
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  useEffect(() => {
+    onQuestionIndexChange?.(currentQuestionIndex);
+  }, [currentQuestionIndex, onQuestionIndexChange]);
 
   function isQuestionAnswered(
     question: QuestionType,
@@ -388,7 +394,7 @@ export function SurveyQuestionnaire({
                     "px-3.5 py-2.5 sm:py-4 w-full rounded-lg sm:rounded-xl transition cursor-pointer text-white font-semibold",
                     !isCurrentAnswered
                       ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-secondary hover:bg-secondary-dark",
+                      : "bg-primary hover:bg-secondary-dark",
                   ].join(" ")}
                 >
                   {currentQuestionIndex === totalQuestions - 1

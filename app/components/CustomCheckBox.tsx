@@ -53,7 +53,7 @@ export default function CustomCheckbox({
 
       <span
         className={clsx(
-          "text-sm sm:text-base inline-block font-medium text-neutral-600",
+          "text-sm sm:text-base inline-block font-medium ",
           width,
         )}
       >

@@ -68,7 +68,7 @@ const Header = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              className="flex h-9 w-9 items-center justify-center bg-white rounded-[5px] 2xl:hidden"
+              className="flex h-9 w-9 items-center justify-center bg-white rounded-[5px] md:hidden"
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
             >
@@ -81,14 +81,14 @@ const Header = () => {
                 className="shrink-0 md:w-auto md:h-auto h-10 w-50"
               />
             </Link>
-            <div className="2xl:block hidden">
+            <div className="md:block hidden">
               <DesktopMenu />
             </div>
           </div>
           <div className="flex flex-row  gap-3">
             <Link
               href={"/products"}
-              className="rounded-[5px] hidden bg-white hover:bg-secondary  py-2 px-5 group font-medium text-sm text-black xl:flex items-center gap-3"
+              className="rounded-[5px] hidden whitespace-nowrap bg-white hover:bg-secondary  py-2 px-5 group font-medium text-sm text-black xl:flex items-center gap-3"
             >
               Get Started{" "}
             </Link>
@@ -130,7 +130,7 @@ const Header = () => {
         cancelLabel="Close"
         bodyPaddingClasses="p-0"
       >
-        <div className="z-50 w-full bg-white focus:outline-none">
+        <div className="z-50 w-full bg-white focus:outline-none h-full">
           <div className="flex items-center justify-between border-b border-b-gray-200 p-4">
             <p className="text-base font-semibold text-gray-900">Products</p>
             <p className="text-xl font-bold text-secondary">
@@ -138,7 +138,7 @@ const Header = () => {
             </p>
           </div>
 
-          <div className="overflow-auto p-5">
+          <div className="overflow-auto p-5 h-full">
             <div className="space-y-4">
               {items.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-600">
@@ -203,14 +203,14 @@ const Header = () => {
                             />
 
                             {(item.pricingOptions?.length ?? 0) > 1 && (
-                              <div className="max-w-36 min-w-30">
+                              <div className="md:max-w-36 w-full md:min-w-30">
                                 <Menu as="div" className="relative w-full">
                                   <MenuButton className="w-full text-xs px-2.5 py-2 border border-slate-200 justify-between flex gap-1 md:gap-2 items-center rounded-full outline-none text-slate-900 bg-white">
                                     <span className="text-gray-700 truncate text-start">
                                       {item.pricingOptions?.find(
                                         (pricing) =>
                                           pricing.id === item.selectedPricingId,
-                                      )?.label || "Select option"}
+                                      )?.strength || "Select option"}
                                     </span>
                                     <span>
                                       <svg
@@ -254,7 +254,7 @@ const Header = () => {
                                                     : "",
                                                 ].join(" ")}
                                               >
-                                                <span>{pricing.label}</span>
+                                                <span>{pricing.strength}</span>
                                                 {isSelected && (
                                                   <span className="text-sky-500 text-base leading-none">
                                                     ✓
