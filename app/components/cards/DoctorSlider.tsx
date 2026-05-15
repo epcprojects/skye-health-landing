@@ -69,7 +69,7 @@ const DoctorSwiper = () => {
               {activeSlide.heading}
             </p>
 
-            <div className="flex flex-col gap-4.25">
+            <div className="flex flex-col gap-2 lg:gap-4.25">
               <p className="text-base font-bold text-primary-light md:text-xl lg:text-2xl">
                 {activeSlide.name}
               </p>

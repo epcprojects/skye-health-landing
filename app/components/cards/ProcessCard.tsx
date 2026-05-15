@@ -151,7 +151,7 @@ const ProcessCard = ({
 
   return (
     <div
-      className={`group pt-12.5 overflow-hidden lg:pr-12.5 lg:pl-12.5 pl-4 pr-4 h-155 md:h-182.5 flex flex-col gap-10 rounded-[30px] relative transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.06)] ${classes.card}`}
+      className={`group pt-12.5 overflow-hidden lg:pr-12.5 lg:pl-12.5 pl-4 pr-4 h-135 md:h-182.5 flex flex-col gap-10 rounded-[30px] relative transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.06)] ${classes.card}`}
     >
       <Image
         src={image}
