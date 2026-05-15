@@ -3,11 +3,33 @@ import React from "react";
 import Image from "next/image";
 import { images } from "@/app/ui";
 import Link from "next/link";
-import {
-  SendIcon,
-} from "@/public/icons";
+import { SendIcon } from "@/public/icons";
+import { useEffect, useRef, useState } from "react";
+
 import { footerLinkSections, socialLinks } from "@/app/constants/constants";
 const Footer = () => {
+  const textRef = useRef<HTMLParagraphElement | null>(null);
+  const [showText, setShowText] = useState(false);
+
+  useEffect(() => {
+    const element = textRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowText(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <footer className="flex flex-col bg-[url('/images/FooterBgImage.jpg')] bg-cover bg-center bg-no-repeat">
       <div className="container max-w-7xl mx-auto flex flex-col gap-8 lg:gap-24 py-8 lg:py-16 px-4 lg:px-8">
@@ -17,12 +39,23 @@ const Footer = () => {
           className="lg:w-full lg:h-full  w-80 h-auto"
         />
         <div className="flex flex-wrap gap-15">
-          <p className="text-lg text-gray-100 text-center lg:text-start max-w-83.75">
+          <p
+            ref={textRef}
+            className={`text-lg text-gray-100 text-center lg:text-start max-w-83.75 ${
+              showText
+                ? "animate-[footer-text-up_700ms_ease-out_both]"
+                : "opacity-0"
+            }`}
+          >
             Premium Peptides • Performance Forward. Delivering purity you can
             trust to high-performance individuals globally.
           </p>
+
           {footerLinkSections.map((section) => (
-            <div key={section.title} className="flex flex-col gap-4 lg:min-w-45">
+            <div
+              key={section.title}
+              className="flex flex-col gap-4 lg:min-w-45"
+            >
               <p className="text-sm font-semibold text-white/50 leading-4.75 tracking-[3px] uppercase">
                 {section.title}
               </p>
@@ -32,7 +65,7 @@ const Footer = () => {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="text-base text-gray-100"
+                    className="relative w-fit text-base text-gray-100 after:absolute after:left-0 after:-bottom-1 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-gray-100 after:transition-transform after:duration-300 hover:after:scale-x-100"
                   >
                     {link.label}
                   </Link>

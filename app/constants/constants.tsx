@@ -11,6 +11,7 @@ import {
   InfinityHoveredIcon,
   InfinityIcon,
   InstagramIcon,
+  LinkEdinIcon,
   LockHoveredIcon,
   LockIcon,
   MouseIcon,
@@ -19,7 +20,6 @@ import {
   XIcon,
 } from "@/public/icons";
 import { images } from "../ui";
-import LinkedinIcon from "@/public/icons/LinkEdinIcon";
 
 export type MenuItem = {
   label: string;
@@ -167,7 +167,7 @@ export const socialLinks = [
   {
     label: "LinkedIn",
     href: "https://linkedin.com",
-    Icon: LinkedinIcon,
+    Icon: LinkEdinIcon,
   },
   {
     label: "Facebook",
@@ -321,39 +321,25 @@ export const wellnessCards = [
     image: images.landingpageimages.BetterSkinImage,
   },
   {
-    id: "healthy-aging-2",
-    title: "Healthy Aging",
+    id: "performance",
+    title: "Performance",
     description:
-      "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
-    image: images.landingpageimages.DirectDoorImage,
+      "Support energy, focus, recovery, and physical performance with targeted wellness options designed around your goals.",
+    image: images.landingpageimages.PerformanceImage,
   },
   {
-    id: "healthy-aging-3",
-    title: "Healthy Aging",
+    id: "recovery",
+    title: "Recovery",
     description:
-      "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
-    image: images.landingpageimages.DirectDoorImage,
+      "Support muscle repair, daily recovery, and overall wellness with targeted options designed around your lifestyle and goals.",
+    image: images.landingpageimages.RecoveryImage,
   },
   {
-    id: "healthy-aging-4",
-    title: "Healthy Aging",
+    id: "weightmanagement",
+    title: "Weight Management",
     description:
-      "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
-    image: images.landingpageimages.DirectDoorImage,
-  },
-  {
-    id: "healthy-aging-5",
-    title: "Healthy Aging",
-    description:
-      "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
-    image: images.landingpageimages.DirectDoorImage,
-  },
-  {
-    id: "healthy-aging-6",
-    title: "Healthy Aging",
-    description:
-      "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
-    image: images.landingpageimages.DirectDoorImage,
+      "Support healthy weight goals with personalized wellness options designed to improve balance, consistency, and long-term progress.",
+    image: images.landingpageimages.WeightManagementImage,
   },
 ] as const;
 
