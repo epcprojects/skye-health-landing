@@ -9,9 +9,12 @@ import "swiper/css";
 
 const communityImages = [
   images.landingpageimages.CommunityImageOne,
-  images.landingpageimages.CommunityImageTwo,
+
+    images.landingpageimages.CommunityImageSix,
   images.landingpageimages.CommunityImageThree,
   images.landingpageimages.CommunityImageFour,
+  images.landingpageimages.CommunityImageFive,
+images.landingpageimages.CommunityImageTwo,
 ];
 
 const CommunitySwiper = () => {

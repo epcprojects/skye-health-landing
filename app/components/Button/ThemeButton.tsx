@@ -7,7 +7,9 @@ type ThemeButtonVariant =
   | "outlined"
   | "primaryblue"
   | "primaryFilled"
-  | "whiteOutlined";
+  | "whiteOutlined"
+  |"blacktexted"
+  ;
 
 type ThemeButtonSize =
   | "sm"
@@ -32,6 +34,7 @@ type ThemeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClasses: Record<ThemeButtonVariant, string> = {
   primary: "bg-white text-black font-medium rounded-full hover:font-bold hover:bg-primary hover:text-white",
+  blacktexted:"bg-white text-black font-medium rounded-full ",
   outlinedBluish:
     "text-primary font-semibold border border-primary rounded-xl group-hover:bg-white",
   blackFilled:

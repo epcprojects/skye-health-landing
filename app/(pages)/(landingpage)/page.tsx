@@ -390,6 +390,7 @@ export default function Home() {
                 onClick={() => {
                   "";
                 }}
+                variant="blacktexted"
                 size="extralarge"
                 label={"Unlock Access"}
                 className="font-semibold!"
@@ -433,7 +434,7 @@ export default function Home() {
             <p className="text-3xl lg:text-[54px] text-center lg:text-start font-semibold text-neutral-900 tracking-[-2%]">
               Frequently Asked Questions?
             </p>
-            <p className="text-gray-800 text-xl lg:text-2xl text-center">
+            <p className="text-gray-800 text-lg lg:text-xl text-center">
               Everything you need to know about our peptides and process.
             </p>
           </div>
