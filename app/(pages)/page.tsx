@@ -547,8 +547,16 @@ export default function Home() {
               />
             </div>
           </div>
-          <Image src={images.landingpageimages.VideoImage} alt={"Video"} />
         </div>
+      </section>
+      <section className="pb-8 lg:pb-24  hidden md:flex items-center justify-center">
+        <video autoPlay loop muted playsInline className=" z-10">
+          <source
+            src="https://res.cloudinary.com/dgbdcdqd1/video/upload/q_auto/f_auto/v1778853131/render_jicqf1.mp4"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
       </section>
       <section className="pb-12 lg:pb-24">
         <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-10 px-4 lg:px-8 2xl:px-0">

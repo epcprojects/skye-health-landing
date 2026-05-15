@@ -88,7 +88,7 @@ const Header = () => {
           <div className="flex flex-row  gap-3">
             <Link
               href={"/products"}
-              className="rounded-[5px] hidden bg-white hover:bg-secondary hover:text-white py-2 px-5 group font-medium text-sm text-black xl:flex items-center gap-3"
+              className="rounded-[5px] hidden bg-white hover:bg-secondary  py-2 px-5 group font-medium text-sm text-black xl:flex items-center gap-3"
             >
               Get Started{" "}
             </Link>
