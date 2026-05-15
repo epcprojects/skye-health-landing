@@ -1,7 +1,7 @@
 "use client";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { ArrowRightIcon } from "@/public/icons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import Link from "next/link";
 import ProcessCard from "@/app/components/cards/ProcessCard";
@@ -12,7 +12,6 @@ import TherapyCard from "../components/cards/TherapyCard";
 import {
   featureCards,
   processCards,
-  products,
   steps,
   TherapyCardId,
   therapyCards,
@@ -24,6 +23,36 @@ import WellnessCarousel from "../components/cards/WelnessCarousel";
 import DoctorSwiper from "../components/cards/DoctorSlider";
 import StepCard from "../components/cards/StepCard";
 import FeatureCard from "../components/cards/FeatureCard";
+import { Images } from "../images";
+import { useQuery } from "@apollo/client/react";
+import {
+  ALL_PRODUCTS,
+  AllProductsType,
+  AllProductsVariables,
+  FETCH_CATEGORIES,
+  ProductType,
+} from "../graphql/queries/products";
+import { useRouter } from "next/navigation";
+
+import CapsuleImage from "@/public/images/capsule.png";
+import CreamImage from "@/public/images/cream.png";
+import InjectableImage from "@/public/images/injectable.png";
+import InsertImage from "@/public/images/insert.png";
+import NailPolishImage from "@/public/images/Nail Polish.png";
+import NasalSprayImage from "@/public/images/Nasal Spray.png";
+import OintmentImage from "@/public/images/Ointment.png";
+import PatchImage from "@/public/images/Patch.png";
+import PrefillesSyringeImage from "@/public/images/Pre-filles Syringe.png";
+import ScalpOilImage from "@/public/images/Scalp OIl.png";
+import SolutionImage from "@/public/images/Solution.png";
+import SuppositoryImage from "@/public/images/Suppository.png";
+import TabletImage from "@/public/images/Tablet.png";
+import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
+import TrocheImage from "@/public/images/Troche.png";
+import VialImage from "@/public/images/Vial.png";
+import { addProductToCart } from "../Redux/slices/cart/cartSlice";
+import { toastAlert } from "../components/ToastAlert";
+import { useAppDispatch } from "../Redux/store";
 
 export default function Home() {
   const cardActions: Record<TherapyCardId, () => void> = {
@@ -68,15 +97,139 @@ export default function Home() {
     },
   };
 
-  const categories = [
-    "Peptide Therapy",
-    "Hormones",
-    "Longevity",
-    "Sleep",
-    "Hair Regrowth",
-    "Weight Loss",
-  ];
-  const [selectedCategory, setSelectedCategory] = useState("Peptide Therapy");
+  // my code
+
+  const PER_PAGE = 10;
+  const MAX_PRODUCTS = 10;
+
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [activeProductFilter, setActiveProductFilter] = useState<
+    "in_demand" | "all" | "category"
+  >("in_demand");
+  const [extraProducts, setExtraProducts] = useState<ProductType[]>([]);
+
+  const getMobileCategoryLabel = (category: string) => {
+    if (category.includes(">")) return category.split(">")[0].trim();
+
+    const acronym = category.match(/^([A-Z]{2,})\s*\(/);
+    if (acronym) return acronym[1];
+
+    return category;
+  };
+
+  const normalizeForm = (form?: string | null) => form?.trim().toLowerCase();
+
+  const categoryChipImageMap = {
+    "General Health": Images.landingPage.GeneralHealthChipImage,
+    Hormones: Images.landingPage.HormonesChipImage,
+    HRT: Images.landingPage.AntiAgingImage,
+    "HRT (hormone replacement therapy)": Images.landingPage.HormonesChipImage,
+    Peptides: Images.landingPage.PeptidesChipImage,
+    "Sexual Wellness": Images.landingPage.SexualWelnessChipImage,
+    Vitamin: Images.landingPage.VitaminChipImage,
+    "Weight Loss": Images.landingPage.WeightLossChipImage,
+  } as const;
+
+  const getCategoryChipImage = (category: string) => {
+    return (
+      categoryChipImageMap[category as keyof typeof categoryChipImageMap] ||
+      Images.landingPage.GeneralHealthChipImage
+    );
+  };
+
+  const {
+    data,
+    loading,
+    error: appolloError,
+  } = useQuery<AllProductsType, AllProductsVariables>(ALL_PRODUCTS, {
+    variables: {
+      search: undefined,
+      category:
+        activeProductFilter === "category"
+          ? selectedCategory || undefined
+          : undefined,
+      in_demand: activeProductFilter === "in_demand" ? true : undefined,
+      page: 1,
+      perPage: PER_PAGE,
+    },
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: categoriesData } = useQuery<{ productCategories: string[] }>(
+    FETCH_CATEGORIES,
+    { skip: loading || !!appolloError },
+  );
+
+  const firstPageProducts = data?.allProducts?.allData ?? [];
+
+  const productCategories: string[] = categoriesData?.productCategories ?? [];
+
+  const allProducts = useMemo(() => {
+    const existingIds = new Set<string>();
+
+    return [...firstPageProducts, ...extraProducts]
+      .filter((product) => {
+        if (existingIds.has(product.id)) return false;
+        existingIds.add(product.id);
+        return true;
+      })
+      .slice(0, MAX_PRODUCTS);
+  }, [firstPageProducts, extraProducts]);
+
+  const getInDemandBgImage = (productName: string) => {
+    const name = productName.toLowerCase();
+
+    if (name.includes("tirzeptatide")) {
+      return Images.landingPage.TirzepatideImage;
+    }
+
+    if (name.includes("semaglutide")) {
+      return Images.landingPage.SemaglutideImage;
+    }
+
+    if (name.includes("nad")) {
+      return Images.landingPage.NADImage;
+    }
+
+    if (name.includes("sildenafil")) {
+      return Images.landingPage.sildenafil;
+    }
+
+    return Images.landingPage.TestosteroneImage;
+  };
+
+  const formImageMap: Record<string, StaticImageData> = {
+    capsule: CapsuleImage,
+    cream: CreamImage,
+    injectable: InjectableImage,
+    insert: InsertImage,
+    "nail polish": NailPolishImage,
+    "nasal spray": NasalSprayImage,
+    ointment: OintmentImage,
+    patch: PatchImage,
+    "pre-filled syringe": PrefillesSyringeImage,
+    "pre-filles syringe": PrefillesSyringeImage,
+    "scalp oil": ScalpOilImage,
+    solution: SolutionImage,
+    suppository: SuppositoryImage,
+    tablet: TabletImage,
+    "trichosol solution": TrichosolSolutionImage,
+    troche: TrocheImage,
+    vial: VialImage,
+  };
+
+  const getProductImage = (product: ProductType) => {
+    if (product.primaryImage) return product.primaryImage;
+
+    const form = normalizeForm(product.form);
+    if (!form) return "";
+
+    return formImageMap[form] || "";
+  };
 
   return (
     <>
@@ -118,40 +271,99 @@ export default function Home() {
             <p className="text-4xl text-center px-4 lg:px-0 lg:text-start lg:text-[64px] font-semibold text-black tracking-[-2%]">
               Discover Our Products
             </p>
-            <div className="w-full overflow-x-auto px-4 scrollbar-hide lg:overflow-visible">
-              <div className="flex w-max flex-row gap-3 lg:w-full lg:justify-center">
-                {categories.map((category) => {
-                  const isSelected = selectedCategory === category;
+            <div className="flex flex-row gap-2 lg:gap-2.5 flex-wrap">
+              <button
+                onClick={() => {
+                  setActiveProductFilter("all");
+                  setSelectedCategory("");
+                }}
+                className={`py-2 lg:py-1.5 px-3 lg:px-5.5 cursor-pointer rounded-xl hover:border-primary-light text-sm lg:text-base font-medium text-neutral-900 ${
+                  activeProductFilter === "all"
+                    ? "bg-primary-light text-white"
+                    : "bg-white border border-[#E3E3E3]"
+                }`}
+              >
+                All
+              </button>
 
-                  return (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => setSelectedCategory(category)}
-                      className={`shrink-0 rounded-full px-6.5 py-4 text-lg font-medium  cursor-pointer  ${
-                        isSelected
-                          ? "bg-[#F3F4F6] border border-[#F3F4F6] text-neutral-900"
-                          : "text-neutral-700 border border-[#E3E3E3] bg-white hover:bg-[#F9FAFB] hover:border hover:border-[#F3F4F6]"
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  );
-                })}
-              </div>
+              <button
+                onClick={() => {
+                  setActiveProductFilter("in_demand");
+                  setSelectedCategory("");
+                }}
+                className={`py-2 lg:py-1.5 flex items-center gap-2 px-2 lg:pr-3 lg:ps-2 hover:border-primary-light cursor-pointer rounded-xl text-sm lg:text-base font-medium text-neutral-900 ${
+                  activeProductFilter === "in_demand"
+                    ? "bg-primary-light text-white"
+                    : "bg-white border border-[#E3E3E3]"
+                }`}
+              >
+                <Image src={Images.landingPage.indemand} alt={""} /> In Demand
+              </button>
+
+              {productCategories.map((category) => {
+                const isSelected =
+                  activeProductFilter === "category" &&
+                  selectedCategory === category;
+
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setActiveProductFilter("category");
+                      setSelectedCategory(category);
+                      setExtraProducts([]);
+                    }}
+                    className={`py-1 lg:py-1.5 px-1 lg:px-2 lg:pr-3 hover:border-primary-light cursor-pointer flex flex-row items-center gap-2.5  rounded-xl text-sm lg:text-base font-medium text-neutral-900 whitespace-nowrap ${
+                      isSelected
+                        ? "bg-primary-light text-white"
+                        : "bg-white border border-[#E3E3E3]"
+                    }`}
+                  >
+                    <Image
+                      src={getCategoryChipImage(category)}
+                      alt={category}
+                    />
+
+                    <span className="sm:hidden">
+                      {getMobileCategoryLabel(category)}
+                    </span>
+                    <span className="hidden sm:inline">{category}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
+          {loading && allProducts.length === 0 && (
+            <p className="text-neutral-600 text-center">Loading products...</p>
+          )}
+
+          {appolloError && (
+            <p className="text-red-600 text-center">Failed to load products.</p>
+          )}
+
+          {!loading && !appolloError && allProducts.length === 0 && (
+            <div className="text-neutral-600 text-center">No Product Found</div>
+          )}
 
           <div className="container max-w-390 mx-auto grid grid-cols-1 md:grid-cols-2   px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
-            {products.map((product) => (
-              <ProductCard
+            {allProducts.map((product: ProductType) => (
+              <div
                 key={product.id}
-                image={product.image}
-                title={product.title}
-                onBuyClick={() => {
-                  console.log(`${product.title} clicked`);
-                }}
-              />
+                className="h-full flex"
+                onClick={() => router.push(`/products/${product.id}`)}
+              >
+                <ProductCard
+                  key={product.id}
+                  bgImage={getInDemandBgImage(product.name)}
+                  image={getProductImage(product)}
+                  isInDemand={activeProductFilter === "in_demand"}
+                  title={product.name}
+                  onBuyClick={() => {
+                    dispatch(addProductToCart({ product }));
+                    toastAlert("Added to Cart Successfully", true);
+                  }}
+                />
+              </div>
             ))}
           </div>
         </div>
