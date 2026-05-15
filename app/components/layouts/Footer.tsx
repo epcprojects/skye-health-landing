@@ -108,9 +108,9 @@ const Footer = () => {
         <p className="text-base text-white md:order-1 order-2">
           © {new Date().getFullYear()} SKYE HEALTH. All rights reserved.
         </p>
-        <div className="flex flex-row gap-6 items-center order-1 md:order-2">
+        <div className="flex flex-row gap-2 items-center order-1 md:order-2">
           {socialLinks.map(({ label, href, Icon }) => (
-            <Link key={label} href={href} aria-label={label}>
+            <Link key={label} className="hover:bg-black/20 rounded-full w-12.5 h-12.5  flex items-center justify-center" href={href} aria-label={label}>
               <Icon />
             </Link>
           ))}

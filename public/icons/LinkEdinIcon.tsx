@@ -1,6 +1,6 @@
 import React from "react";
 
-const LinkEdinIcon = ({ fill = "#104584" }) => {
+const LinkEdinIcon = ({ fill = "white" }) => {
   return (
     <svg
       width="17"

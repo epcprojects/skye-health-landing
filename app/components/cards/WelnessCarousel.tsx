@@ -46,7 +46,7 @@ const WellnessCarousel = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-9">
       <div className="pl-4 lg:pl-8 2xl:pl-[calc((100vw-1440px)/2+32px)]">
         <Swiper
           modules={[Mousewheel]}

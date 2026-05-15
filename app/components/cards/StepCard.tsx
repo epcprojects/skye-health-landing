@@ -57,7 +57,7 @@ const StepCard = ({ Icon, title, description }: StepCardProps) => {
 
         <div className="flex flex-col gap-1.5">
           <p className="text-xl lg:text-[33px] font-bold text-black">{title}</p>
-          <p className="text-lg lg:text-[22px] text-neutral-800">
+          <p className="text-lg lg:text-xl text-neutral-800">
             {description}
           </p>
         </div>
