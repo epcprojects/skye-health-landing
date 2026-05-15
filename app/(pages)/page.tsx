@@ -549,7 +549,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="pb-8 lg:pb-24  hidden md:flex items-center justify-center">
+      <section className="pb-8 lg:pb-24 flex items-center justify-center">
         <video autoPlay loop muted playsInline className=" z-10">
           <source
             src="https://res.cloudinary.com/dgbdcdqd1/video/upload/q_auto/f_auto/v1778853131/render_jicqf1.mp4"
@@ -572,7 +572,6 @@ export default function Home() {
         </div>
       </section>
       <section className="pt-12 pb-12 lg:pt-32 lg:pb-32 bg-[radial-gradient(circle,#08387A_0%,#06224C_100%)]  relative overflow-hidden">
-       
         <div className="container max-w-360 mx-auto flex flex-col gap-6 lg:gap-32 px-4 lg:px-8 relative z-20">
           <div className="flex flex-col gap-3">
             <p className="text-xl lg:text-2xl text-white/70">Get Started</p>
@@ -612,7 +611,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-         <Image
+        <Image
           src={images.landingpageimages.InvestFutureImage}
           alt={"invest in future"}
           className="absolute z-5 -bottom-10 right-0 hidden lg:block"
