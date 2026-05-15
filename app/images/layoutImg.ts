@@ -2,9 +2,9 @@ import logo from "../../public/images/logo.svg";
 import footerCouple from "../../public/images/footerCouple.png";
 import eyeClosed from "../../public/images/eyeClosed.svg";
 import eyeOpened from "../../public/images/eyeOpened.svg";
-import authMockup from "../../public/images/authMockup.png";
 import servicesBadges from "../../public/images/servicesBadges.png";
-import NewLogo from "@/public/images/NewLogo.svg"
+import NewLogo from "@/public/images/NewLogo.svg";
+
 export const LayoutImages = {
   NewLogo,
   logo,
@@ -12,5 +12,4 @@ export const LayoutImages = {
   servicesBadges,
   eyeClosed,
   eyeOpened,
-  authMockup,
 };
