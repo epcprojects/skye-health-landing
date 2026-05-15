@@ -117,7 +117,7 @@ const Footer: React.FC<FooterProps> = ({ menuItems }) => {
                 </a>
                 <a href="#" className="group">
                   <span className="drop-shadow bg-white h-10 w-10 flex items-center justify-center rounded-full text-primary transition-colors duration-500 ease-in-out group-hover:bg-secondary group-hover:text-white">
-                    <LinkEdinIcon fill="currentColor" />
+                    {/* <LinkEdinIcon fill="currentColor" /> */}
                   </span>
                 </a>
               </div>
