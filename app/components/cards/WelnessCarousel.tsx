@@ -27,21 +27,16 @@ const WellnessCarousel = () => {
     "better-skin": () => {
       console.log("Better Skin clicked");
     },
-    "healthy-aging-2": () => {
-      console.log("Healthy Aging 2 clicked");
+    "performance": () => {
+      console.log("Better Skin clicked");
     },
-    "healthy-aging-3": () => {
-      console.log("Healthy Aging 2 clicked");
+     "recovery": () => {
+      console.log("Better Skin clicked");
     },
-    "healthy-aging-4": () => {
-      console.log("Healthy Aging 2 clicked");
+     "weightmanagement": () => {
+      console.log("Better Skin clicked");
     },
-    "healthy-aging-5": () => {
-      console.log("Healthy Aging 2 clicked");
-    },
-    "healthy-aging-6": () => {
-      console.log("Healthy Aging 2 clicked");
-    },
+    
 
   };
 
