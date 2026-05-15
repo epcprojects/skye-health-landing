@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: #104584;
+  --color-secondary: #00A4CE;
+  --color-primary-light: #EBF6FA;
+  --color-primary-light-active: #C2E2F0;
+  --color-secondary: #3AB5FE;
+  --color-secondary-dark: #3097d4;
+  --color-powder-blue: #B3E8F0;
+  --color-pacific-blue: #1FA2B8;
+  --color-periwinkle-blue: #70A4DE;
+  --color-french-pass: #D8EAFF;
+  --color-linen: #FFF0ED;
+--color-biloba-flower: #9FAAFF;
+  --color-light-taupe :#B98077;
+  --color-soft-peach: #FFEDE8;
+  --color-sunset-orange: #EF6440;
+  --color-mint:#E3FFF4;
+  --color-jungle-green: #319F80;
+  --color-pearl: #FBEDFF;
+  --color-dusty-purple:#87678E;
+  --color-mercury: #E3E9F2;
+  --shadow-header: 0 14px 60px 0 rgba(0, 0, 0, 0.10);
+  --color-border-primary: #D5D7DA;
+  --color-text-secondary-700: #414651;
+    --animate-spin-slow: spin 6s linear infinite;
+   --animate-spin-dead-slow: spin 40s linear infinite;
+   --text-42: 2.6rem;
+   --color-water: #EBF6FA;
+   --color-peace: #E3E9F2;
+   --color-gunmetal: #2E2E2E;
+   --color-success-500: #2CDD41;
+   --color-error-400: #EA5D5D;
+   --color-warning-600: #DC6803;
+   --color-off-green: #EAFCEC;
+
+  @keyframes slideUpWord {
+    0% {
+      opacity: 0;
+      transform: translateY(120%);
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+    80% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-120%);
+    }
+  }
+  
+  --animate-slide-up-word: slideUpWord 2s ease-in-out;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--manrope);
+}
+
+html {
+   overflow: hidden auto !important;
+   padding-right: 0px !important;
+}
+
+button {
+  transition: opacity 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.crt-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.xs\:bg-cover {
+    @media (width >=540px) {
+        background-size: cover;
+    }
+}
+.xs\:bg-center {
+    @media (width >=540px) {
+        background-position: center;
+    }
+}
+.xs\:pt-150 {
+    @media (width >=540px) {
+        padding-top: calc(var(--spacing) * 150) /* 37.5rem = 600px */;
+    }
+}
+.xs\:min-h-180 {
+    @media (width >= 540px) {
+        min-height: calc(var(--spacing) * 180) /* 45rem = 720px */;
+    }
+}
+
+.crt-root {
+  display: inline-block;
+  line-height: 1.2;
+  vertical-align: top;
+  outline: none;
+}
+
+.crt-wrap {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+/* Character viewport */
+.crt-cell {
+  display: inline-block;
+  overflow: hidden;
+  height: 1em; /* show exactly one glyph */
+}
+
+/* Two identical glyphs stacked */
+
+.crt-glyph {
+  display: block;
+  height: 1em;
+  line-height: 1em;
+}
+
+/* ✅ Move by ONE glyph (half of the 2-glyph stack) */
+.crt-root:hover .crt-stack {
+  transform: translateY(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-stack {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+.noise {
+  position: relative;
+  overflow: hidden;
+}
+
+.noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../public/images//noise.png");
+  opacity: 1;
+  pointer-events: none;
+}
+
+
+
+/* .............. */
+.faq-arrow {
+  display: inline-flex;
+  transform: rotate(-40deg); /* closed: up-right */
+  transition: transform 500ms ease;
+}
+
+/* Trigger is a button with data-state */
+button[data-state="open"] .faq-arrow {
+  transform: rotate(45deg); /* open: down-right */
+}
+
+.faq-anim {
+  overflow: hidden;
+}
+.faq-anim[data-state="open"] {
+  animation: faqDown 300ms ease-out;
+}
+.faq-anim[data-state="closed"] {
+  animation: faqUp 300ms ease-out;
+}
+
+@keyframes faqDown {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes faqUp {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+.Toastify__toast.Toastify__toast-theme--light {
+  @apply top-16 md:top-auto right-2 md:right-auto
+}

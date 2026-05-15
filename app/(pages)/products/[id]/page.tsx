@@ -1,0 +1,409 @@
+"use client";
+import {
+  ProductMetaList,
+  QuantityStepper,
+  SectionHeroCTA,
+} from "@/app/components";
+import { Autoplay } from "swiper/modules";
+import { Images } from "@/app/images";
+import { ChevronIcon, ShoppingCartIcon } from "@/public/icons";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Swiper as SwiperType } from "swiper/types";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Swiper, SwiperSlide } from "swiper/react";
+import ProductCard from "@/app/components/ProductCard";
+import { toastAlert } from "@/app/components/ToastAlert";
+import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
+import {
+  selectProductById,
+  selectRelatedProducts,
+} from "@/app/Redux/slices/products/productsSlice";
+import { addProductToCart } from "@/app/Redux/slices/cart/cartSlice";
+import Link from "next/link";
+import { ProductType } from "@/app/graphql/queries/products";
+import { StaticImageData } from "next/image";
+
+import CapsuleImage from "@/public/images/capsule.png";
+import CreamImage from "@/public/images/cream.png";
+import InjectableImage from "@/public/images/injectable.png";
+import InsertImage from "@/public/images/insert.png";
+import NailPolishImage from "@/public/images/Nail Polish.png";
+import NasalSprayImage from "@/public/images/Nasal Spray.png";
+import OintmentImage from "@/public/images/Ointment.png";
+import PatchImage from "@/public/images/Patch.png";
+import PrefillesSyringeImage from "@/public/images/Pre-filles Syringe.png";
+import ScalpOilImage from "@/public/images/Scalp OIl.png";
+import SolutionImage from "@/public/images/Solution.png";
+import SuppositoryImage from "@/public/images/Suppository.png";
+import TabletImage from "@/public/images/Tablet.png";
+import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
+import TrocheImage from "@/public/images/Troche.png";
+import VialImage from "@/public/images/Vial.png";
+import HomePageProductCard from "@/app/components/HomePageProductsCard";
+
+const Page = () => {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const product = useAppSelector((state) =>
+    selectProductById(state, params.id as string),
+  );
+
+  const relatedProducts = useAppSelector((state) =>
+    selectRelatedProducts(state, params.id),
+  );
+
+  console.log("relatedProducts", relatedProducts);
+
+  const [qty, setQty] = useState(1);
+  const [selectedPricingId, setSelectedPricingId] = useState<string | null>(
+    null,
+  );
+  const swiperRef2 = useRef<SwiperType | null>(null);
+
+  useEffect(() => {
+    if (!product) {
+      router.replace("/products");
+    }
+  }, [product, router]);
+
+  useEffect(() => {
+    if (!product) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedPricingId(product.productUnitPricings?.[0]?.id ?? null);
+  }, [product]);
+
+  const extractMg = (strength?: string) => {
+    if (!strength) return null;
+    const m = strength.match(/(\d+(\.\d+)?)/);
+    return m ? Number(m[1]) : null;
+  };
+
+  if (!product) return null;
+
+  const selectedUnitPricing =
+    product.productUnitPricings?.find(
+      (pricing) => pricing.id === selectedPricingId,
+    ) ?? product.productUnitPricings?.[0];
+
+  const displayPrice =
+    selectedUnitPricing?.retailPrice ??
+    selectedUnitPricing?.cost ??
+    product.retailPrice ??
+    product.price;
+
+  const displayStrength = selectedUnitPricing?.strength || product.strength;
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const dosageOptions = useMemo(
+    () => product.productUnitPricings ?? [],
+    [product.productUnitPricings],
+  );
+
+  const normalizeForm = (form?: string | null) => form?.trim().toLowerCase();
+
+  const formImageMap: Record<string, StaticImageData> = {
+    capsule: CapsuleImage,
+    cream: CreamImage,
+    injectable: InjectableImage,
+    insert: InsertImage,
+    "nail polish": NailPolishImage,
+    "nasal spray": NasalSprayImage,
+    ointment: OintmentImage,
+    patch: PatchImage,
+    "pre-filled syringe": PrefillesSyringeImage,
+    "pre-filles syringe": PrefillesSyringeImage,
+    "scalp oil": ScalpOilImage,
+    solution: SolutionImage,
+    suppository: SuppositoryImage,
+    tablet: TabletImage,
+    "trichosol solution": TrichosolSolutionImage,
+    troche: TrocheImage,
+    vial: VialImage,
+  };
+
+  const getProductImage = (item: ProductType) => {
+    if (item.primaryImage) return item.primaryImage;
+
+    const form = normalizeForm(item.form);
+    if (!form) return Images.landingPage.product;
+
+    return formImageMap[form] || Images.landingPage.product;
+  };
+
+  return (
+    <>
+      <SectionHeroCTA
+        title={product.name}
+        tags={[product.form, product.strength]}
+        width="max-w-7xl"
+        titleSize="text-4xl"
+      />
+
+      <section className="container mx-auto px-4 lg:px-8 max-w-7xl space-y-8 lg:space-y-13 py-8 sm:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="border border-neutral-200 rounded-xl flex items-center justify-center">
+            <Image
+              alt=""
+              src={getProductImage(product)}
+              width={240}
+              height={376}
+            />
+          </div>
+
+          <div className="space-y-3 lg:space-y-6">
+            <div className="space-y-4.5">
+              <h2 className="text-xl wrap-anywhere lg:text-2xl font-semibold text-gunmetal">
+                {product.name}
+              </h2>
+
+              <div className="flex items-center gap-2">
+                <span className="text-base font-medium text-gray-900">
+                  Availability:
+                </span>
+                <span
+                  className={`
+          shrink-0
+    text-gunmetal text-base font-semibold
+    flex items-center gap-2.5
+    before:content-['']
+    before:h-2.5 before:w-2.5
+    before:rounded-full
+    before:inline-block
+    ${1 === 1 ? "before:bg-success-500" : "before:bg-error-400"}
+  `}
+                >
+                  {product.inStock ? "In Stock" : "Out of Stock"}
+                </span>
+              </div>
+
+              <h3 className="text-neutral-900 font-extrabold text-3xl lg:text-4xl">
+                $
+                {Number(displayPrice) % 1 === 0
+                  ? Number(displayPrice)
+                  : Number(displayPrice).toFixed(2)}
+              </h3>
+            </div>
+
+            {dosageOptions.length > 1 && (
+              <div className="bg-neutral-100 rounded-[20px] p-4 space-y-3.5">
+                <p className="text-xl text-gray-900 font-medium">
+                  Select peptide dosage
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {dosageOptions.map((option) => {
+                    const optionPrice =
+                      option.retailPrice ?? option.cost ?? product.price;
+                    const isActive = option.id === selectedUnitPricing?.id;
+
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setSelectedPricingId(option.id)}
+                        className={`rounded-xl border bg-white text-left p-3 cursor-pointer transition ${
+                          isActive
+                            ? " border-secondary"
+                            : " border-gray-200 hover:bg-white"
+                        }`}
+                      >
+                        <p className="text-lg mb-3 font-semibold text-neutral-800 break-all">
+                          {option.unitQuantity}
+                        </p>
+                        <p className="text-base font-semibold text-neutral-800 break-all">
+                          {option.strength || "Option"}
+                        </p>
+                        <p className="text-base mt-3 text-gray-700">
+                          $
+                          {Number(optionPrice) % 1 === 0
+                            ? Number(optionPrice)
+                            : Number(optionPrice).toFixed(2)}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <ProductMetaList
+                items={[
+                  { label: "Vendor:", value: product.vendor },
+                  {
+                    label: "Size",
+                    value:
+                      selectedUnitPricing?.unitQuantity ||
+                      displayStrength,
+                  },
+                  { label: "Strength:", value: displayStrength },
+                  { label: "Product Type", value: product.form },
+                ]}
+              />
+            </div>
+
+            <div className="flex sm:flex-row flex-col gap-3 sm:items-end">
+              <QuantityStepper value={qty} onChange={setQty} min={1} max={20} />
+
+              <button
+                type="button"
+                onClick={() => {
+                  dispatch(
+                    addProductToCart({
+                      product,
+                      qty,
+                      selectedPricingId: selectedUnitPricing?.id,
+                    }),
+                  );
+                  toastAlert(`Added ${qty} item(s) to cart`, true);
+                }}
+                className="rounded-full w-full flex-1 justify-center cursor-pointer hover:bg-primary/90 bg-primary sm:ps-5 p-1.5 sm:p-3 text-white flex items-center gap-3 text-lg sm:text-xl font-medium"
+              >
+                Add to Cart
+                <ShoppingCartIcon
+                  classname="w-4.5 h-4.5 lg:w-6 lg:h-6"
+                  fill="currentColor"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {product.description && (
+          <div className="space-y-5 lg:space-y-9.5">
+            <h2 className="font-extrabold text-2xl lg:text-3xl text-neutral-900">
+              About This Product
+            </h2>
+
+            <div className="space-y-3 lg:space-y-6">
+              <p
+                className="text-base lg:text-lg text-neutral-700"
+                dangerouslySetInnerHTML={{
+                  __html: product.description,
+                }}
+              ></p>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-6">
+          <h2 className="font-extrabold text-2xl lg:text-3xl text-neutral-900">
+            Customers Also Bought
+          </h2>
+
+          <div className="relative ">
+            <div className="absolute -left-4 2xl:-left-20 top-1/2 z-10 -translate-y-1/2">
+              <button
+                onClick={() => swiperRef2.current?.slidePrev()}
+                className="bg-white rounded-full w-10 h-10   border border-neutral-200 flex items-center justify-center hover:drop-shadow"
+              >
+                <ChevronIcon />
+              </button>
+            </div>
+
+            <div className="absolute -right-4 2xl:-right-20 top-1/2 z-10 -translate-y-1/2">
+              <button
+                onClick={() => swiperRef2.current?.slideNext()}
+                className="bg-white rounded-full rotate-180 w-10 h-10 border border-neutral-200 flex items-center justify-center hover:drop-shadow"
+              >
+                <ChevronIcon />
+              </button>
+            </div>
+            <Swiper
+              pagination={{ clickable: true }}
+              autoplay={false}
+              loop={true}
+              slidesPerView={"auto"}
+              spaceBetween={30}
+              modules={[Autoplay]}
+              className="relative reviewSlider"
+              onSwiper={(swiper) => {
+                swiperRef2.current = swiper;
+              }}
+            >
+              {relatedProducts.map((p: ProductType, index) => (
+                <SwiperSlide key={index} className="max-w-sm! px-0!">
+                  <div
+                    className="h-full cursor-pointer"
+                    onClick={(event) => {
+                      const target = event.target as HTMLElement;
+
+                      if (target.closest("button")) {
+                        return;
+                      }
+
+                      router.push(`/products/${p.id}`);
+                    }}
+                  >
+                    <HomePageProductCard
+                      category={p.category}
+                      title={p.name}
+                      image={getProductImage(p)}
+                      tags={[p.strength, p.form].filter((tag): tag is string =>
+                        Boolean(tag),
+                      )}
+                      price={
+                        Number(p.retailPrice || p.price) % 1 === 0
+                          ? `$${Number(p.retailPrice || p.price)}`
+                          : `$${Number(p.retailPrice || p.price).toFixed(2)}`
+                      }
+                      onAddToCart={() => {
+                        dispatch(addProductToCart({ product: p }));
+                        toastAlert("Added to Cart Successfully", true);
+                      }}
+                    />
+                  </div>
+                  {/* <ProductCard
+                    onAddToCart={() => {
+                      dispatch(addProductToCart({ product: p }));
+                      toastAlert("Added to Cart Successfully", true);
+                    }}
+                    onCardClick={(id) => {
+                      router.push(`/products/${id}`);
+                    }}
+                    product={{
+                      id: p.id.toString(),
+                      title: p.name,
+                      category: p.form,
+                      stock: p.inStock,
+                      price:
+                        Number(p.retailPrice ? p.retailPrice : p.price) % 1 ===
+                        0
+                          ? Number(p.retailPrice ? p.retailPrice : p.price)
+                          : Number(
+                              p.retailPrice ? p.retailPrice : p.price,
+                            ).toFixed(2),
+                      image: p.primaryImage || "",
+                      // size: p.strength,
+                      dosing: extractMg(p.strength)
+                        ? `${extractMg(p.strength)} mg`
+                        : "",
+                      timing: "",
+                      // type: p.form,
+                      warnings: "",
+                    }}
+                  /> */}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <Link
+            href={"/products"}
+            className="text-neutral-900 font-medium hover:bg-neutral-100 cursor-pointer text-base py-3 px-7.5 rounded-full border-secondary border-2"
+          >
+            View all products
+          </Link>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Page;
