@@ -240,3 +240,21 @@ body {
 
 
 
+.faq-anim {
+  overflow: hidden;
+}
+.faq-anim[data-state="open"] {
+  animation: faqDown 300ms ease-out;
+}
+.faq-anim[data-state="closed"] {
+  animation: faqUp 300ms ease-out;
+}
+
+@keyframes faqDown {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes faqUp {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}

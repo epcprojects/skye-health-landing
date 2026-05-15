@@ -26,6 +26,8 @@ import { useState } from "react";
 import Link from "next/link";
 import ProcessCard from "@/app/components/cards/ProcessCard";
 import CommunitySwiper from "@/app/components/cards/CommunitySwiper";
+import FaqAccordion from "@/app/components/cards/FAQAccordion";
+import NEWFAQ from "@/app/components/cards/FAQAccordion";
 
 export default function Home() {
   const cardActions: Record<TherapyCardId, () => void> = {
@@ -440,7 +442,8 @@ export default function Home() {
           </div>
           <div className="flex flex-col gap-4 lg:gap-8">
             <div className="flex flex-col gap-4 lg:gap-9">
-              <FAQAccordion />
+              {/* <FAQAccordion /> */}
+              <NEWFAQ/>
               <p className=" text-center text-lg lg:text-xl text-black">
                 Still have questions?{" "}
                 <Link href={""} className="font-semibold ">

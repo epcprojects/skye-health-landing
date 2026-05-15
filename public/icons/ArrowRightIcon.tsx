@@ -1,10 +1,10 @@
 import React from "react";
 
-const ArrowRightIcon = ({ fill = "white"}) => {
+const ArrowRightIcon = ({ fill = "white" ,width="19" ,height="19"}) => {
   return (
     <svg
-      width="19"
-      height="19"
+      width={width}
+      height={height}
       viewBox="0 0 19 19"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
