@@ -83,19 +83,22 @@ const Footer = () => {
                 <br /> updates and batch release alerts.
               </p>
             </div>
-            <div className="rounded-full bg-white/5  border border-white/20 backdrop-blur-[20px] flex flex-row py-2 pr-2 pl-5.5">
+            <div className="group rounded-full bg-white/5 border border-white/20 hover:border-white/50 backdrop-blur-[20px] flex flex-row py-2 pr-2 pl-5.5">
               <input
                 type="text"
-                placeholder="Your Address"
-                className=" placeholder:text-base placeholder:text-neutral-300 outline-none flex-1"
+                placeholder="Your email address"
+                className="placeholder:text-base placeholder:text-neutral-400 outline-none flex-1"
               />
               <button
                 onClick={() => {
                   "";
                 }}
-                className="w-9 h-9 rounded-full flex items-center justify-center bg-[#009FFF]"
+                className="w-9 h-9 rounded-full flex items-center justify-center bg-[#009FFF]  "
               >
-                <SendIcon />
+                <span className=" transition-transform duration-300 group-hover:-rotate-20">
+                 <SendIcon />
+                </span>
+                
               </button>
             </div>
           </div>
@@ -105,9 +108,9 @@ const Footer = () => {
         <p className="text-base text-white md:order-1 order-2">
           © {new Date().getFullYear()} SKYE HEALTH. All rights reserved.
         </p>
-        <div className="flex flex-row gap-6 items-center order-1 md:order-2">
+        <div className="flex flex-row gap-2 items-center order-1 md:order-2">
           {socialLinks.map(({ label, href, Icon }) => (
-            <Link key={label} href={href} aria-label={label}>
+            <Link key={label} className="hover:bg-black/20 rounded-full w-12.5 h-12.5  flex items-center justify-center" href={href} aria-label={label}>
               <Icon />
             </Link>
           ))}

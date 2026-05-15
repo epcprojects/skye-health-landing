@@ -440,11 +440,11 @@ export default function Home() {
           className="hidden 2xl:block 2xl:absolute bottom-0 right-0"
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-16">
-          <div className="flex flex-col gap-4 lg:gap-8">
+          <div className="flex flex-col gap-4 ">
             <p className="text-3xl lg:text-[54px] font-semibold text-black">
               Get Started in 3 Simple Steps
             </p>
-            <p className="text-gray-800 text-base lg:text-2xl">
+            <p className="text-gray-800 text-base lg:text-[22px]">
               SKYE HEALTH provides access to therapies commonly
               <br /> evaluated in clinical and performance settings
             </p>
@@ -512,7 +512,7 @@ export default function Home() {
       </section>
       <section className="py-12 lg:pt-24">
         <div className="container max-w-360 mx-auto flex flex-col gap-12">
-          <div className="flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center gap-8">
             <div className="flex flex-col items-center gap-4 px-4 lg:px-0">
               <p className="text-center text-3xl lg:text-[64px] font-semibold leading-[120%] tracking-[-2%] text-[#009FFF]">
                 Clinical Care.
@@ -572,8 +572,8 @@ export default function Home() {
         <div className="container max-w-360 mx-auto flex flex-col gap-12 lg:gap-32 px-4 lg:px-8 relative z-20">
           <div className="flex flex-col gap-3">
             <p className="text-xl lg:text-2xl text-white/70">Get Started</p>
-            <div className="flex flex-col gap-6">
-              <p className="text-3xl lg:text-[64px] font-semibold leading-[120%] tracking-[-2%] text-white">
+            <div className="flex flex-col gap-2">
+              <p className="text-3xl lg:text-[64px] font-semibold  tracking-[-2%] text-white">
                 Invest in your
                 <br /> future self.
               </p>
@@ -611,7 +611,7 @@ export default function Home() {
       </section>
       <section className="py-12 lg:py-24">
         <div className="flex flex-col gap-10 ">
-          <div className="flex flex-col items-center gap-3 px-4 lg:px-0">
+          <div className="flex flex-col items-center gap-2 px-4 lg:px-0">
             <p className="text-black text-xl lg:text-2xl">Community Feedback</p>
             <p className="text-3xl lg:text-[54px] text-center lg:text-start font-semibold text-neutral-900">
               Empowering Thousands of Users.
@@ -644,7 +644,7 @@ export default function Home() {
             <p className="text-3xl lg:text-[54px] text-center lg:text-start font-semibold text-neutral-900 tracking-[-2%]">
               Frequently Asked Questions?
             </p>
-            <p className="text-gray-800 text-lg lg:text-xl text-center">
+            <p className="text-gray-800 text-lg lg:text-[22px] text-center">
               Everything you need to know about our peptides and process.
             </p>
           </div>

@@ -31,8 +31,8 @@ import BgGlowImage from "@/public/images/CardsBgGlowImage.png";
 import CommunityImageFive from "@/public/images/CommunityImageFive.png";
 import CommunityImageSix from "@/public/images/CommunityImageSix.png";
 import PerformanceImage from "@/public/images/PerformanceImage.png";
-import WeightManagementImage from "@/public/images/WeightManagementImage.png";
-import RecoveryImage from "@/public/images/RecoveryImage.png";
+import WeightManagementImage from "@/public/images/Recovery.png";
+import RecoveryImage from "@/public/images/WeightManagementImage.png";
 export const landingpageimages = {
   WeightManagementImage,
   RecoveryImage,
