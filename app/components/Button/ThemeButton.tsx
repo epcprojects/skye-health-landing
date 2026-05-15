@@ -46,12 +46,12 @@ const variantClasses: Record<ThemeButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ThemeButtonSize, string> = {
-  sm: "md:px-7.5 px-4 py-4 text-base md:text-lg gap-4",
+  sm: "md:px-7.5 px-6 py-4 text-base md:text-lg gap-4",
   md: "px-7.5 py-3 text-lg gap-2.5",
   lg: "px-10 py-4 text-lg gap-2.5",
-  xl: "py-4 px-4 md:px-8 text-base md:text-[22px] gap-4",
+  xl: "py-4 px-6 md:px-8 text-base md:text-[22px] gap-4",
   xxl: "py-4 px-11 text-lg gap-2.5",
-  extralarge: "py-2 lg:py-[26px] px-4 lg:px-10 text-base lg:text-xl",
+  extralarge: "py-4 lg:py-[26px] px-6 lg:px-10 text-base lg:text-xl",
   ultrasmall: "py-3 px-6 text-lg gap-2.5",
 };
 

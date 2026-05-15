@@ -38,10 +38,10 @@ const Footer = () => {
           alt={"sky health logo"}
           className="lg:w-full lg:h-full  w-80 h-auto"
         />
-        <div className="flex flex-wrap gap-15">
+        <div className="flex flex-wrap gap-15 " >
           <p
             ref={textRef}
-            className={`text-lg text-gray-100 text-center lg:text-start max-w-83.75 ${
+            className={`text-lg text-gray-100 text-center lg:text-start lg:max-w-83.75 ${
               showText
                 ? "animate-[footer-text-up_700ms_ease-out_both]"
                 : "opacity-0"
@@ -83,7 +83,7 @@ const Footer = () => {
                 <br /> updates and batch release alerts.
               </p>
             </div>
-            <div className="group rounded-full bg-white/5 border border-white/20 hover:border-white/50 backdrop-blur-[20px] flex flex-row py-2 pr-2 pl-5.5">
+            <div className="w-full group rounded-full bg-white/5 border border-white/20 hover:border-white/50 backdrop-blur-[20px] flex flex-row py-2 pr-2 pl-5.5">
               <input
                 type="text"
                 placeholder="Your email address"
