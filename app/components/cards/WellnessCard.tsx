@@ -72,7 +72,7 @@ const WellnessCard = ({
   const isMobile = useIsMobile();
 
   return (
-    <div className="group pt-10  flex flex-col gap-10 relative px-4 lg:px-10 bg-black/21 rounded-[30px] h-100 md:h-150 lg:min-w-112.75 backdrop-blur-[20px] overflow-hidden ">
+    <div className="group pt-8 lg:pt-10  flex flex-col gap-10 relative px-7 lg:px-10 bg-black/21 rounded-[30px] h-100 md:h-150 lg:min-w-112.75 backdrop-blur-[20px] overflow-hidden ">
       <Image
         src={image}
         alt={title}

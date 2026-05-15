@@ -68,7 +68,7 @@ const Header = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              className="flex h-7 w-7 items-center justify-center bg-white 2xl:hidden"
+              className="flex h-9 w-9 items-center justify-center bg-white rounded-[5px] 2xl:hidden"
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
             >

@@ -115,7 +115,7 @@ const NEWFAQ: React.FC = () => {
         <Accordion.Item
           key={index}
           value={`item-${index}`}
-          className=" group p-7 bg-[#F3F4F6] rounded-[32px]"
+          className=" group px-4 py-4  lg:py-7 lg:px-7 bg-[#F3F4F6] rounded-[20px] lg:rounded-[32px]"
         >
           <Accordion.Trigger className="w-full  cursor-pointer">
             <Accordion.Header>

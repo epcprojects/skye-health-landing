@@ -241,13 +241,13 @@ export default function Home() {
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8  flex flex-col gap-8 lg:gap-25">
           <div className="flex flex-col gap-4 lg:gap-7.5">
-            <p className="text-4xl xl:text-[90px] font-semibold text-center lg:text-start text-white">
+            <p className="text-[40px] xl:text-[90px] font-semibold text-center lg:text-start text-white">
               Your Health.{" "}
               <span className="text-white/40">
                 <CharRollText as="span" text="Elevated." auto />
               </span>
             </p>
-            <p className="text-xl xl:text-2xl text-center lg:text-start text-white">
+            <p className="text-lg xl:text-2xl text-center lg:text-start text-white">
               Experience a new standard of personalized care.
               <br />
               From longevity to daily wellness, we bring expert-led treatments.
@@ -369,7 +369,7 @@ export default function Home() {
         </div>
       </section>
       <section className="pb-24">
-        <div className="container max-w-360 mx-auto flex flex-col gap-12">
+        <div className="container max-w-360 mx-auto flex flex-col gap-8 lg:gap-12">
           <div className="flex flex-col items-center gap-8">
             <div className="flex flex-col items-center px-4 lg:px-0 gap-4">
               <p className=" text-center leading-[120%] font-semibold text-4xl lg:text-[64px] text-black tracking-[-2%]">
@@ -382,7 +382,7 @@ export default function Home() {
                 <br /> secure digital intake to understand your unique biology.
               </p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5.5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-5.5">
               <ThemeButton
                 variant="blackFilled"
                 size="lg"
@@ -476,7 +476,7 @@ export default function Home() {
         <Image
           src={images.landingpageimages.HeartLogo}
           alt={"heart bg"}
-          className="absolute top-30 lg:right-30 right-0  mix-blend-overlay"
+          className="absolute top-30 lg:right-30 right-0 h-70 lg:h-auto w-auto  mix-blend-overlay"
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8 ">
           <div className="max-w-165.25 flex flex-col gap-12 lg:gap-32">
@@ -528,7 +528,7 @@ export default function Home() {
                 disrupt it.
               </p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5.5">
+            <div className="grid grid-cols-1 lg:grid-cols-2  gap-3 lg:gap-5.5">
               <ThemeButton
                 onClick={() => {
                   "";
@@ -559,7 +559,7 @@ export default function Home() {
         </video>
       </section>
       <section className="pb-12 lg:pb-24">
-        <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-10 px-4 lg:px-8 2xl:px-0">
+        <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-10 px-4 lg:px-8 2xl:px-0">
           {featureCards.map((feature) => (
             <FeatureCard
               key={feature.id}
@@ -571,13 +571,9 @@ export default function Home() {
           ))}
         </div>
       </section>
-      <section className="py-12 lg:py-32 bg-[radial-gradient(circle,#08387A_0%,#06224C_100%)] relative overflow-hidden">
-        <Image
-          src={images.landingpageimages.InvestFutureImage}
-          alt={"invest in future"}
-          className="absolute z-5 -bottom-10 right-0"
-        />
-        <div className="container max-w-360 mx-auto flex flex-col gap-12 lg:gap-32 px-4 lg:px-8 relative z-20">
+      <section className="pt-12 pb-12 lg:pt-32 lg:pb-32 bg-[radial-gradient(circle,#08387A_0%,#06224C_100%)]  relative overflow-hidden">
+       
+        <div className="container max-w-360 mx-auto flex flex-col gap-6 lg:gap-32 px-4 lg:px-8 relative z-20">
           <div className="flex flex-col gap-3">
             <p className="text-xl lg:text-2xl text-white/70">Get Started</p>
             <div className="flex flex-col gap-2">
@@ -592,14 +588,14 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-6.25">
+          <div className="flex flex-col gap-4 lg:gap-6.25">
             <div className="flex flex-col gap-3">
               <p className="text-xl lg:text-2xl text-white/70">Email*</p>
               <div>
                 <input
                   type="text"
                   placeholder="example@email.com"
-                  className="lg:py-5 lg:px-7.5 px-4 py-4 placeholder:text-white/40 text-base lg:text-xl hover:border-white/40  border border-white/20 text-white hover:bg-primary-dark bg-primary-dark/70 lg:w-125 rounded-full outline-none "
+                  className="w-full lg:py-5 lg:px-7.5 px-4 py-4 placeholder:text-white/40 text-base lg:text-xl hover:border-white/40  border border-white/20 text-white hover:bg-primary-dark bg-primary-dark/70 lg:w-125 rounded-full outline-none "
                 />
               </div>
             </div>
@@ -616,6 +612,11 @@ export default function Home() {
             </div>
           </div>
         </div>
+         <Image
+          src={images.landingpageimages.InvestFutureImage}
+          alt={"invest in future"}
+          className="absolute z-5 -bottom-10 right-0 hidden lg:block"
+        />
       </section>
       <section className="py-12 lg:py-24">
         <div className="flex flex-col gap-10 ">
