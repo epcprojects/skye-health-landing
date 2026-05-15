@@ -1,11 +1,9 @@
 "use client";
 import React from "react";
 
-import { useBodyScrollLock } from "@/app/hooks/useBodyScrollLock";
 import Portal from "../portal";
 import ThemeButton, { buttonVariant } from "../buttons/ThemeInput";
 import { CrossIcon, ShoppingCartIcon } from "@/public/icons";
-import { useIsMobile } from "@/app/hooks/useIsMobile";
 
 export enum ModalPosition {
   CENTER = "center",
@@ -77,15 +75,8 @@ const AppModal: React.FC<AppModalProps> = ({
   cancelBtnIcon,
   disableCloseButton = false,
   hideCrossButton = false,
-  headerTooltip,
-  headerTooltipAutoShowOnceKey,
-  headerTooltipAutoHideAfter,
   centerFooter = false,
 }) => {
-  const isMobile = useIsMobile();
-
-  // useBodyScrollLock(isOpen && isMobile);
-
   if (!isOpen) return null;
 
   const baseModalClasses = " shadow-xl h-full flex flex-col";

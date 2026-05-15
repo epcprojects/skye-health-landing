@@ -1,28 +1,17 @@
 "use client";
 import {
-  AddIcon,
-  ArrowIcon,
   ArrowRightIcon,
-  CheckCircleIcon,
   MedicineIcon,
-  PlusIcon,
   PulseIcon,
-  RxIcon,
   SecurityCheckIcon,
   StethoscopeIcon,
 } from "@/public/icons";
 import Image, { StaticImageData } from "next/image";
 import { Images } from "../images";
-import {
-  HowItWorksScrollCards,
-  MarqueeCard,
-  MarqueeLanding,
-} from "../components";
-import HormonesCard from "../components/HormonesCard";
 
 import NEWFAQ from "../components/FAQ";
 import Link from "next/link";
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useQuery } from "@apollo/client/react";
 import { FETCH_CATEGORIES } from "@/app/graphql/queries/products";
 import {
@@ -57,7 +46,6 @@ import TabletImage from "@/public/images/Tablet.png";
 import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
 import TrocheImage from "@/public/images/Troche.png";
 import VialImage from "@/public/images/Vial.png";
-import { profile } from "console";
 import { useRouter } from "next/navigation";
 
 const PER_PAGE = 20;
