@@ -93,7 +93,7 @@ const WellnessCarousel = () => {
             type="button"
             onClick={() => swiperRef.current?.slidePrev()}
             disabled={isBeginning}
-            className="w-12.5 h-12.5 bg-black/17 rounded-full items-center justify-center flex rotate-180 disabled:opacity-40"
+            className="w-12.5 h-12.5 hover:bg-white hover:[&_path]:fill-black bg-black/17 rounded-full items-center justify-center flex rotate-180 disabled:opacity-40"
           >
             <ArrowRightIcon />
           </button>
@@ -113,7 +113,7 @@ const WellnessCarousel = () => {
             type="button"
             onClick={() => swiperRef.current?.slideNext()}
             disabled={isEnd}
-            className="w-12.5 h-12.5 bg-black/17 rounded-full items-center justify-center flex disabled:opacity-40"
+            className="w-12.5 h-12.5 hover:bg-white hover:[&_path]:fill-black  bg-black/17 rounded-full items-center justify-center flex disabled:opacity-40"
           >
             <ArrowRightIcon />
           </button>

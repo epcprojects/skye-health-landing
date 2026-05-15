@@ -83,19 +83,22 @@ const Footer = () => {
                 <br /> updates and batch release alerts.
               </p>
             </div>
-            <div className="rounded-full bg-white/5  border border-white/20 backdrop-blur-[20px] flex flex-row py-2 pr-2 pl-5.5">
+            <div className="group rounded-full bg-white/5 border border-white/20 hover:border-white/50 backdrop-blur-[20px] flex flex-row py-2 pr-2 pl-5.5">
               <input
                 type="text"
-                placeholder="Your Address"
-                className=" placeholder:text-base placeholder:text-neutral-300 outline-none flex-1"
+                placeholder="Your email address"
+                className="placeholder:text-base placeholder:text-neutral-400 outline-none flex-1"
               />
               <button
                 onClick={() => {
                   "";
                 }}
-                className="w-9 h-9 rounded-full flex items-center justify-center bg-[#009FFF]"
+                className="w-9 h-9 rounded-full flex items-center justify-center bg-[#009FFF]  "
               >
-                <SendIcon />
+                <span className=" transition-transform duration-300 group-hover:-rotate-20">
+                 <SendIcon />
+                </span>
+                
               </button>
             </div>
           </div>
