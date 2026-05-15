@@ -1,15 +1,7 @@
 "use client";
-import {
-  ArrowRightIcon,
-  MedicineIcon,
-  PulseIcon,
-  SecurityCheckIcon,
-  StethoscopeIcon,
-} from "@/public/icons";
+import { ArrowRightIcon } from "@/public/icons";
 import Image, { StaticImageData } from "next/image";
 import { Images } from "../images";
-
-import NEWFAQ from "../components/FAQ";
 import Link from "next/link";
 import { useState, useRef, useMemo } from "react";
 import { useQuery } from "@apollo/client/react";
@@ -51,47 +43,18 @@ import { useRouter } from "next/navigation";
 const PER_PAGE = 20;
 const MAX_PRODUCTS = 20;
 export default function Home() {
-  const items = [
-    {
-      num: "01",
-      title: "Online Assessment",
-      description:
-        "Answer clinically relevant questions about your health goals and history.",
-    },
-    {
-      num: "02",
-      title: "Medical Review",
-      description: "A licensed provider evaluates your data and lab results.",
-    },
-    {
-      num: "03",
-      title: "Personalized Plan",
-      description:
-        "Receive tailored peptides, hormones, and vitamins designed for you.",
-    },
-    {
-      num: "04",
-      title: "Delivery & Support",
-      description:
-        "Receive tailored peptides, hormones, and vitamins designed for you.",
-    },
-  ];
   const dispatch = useAppDispatch();
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [activeProductFilter, setActiveProductFilter] = useState<
     "in_demand" | "all" | "category"
   >("in_demand");
-  const [page, setPage] = useState(1);
   const [extraProducts, setExtraProducts] = useState<ProductType[]>([]);
-  const [hasMoreProducts, setHasMoreProducts] = useState(true);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const {
     data,
     loading,
     error: appolloError,
-    fetchMore,
   } = useQuery<AllProductsType, AllProductsVariables>(ALL_PRODUCTS, {
     variables: {
       search: undefined,
@@ -184,35 +147,6 @@ export default function Home() {
 
     return "/products";
   };
-
-  const normalizeCategoryName = (category: string) =>
-    category.trim().toLowerCase();
-
-  // const orderedProductCategories = useMemo(() => {
-  //   const allowedCategoryMap = new Map(
-  //     visibleCategoryNames.map((category) => [
-  //       normalizeCategoryName(category),
-  //       category,
-  //     ]),
-  //   );
-
-  //   return productCategories
-  //     .filter((category) =>
-  //       allowedCategoryMap.has(normalizeCategoryName(category)),
-  //     )
-  //     .sort((a, b) => {
-  //       const aIndex = visibleCategoryNames.findIndex(
-  //         (category) =>
-  //           normalizeCategoryName(category) === normalizeCategoryName(a),
-  //       );
-  //       const bIndex = visibleCategoryNames.findIndex(
-  //         (category) =>
-  //           normalizeCategoryName(category) === normalizeCategoryName(b),
-  //       );
-
-  //       return aIndex - bIndex;
-  //     });
-  // }, [productCategories]);
 
   const orderedProductCategories = useMemo(() => {
     return visibleCategoryNames;
@@ -355,8 +289,6 @@ export default function Home() {
                 onClick={() => {
                   setActiveProductFilter("all");
                   setSelectedCategory("");
-                  setPage(1);
-                  setHasMoreProducts(true);
                 }}
                 className={`py-2 lg:py-1.5 px-3 lg:px-5.5 cursor-pointer rounded-xl text-sm lg:text-base font-medium text-neutral-900 ${
                   activeProductFilter === "all"
@@ -371,8 +303,6 @@ export default function Home() {
                 onClick={() => {
                   setActiveProductFilter("in_demand");
                   setSelectedCategory("");
-                  setPage(1);
-                  setHasMoreProducts(true);
                 }}
                 className={`py-2 lg:py-1.5 flex items-center gap-2 px-2 lg:pr-3 lg:ps-2 cursor-pointer rounded-xl text-sm lg:text-base font-medium text-neutral-900 ${
                   activeProductFilter === "in_demand"
@@ -394,9 +324,7 @@ export default function Home() {
                     onClick={() => {
                       setActiveProductFilter("category");
                       setSelectedCategory(category);
-                      setPage(1);
                       setExtraProducts([]);
-                      setHasMoreProducts(true);
                     }}
                     className={`py-1 lg:py-1.5 px-1 lg:px-2 lg:pr-3 hover:border-secondary cursor-pointer flex flex-row items-center gap-2.5  rounded-xl text-sm lg:text-base font-medium text-neutral-900 whitespace-nowrap ${
                       isSelected
@@ -484,14 +412,6 @@ export default function Home() {
                     </div>
                   </SwiperSlide>
                 ))}
-
-                {/* {isFetchingMore && (
-                  <SwiperSlide className="!w-auto !h-auto">
-                    <div className="h-full flex items-center text-neutral-600">
-                      Loading more products...
-                    </div>
-                  </SwiperSlide>
-                )} */}
               </Swiper>
             )}
           </div>
@@ -537,384 +457,6 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="bg-neutral-100">
-        <div className=" relative overflow-hidden bg-no-repeat bg-bottom-left">
-          <div className="container max-w-7xl mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-2 py-8 lg:py-24 z-40 relative ">
-            <div className="space-y-8 lg:space-y-14">
-              <div className="space-y-1 lg:space-y-4">
-                <h2 className="font-medium tracking-[-2%] lg:leading-[120%] text-[28px] sm:text-4xl  xl:text-[48px] text-neutral-900">
-                  This isn&apos;t wellness. This is medicine—done right.
-                </h2>
-                <p className="text-neutral-700 font-normal text-base  xl:text-xl">
-                  Paramount HealthRx was built to deliver integrated,
-                  physician-guided optimization—not isolated products.
-                </p>
-              </div>
-              <div className="flex flex-col gap-5 lg:gap-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-2 lg:gap-y-4 gap-x-5">
-                  <div className="p-4 lg:p-5  rounded-xl flex items-center gap-3 lg:gap-6 bg-linear-to-b hover:from-gray-100 hover:to-whites hover:shadow from-white to-white/20 cursor-pointer">
-                    <div className="flex items-center justify-center relative opacity-100">
-                      <Image
-                        alt=""
-                        src={Images.landingPage.iconBg}
-                        className="drop-shadow shrink-0"
-                      />
-                      <span className="absolute">
-                        <SecurityCheckIcon />
-                      </span>
-                    </div>
-
-                    <h2 className="text-neutral-700 text-base lg:text-lg">
-                      Individualized protocols
-                    </h2>
-                  </div>
-
-                  <div className="p-4 lg:p-5  rounded-xl flex items-center gap-3 lg:gap-6 bg-linear-to-b from-white to-white/20 hover:from-gray-100 hover:to-whites hover:shadow cursor-pointer">
-                    <div className="flex items-center justify-center relative opacity-100">
-                      <Image
-                        alt=""
-                        src={Images.landingPage.iconBg}
-                        className="drop-shadow shrink-0"
-                      />
-                      <span className="absolute">
-                        <StethoscopeIcon />
-                      </span>
-                    </div>
-
-                    <h2 className="text-neutral-700 text-base lg:text-lg">
-                      Real labs, real doctors
-                    </h2>
-                  </div>
-
-                  <div className="p-4 lg:p-5  rounded-xl flex items-center gap-3 lg:gap-6 bg-linear-to-b from-white to-white/20 hover:from-gray-100 hover:to-whites hover:shadow cursor-pointer">
-                    <div className="flex items-center justify-center relative opacity-100">
-                      <Image
-                        alt=""
-                        src={Images.landingPage.iconBg}
-                        className="drop-shadow shrink-0"
-                      />
-                      <span className="absolute">
-                        <MedicineIcon />
-                      </span>
-                    </div>
-
-                    <h2 className="text-neutral-700 text-base lg:text-lg">
-                      Compounded by elite pharmacies
-                    </h2>
-                  </div>
-
-                  <div className="p-4 lg:p-5  rounded-xl flex items-center gap-3 lg:gap-6 bg-linear-to-b from-white to-white/20 hover:from-gray-100 hover:to-whites hover:shadow cursor-pointer">
-                    <div className="flex items-center justify-center relative opacity-100">
-                      <Image
-                        alt=""
-                        src={Images.landingPage.iconBg}
-                        className="drop-shadow shrink-0"
-                      />
-                      <span className="absolute">
-                        <PulseIcon />
-                      </span>
-                    </div>
-
-                    <h2 className="text-neutral-700 text-base lg:text-lg">
-                      Continuous monitoring & refinement
-                    </h2>
-                  </div>
-                </div>
-
-                <div className="flex flex-col w-full lg:w-auto gap-2 lg:gap-4">
-                  <div className="w-full lg:w-auto">
-                    <Link href={"/products"}>
-                      <button
-                        className="bg-[#104584] cursor-pointer backdrop-blur-[66px] py-3 px-6 rounded-lg w-full lg:w-auto"
-                        onClick={() => ""}
-                      >
-                        <span className="text-white font-semibold text-base ">
-                          Explore Treatments
-                        </span>
-                      </button>
-                    </Link>
-                  </div>
-                  <span className="text-neutral-800 text-base text-center lg:text-start italic">
-                    Because average isn&apos;t the goal.
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <Image
-            src={Images.landingPage.wellnessMockup}
-            alt="wellnessMockup"
-            className="relative md:absolute bottom-0 end-1 2xl:end-0 z-20 "
-          />
-
-          <Image
-            src={Images.landingPage.bgCircles}
-            alt="wellnessMockup"
-            className="absolute hidden lg:block  -bottom-4 animate-spin-dead-slow -end-4 z-10"
-          />
-        </div>
-      </section>
-      <section className="py-8 lg:py-24">
-        <div className="container max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 px-4 2xl:px-0">
-          <div className="flex flex-col gap-4 lg:gap-8">
-            <div className="flex flex-col gap-1 lg:gap-2">
-              <h2 className="leading-[120%]  tracking-[-2%] font-medium text-[28px] lg:text-5xl text-neutral-900">
-                How It Works
-              </h2>
-              <p className="text-lg lg:text-xl text-neutral-800">
-                Simple. Secure. Physician-Guided.
-              </p>
-            </div>
-            <div>
-              <Link href={"/products"}>
-                <button
-                  onClick={() => {
-                    "";
-                  }}
-                  className="cursor-pointer py-3 px-6 border border-black rounded-lg text-black font-semibold text-base"
-                >
-                  Explore Treatments
-                </button>
-              </Link>
-            </div>
-          </div>
-          <div className="flex flex-col gap-5 lg:gap-9.5">
-            <div className="flex flex-row gap-4 lg:gap-9.5">
-              <Image
-                src={Images.landingPage.OnlineAssessmentImage}
-                alt={"Online assessment"}
-                className="shrink-0 w-20 h-18 rounded-lg lg:rounded-0 object-cover lg:w-auto lg:h-auto"
-              />
-              <div className="flex flex-col  gap-1 lg:gap-2">
-                <p className="text-xl lg:text-[28px] text-black">
-                  1. Online Assessment
-                </p>
-                <p className="text-base lg:text-[20px] text-neutral-600">
-                  Answer clinically relevant questions about your health goals
-                  and history.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 lg:gap-9.5">
-              <Image
-                src={Images.landingPage.MedicalReviewImage}
-                alt={"Online assessment"}
-                className="shrink-0 w-20 h-18 object-cover rounded-lg lg:rounded-0 lg:w-auto lg:h-auto"
-              />
-              <div className="flex flex-col gap-1 lg:gap-2">
-                <p className="text-xl lg:text-[28px] text-black">
-                  2. Medical Review
-                </p>
-                <p className="text-base lg:text-[20px] text-neutral-600">
-                  A licensed provider evaluates your data and lab results.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 lg:gap-9.5">
-              <Image
-                src={Images.landingPage.PersonlizedPlanImage}
-                alt={"Online assessment"}
-                className="shrink-0 w-20 h-18  object-cover rounded-lg lg:rounded-0 lg:w-auto lg:h-auto"
-              />
-              <div className="flex flex-col gap-1 lg:gap-2">
-                <p className="text-xl lg:text-[28px] text-black">
-                  3. Personalized Plan
-                </p>
-                <p className="text-base lg:text-[20px] text-neutral-600">
-                  Receive tailored peptides, hormones, and vitamins designed for
-                  you.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 lg:gap-9.5">
-              <Image
-                src={Images.landingPage.DeliveryandSupportImage}
-                alt={"Online assessment"}
-                className="shrink-0 w-20 h-18 object-cover rounded-lg lg:rounded-0 lg:w-auto lg:h-auto"
-              />
-              <div className="flex flex-col gap-1 lg:gap-2">
-                <p className="text-xl lg:text-[28px] text-black">
-                  4. Delivery & Support
-                </p>
-                <p className="text-base lg:text-[20px] text-neutral-600">
-                  Receive tailored peptides, hormones, and vitamins designed for
-                  you.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="pb-8 lg:pb-24 lg:block hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className=" w-full h-full object-cover z-10"
-        >
-          <source
-            src="https://res.cloudinary.com/dgbdcdqd1/video/upload/q_auto/f_auto/v1778760507/Paramount_mw5zdn.mp4"
-            type="video/mp4"
-          />
-          Your browser does not support the video tag.
-        </video>
-      </section>
-      <section className="px-4 2xl:px-0">
-        <div className="container mx-auto  max-w-7xl">
-          <div className=" relative  flex flex-col p-4 xl:p-16 items-center justify-center bg-linear-0 rounded-2xl lg:rounded-4xl overflow-hidden bg-[#EFF4FF]">
-            <div className=" flex flex-col lg:flex-row  items-center gap-4 lg:gap-9  w-full relative  mb-5 lg:mb-0">
-              <div className="flex-1 flex flex-col items-center lg:items-start gap-2">
-                <p className="font-medium text-center lg:text-start leading-[120%] tracking-[-2%] text-[28px] lg:text-[48px] text-neutral-900">
-                  Your biology is unique.
-                </p>
-                <p className="text-lg lg:text-xl text-neutral-800">
-                  Your treatment should be too.
-                </p>
-              </div>
-              <div>
-                <Link href={"/products"}>
-                  <button
-                    onClick={() => {
-                      "";
-                    }}
-                    className="border cursor-pointer text-base font-semibold text-black border-black py-3 px-6 rounded-lg"
-                  >
-                    Start Your Assessment
-                  </button>
-                </Link>
-              </div>
-            </div>
-            <div className="relative self-stretch -mx-8 w-[calc(100%+64px)] lg:hidden">
-              <div className="relative h-75 w-full">
-                <Image
-                  src={Images.landingPage.BiologyUniqueGroupImage}
-                  alt="Biology Unique"
-                  fill
-                  className="object-cover object-center"
-                />
-              </div>
-            </div>
-
-            <div className="relative hidden lg:block">
-              <Image
-                src={Images.landingPage.BiologyUniqueGroupImage}
-                alt="Biology Unique"
-              />
-            </div>
-
-            <div className=" w-full  relative">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-9 w-full relative ">
-                <div className="bg-white p-5 lg:p-7.5 flex-col flex gap-7  rounded-2xl lg:rounded-[30px]">
-                  <div className="space-y-2">
-                    <h2 className="text-xl lg:text-[28px] font-medium text-black">
-                      Peptides
-                    </h2>
-                    <p className="text-gray-800 text-base lg:text-lg">
-                      Advanced compounds designed to accelerate healing, improve
-                      body composition, and support longevity.
-                    </p>
-                  </div>
-                  <Link
-                    href={"/peptides"}
-                    className="bg-neutral-100 w-fit py-3 px-6 rounded-lg text-neutral-800 font-medium text-base "
-                  >
-                    Learn More
-                  </Link>
-                </div>
-
-                <div className="bg-white p-5 lg:p-7.5 flex-col flex gap-7 rounded-2xl lg:rounded-[30px]">
-                  <div className="space-y-2">
-                    <h2 className="text-xl lg:text-[28px] font-medium text-black">
-                      Hormones
-                    </h2>
-                    <p className="text-gray-800 text-base lg:text-lg">
-                      Precision-dosed testosterone, estrogen, progesterone, and
-                      more—medically supervised.
-                    </p>
-                  </div>
-                  <Link
-                    href={"/hormones"}
-                    className="bg-neutral-100 lg:absolute lg:bottom-10 w-fit py-3 px-6 rounded-lg text-neutral-800 font-medium text-base"
-                  >
-                    Learn More
-                  </Link>
-                </div>
-
-                <div className="bg-white p-5 lg:p-7.5 flex-col flex gap-7 rounded-2xl lg:rounded-[30px]">
-                  <div className="space-y-2">
-                    <h2 className="text-xl lg:text-[28px] font-medium text-black">
-                      Vitamins
-                    </h2>
-                    <p className="text-gray-800 text-base lg:text-lg">
-                      Pharmaceutical-grade micronutrients, not store-bought
-                      fillers.
-                    </p>
-                  </div>
-                  <Link
-                    href={"/vitamins"}
-                    className="bg-neutral-100 lg:absolute lg:bottom-10 w-fit py-3 px-6 rounded-lg  text-neutral-800 font-medium text-base "
-                  >
-                    Learn More
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="container max-w-7xl mx-auto py-8 lg:py-16 px-4 2xl:px-0 ">
-        <div className="bg-[#F5F5F5] rounded-xl p-4 lg:p-13.5 grid grid-cols-1 lg:grid-cols-2 items-center  gap-8 lg:gap-23">
-          <div className="flex flex-col gap-4 lg:gap-8.75">
-            <p className="text-2xl lg:text-4xl   font-medium text-neutral-900 leading-[130%] tracking-[-2%]">
-              Start balancing your
-              <br /> hormones with this
-              <br /> free guide
-            </p>
-            <div className="flex flex-col items-center lg:items-start lg:flex-row gap-4">
-              <div className="flex flex-col flex-1 gap-1.5">
-                <input
-                  type="text"
-                  placeholder="Enter your email"
-                  className="bg-white outline-none py-3 px-5 placeholder:text-[#717680] text-base text-black rounded-xl border border-border-primary"
-                />
-                <p className="text-sm  text-neutral-800">
-                  We care about your data in our{" "}
-                  <Link href={""} className="underline underline-offset-2">
-                    privacy policy
-                  </Link>
-                  .
-                </p>
-              </div>
-              <div className="w-full lg:w-auto ">
-                <button
-                  onClick={() => {
-                    "";
-                  }}
-                  className="bg-primary  cursor-pointer py-3 px-8.5 rounded-lg text-base font-semibold text-white w-full lg:w-auto"
-                >
-                  Start Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <div>
-            <Image
-              src={Images.landingPage.BalancingHormonesImage}
-              alt={"Balance Hormones"}
-            />
-          </div>
-        </div>
-      </section>
-      <section className="container mx-auto max-w-7xl lg:pb-16 px-4 xl:px-8">
-        <div className="space-y-5 lg:space-y-13.5">
-          <h2 className="text-[28px] sm:text-5xl font-medium text-center lg:text-start  text-neutral-900 ">
-            Frequent Asked Question?
-          </h2>
-          <NEWFAQ />
         </div>
       </section>
     </>

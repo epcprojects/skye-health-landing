@@ -1,7 +1,6 @@
 "use client";
 import { SectionHeroCTA } from "@/app/components";
 import HomePageProductCard from "@/app/components/HomePageProductsCard";
-import ProductCard from "@/app/components/ProductCard";
 import { toastAlert } from "@/app/components/ToastAlert";
 import {
   ALL_PRODUCTS,
@@ -19,7 +18,7 @@ import { CrossIcon, SearchIcon } from "@/public/icons";
 import { useQuery } from "@apollo/client/react";
 import Image, { StaticImageData } from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import CapsuleImage from "@/public/images/capsule.png";
 import CreamImage from "@/public/images/cream.png";
@@ -92,12 +91,6 @@ const Page = () => {
     FETCH_CATEGORIES,
     { skip: loading || !!appolloError },
   );
-
-  const extractMg = (strength?: string) => {
-    if (!strength) return null;
-    const m = strength.match(/(\d+(\.\d+)?)/);
-    return m ? Number(m[1]) : null;
-  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -202,10 +195,6 @@ const Page = () => {
 
   const CATEGORY_LIMIT = isMobile ? 10 : 20;
 
-  const visibleCategories = showMore
-    ? productCategories
-    : productCategories.slice(0, CATEGORY_LIMIT);
-
   const hasMore = productCategories.length > CATEGORY_LIMIT;
 
   const normalizeForm = (form?: string | null) => form?.trim().toLowerCase();
@@ -229,26 +218,6 @@ const Page = () => {
     troche: TrocheImage,
     vial: VialImage,
   };
-
-  // const formImageMap: Record<string, unknown> = {
-  //   "capsule": Images.landingPage.CapsuleImage,
-  //   "cream": Images.landingPage.CreamImage,
-  //   "injectable": Images.landingPage.InjectableImage,
-  //   "insert": Images.landingPage.InsertImage,
-  //   "nail polish": Images.landingPage.NailPolishImage,
-  //   "nasal spray": Images.landingPage.NasalSprayImage,
-  //   "ointment": Images.landingPage.OintmentImage,
-  //   "patch": Images.landingPage.PatchImage,
-  //   "pre-filled syringe":Images.landingPage.PrefillesSyringeImage,
-  //   "pre-filles syringe": Images.landingPage.PrefillesSyringeImage,
-  //   "scalp oil": Images.landingPage.ScalpOilImage,
-  //   "solution": Images.landingPage.SolutionImage,
-  //   "suppository": Images.landingPage.SuppositoryImage,
-  //   "tablet": Images.landingPage.TabletImage,
-  //   "trichosol solution": Images.landingPage.TrichosolSolutionImage,
-  //   "troche": Images.landingPage.TrocheImage,
-  //   "vial": Images.landingPage.VialImage,
-  // };
 
   const getProductImage = (product: ProductType) => {
     if (product.primaryImage) return product.primaryImage;
@@ -447,25 +416,6 @@ const Page = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {allProducts.map((p: ProductType) => {
-            const mg = extractMg(p.strength);
-
-            const cardProduct = {
-              id: p.id,
-              title: p.name,
-              category: p.category,
-              stock: p.status === "IN_STOCK",
-              price:
-                Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
-                  ? Number(p.retailPrice ? p.retailPrice : p.price)
-                  : Number(p.retailPrice ? p.retailPrice : p.price).toFixed(2),
-              image: p.primaryImage || "",
-              size: p.strength,
-              dosing: mg ? `${mg} mg` : "",
-              timing: "",
-              type: p.form,
-              warnings: "",
-            };
-
             return (
               <div
                 key={p.id}
@@ -493,16 +443,6 @@ const Page = () => {
                   }}
                 />
               </div>
-
-              // <ProductCard
-              //   key={p.id}
-              //   product={cardProduct}
-              //   onCardClick={(id: string) => router.push(`/products/${id}`)}
-              //   onAddToCart={() => {
-              //     dispatch(addProductToCart({ product: p }));
-              //     toastAlert("Added to Cart Successfully", true);
-              //   }}
-              // />
             );
           })}
         </div>

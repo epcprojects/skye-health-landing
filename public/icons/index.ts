@@ -1,8 +1,4 @@
 import ArrowIcon from "./ArrowIcon";
-import SecurityCheckIcon from "./SecurityCheckIcon";
-import StethoscopeIcon from "./StethoscopeIcon";
-import MedicineIcon from "./MedicineIcon";
-import PulseIcon from "./PulseIcon";
 import MailIcon from "./MailIcon";
 import PhoneIcon from "./PhoneIcon";
 import FBIcon from "./FBIcon";
@@ -51,10 +47,6 @@ export {
   PhoneIcon,
   SearchIcon,
   ArrowIcon,
-  SecurityCheckIcon,
-  StethoscopeIcon,
-  MedicineIcon,
-  PulseIcon,
   FBIcon,
   LinkEdinIcon,
   InstaIcon,

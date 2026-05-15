@@ -15,7 +15,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
-import ProductCard from "@/app/components/ProductCard";
 import { toastAlert } from "@/app/components/ToastAlert";
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
 import {
@@ -76,12 +75,6 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedPricingId(product.productUnitPricings?.[0]?.id ?? null);
   }, [product]);
-
-  const extractMg = (strength?: string) => {
-    if (!strength) return null;
-    const m = strength.match(/(\d+(\.\d+)?)/);
-    return m ? Number(m[1]) : null;
-  };
 
   if (!product) return null;
 
@@ -236,9 +229,7 @@ const Page = () => {
                   { label: "Vendor:", value: product.vendor },
                   {
                     label: "Size",
-                    value:
-                      selectedUnitPricing?.unitQuantity ||
-                      displayStrength,
+                    value: selectedUnitPricing?.unitQuantity || displayStrength,
                   },
                   { label: "Strength:", value: displayStrength },
                   { label: "Product Type", value: product.form },
@@ -357,36 +348,6 @@ const Page = () => {
                       }}
                     />
                   </div>
-                  {/* <ProductCard
-                    onAddToCart={() => {
-                      dispatch(addProductToCart({ product: p }));
-                      toastAlert("Added to Cart Successfully", true);
-                    }}
-                    onCardClick={(id) => {
-                      router.push(`/products/${id}`);
-                    }}
-                    product={{
-                      id: p.id.toString(),
-                      title: p.name,
-                      category: p.form,
-                      stock: p.inStock,
-                      price:
-                        Number(p.retailPrice ? p.retailPrice : p.price) % 1 ===
-                        0
-                          ? Number(p.retailPrice ? p.retailPrice : p.price)
-                          : Number(
-                              p.retailPrice ? p.retailPrice : p.price,
-                            ).toFixed(2),
-                      image: p.primaryImage || "",
-                      // size: p.strength,
-                      dosing: extractMg(p.strength)
-                        ? `${extractMg(p.strength)} mg`
-                        : "",
-                      timing: "",
-                      // type: p.form,
-                      warnings: "",
-                    }}
-                  /> */}
                 </SwiperSlide>
               ))}
             </Swiper>
