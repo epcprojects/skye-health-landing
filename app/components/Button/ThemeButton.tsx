@@ -7,10 +7,16 @@ type ThemeButtonVariant =
   | "outlined"
   | "primaryblue"
   | "primaryFilled"
-  | "whiteOutlined"
-  ;
+  | "whiteOutlined";
 
-type ThemeButtonSize = "sm" | "md" | "lg"|"xl"|"xxl"| "extralarge" |"ultrasmall";
+type ThemeButtonSize =
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "xxl"
+  | "extralarge"
+  | "ultrasmall";
 
 type IconPosition = "start" | "end";
 
@@ -21,22 +27,19 @@ type ThemeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: ThemeButtonSize;
   icon?: React.ReactNode;
   iconPosition?: IconPosition;
+  minWidth?: boolean;
 };
 
 const variantClasses: Record<ThemeButtonVariant, string> = {
-  primary: "bg-white text-black font-medium hover:bg-white rounded-full",
+  primary: "bg-white text-black font-medium rounded-full hover:font-bold hover:bg-primary hover:text-white",
   outlinedBluish:
-    "bg-white text-primary font-semibold border border-primary rounded-xl",
+    "text-primary font-semibold border border-primary rounded-xl group-hover:bg-white",
   blackFilled:
     "bg-black backdrop-blur-[66px] rounded-full font-semibold text-white ",
-  outlined:
-    "bg-white border border-black font-semibold text-black rounded-full",
-  primaryblue:
-    "bg-white text-primary font-semibold hover:bg-white rounded-full",
-  primaryFilled:
-  "bg-primary text-white font-semibold rounded-full"  ,
-  whiteOutlined:
-  "border border-white text-white bg-transparent rounded-full"
+  outlined: "bg-white border border-black font-semibold text-black rounded-full hover:font-bold",
+  primaryblue: "bg-white text-primary font-semibold hover:bg-white rounded-full",
+  primaryFilled: "bg-primary text-white font-semibold rounded-full",
+  whiteOutlined: "border border-white text-white bg-transparent font-medium rounded-full hover:bg-white hover:text-primary",
 };
 
 const sizeClasses: Record<ThemeButtonSize, string> = {
@@ -46,7 +49,7 @@ const sizeClasses: Record<ThemeButtonSize, string> = {
   xl: "py-4 px-4 md:px-8 text-base md:text-[22px] gap-4",
   xxl: "py-4 px-11 text-lg gap-2.5",
   extralarge: "py-2 lg:py-[26px] px-4 lg:px-10 text-base lg:text-xl",
-  ultrasmall: "py-3 px-6 text-lg gap-2.5"
+  ultrasmall: "py-3 px-6 text-lg gap-2.5",
 };
 
 const ThemeButton = ({
@@ -56,13 +59,14 @@ const ThemeButton = ({
   size = "md",
   icon,
   iconPosition = "start",
+  minWidth = false,
   className = "",
   disabled,
   type = "button",
   ...props
 }: ThemeButtonProps) => {
   const iconElement = icon ? (
-    <span className="inline-flex  shrink-0 items-center justify-center">
+    <span className="inline-flex shrink-0 items-center justify-center">
       {icon}
     </span>
   ) : null;
@@ -78,12 +82,15 @@ const ThemeButton = ({
         disabled:pointer-events-none disabled:opacity-50
         ${variantClasses[variant]}
         ${sizeClasses[size]}
+        ${minWidth ? "min-w-24 h-15 relative flex items-center justify-center" : ""}
         ${className}
       `}
       {...props}
     >
       {iconPosition === "start" && iconElement}
-      {label}
+
+      {minWidth ? <span className="absolute">{label}</span> : label}
+
       {iconPosition === "end" && iconElement}
     </button>
   );

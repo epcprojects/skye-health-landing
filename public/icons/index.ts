@@ -30,8 +30,19 @@ import RegenerativeIcon from "./RegenerativeIcon";
 import PerformanceIcon from "./PerformanceIcon";
 import SingleTickIcon from "./SingleTickIcon";
 import DocumentationIcon from "./DocumentationIcon";
-
+import DoctorHoveredIcon from "./DoctorHoveredIcon";
+import FingerprintHoveredIcon from "./FingerprintHoveredIcon";
+import LockHoveredIcon from "./LockHoveredIcon";
+import SupportHoveredIcon from "./SupportHoveredIcon";
+import DiscreteDeliveryHoveredIcon from "./DiscreteDeliveryHoveredIcon";
+import InfinityHoveredIcon from "./InfinityHoveredIcon";
 export {
+  DoctorHoveredIcon,
+  FingerprintHoveredIcon,
+  LockHoveredIcon,
+  SupportHoveredIcon,
+  DiscreteDeliveryHoveredIcon,
+  InfinityHoveredIcon,
   SingleTickIcon,
   RegenerativeIcon,
   PerformanceIcon,

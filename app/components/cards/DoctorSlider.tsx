@@ -6,25 +6,46 @@ import type { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ArrowRightIcon } from "@/public/icons";
 import { doctorSlides } from "@/app/constants/constants";
-
+import { Mousewheel } from "swiper/modules";
 import "swiper/css";
 
 const DoctorSwiper = () => {
   const swiperRef = useRef<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
 
   const activeSlide = doctorSlides[activeIndex];
-  const progress = ((activeIndex + 1) / doctorSlides.length) * 100;
+
+  const updateSwiperState = (swiper: SwiperType) => {
+    setActiveIndex(swiper.activeIndex);
+    setProgress(swiper.progress * 100);
+    setIsBeginning(swiper.isBeginning);
+    setIsEnd(swiper.isEnd);
+  };
 
   return (
-    <section className="pt-8 2xl:pt-24">
+    <section className="pt-8 2xl:pt-24 container max-w-360 mx-auto">
       <div className="grid grid-cols-1 xl:grid-cols-2">
         <Swiper
+          modules={[Mousewheel]}
+          mousewheel={{
+            forceToAxis: true,
+            sensitivity: 0.7,
+            thresholdDelta: 5,
+            thresholdTime: 300,
+            releaseOnEdges: true,
+          }}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
+            updateSwiperState(swiper);
           }}
           onSlideChange={(swiper) => {
-            setActiveIndex(swiper.activeIndex);
+            updateSwiperState(swiper);
+          }}
+          onProgress={(swiper) => {
+            updateSwiperState(swiper);
           }}
           slidesPerView={1}
           spaceBetween={0}
@@ -35,24 +56,25 @@ const DoctorSwiper = () => {
               <Image
                 src={slide.image}
                 alt={slide.imageAlt}
-                className="w-full h-full"
+                draggable={false}
+                className=" select-none"
               />
             </SwiperSlide>
           ))}
         </Swiper>
 
-        <div className="flex w-full flex-col justify-between  gap-8 lg:gap-14.5 min-h-143.75 2xl:min-h-0 bg-[#F7F9F9] p-4 lg:p-30">
+        <div className="flex w-full flex-col justify-between  gap-8 lg:gap-14.5  bg-[#F7F9F9] p-4 lg:p-15">
           <div className="flex flex-col gap-4 lg:gap-14.5">
-            <p className="text-2xl font-semibold text-black md:text-3xl lg:text-5xl">
+            <p className="text-2xl font-semibold text-black md:text-xl lg:text-4xl">
               {activeSlide.heading}
             </p>
 
             <div className="flex flex-col gap-4.25">
-              <p className="text-base font-bold text-primarylight md:text-xl lg:text-2xl">
+              <p className="text-base font-bold text-primary-light md:text-xl lg:text-2xl">
                 {activeSlide.name}
               </p>
 
-              <p className="text-xl text-neutral-800 md:text-2xl lg:text-[28px]">
+              <p className="text-lg text-neutral-800 md:text-xl">
                 {activeSlide.description}
               </p>
             </div>
@@ -62,7 +84,7 @@ const DoctorSwiper = () => {
             <button
               type="button"
               onClick={() => swiperRef.current?.slidePrev()}
-              disabled={activeIndex === 0}
+              disabled={isBeginning}
               className="flex h-12.5 w-12.5 rotate-180 items-center justify-center rounded-full bg-white disabled:opacity-40"
             >
               <ArrowRightIcon fill="black" />
@@ -82,7 +104,7 @@ const DoctorSwiper = () => {
             <button
               type="button"
               onClick={() => swiperRef.current?.slideNext()}
-              disabled={activeIndex === doctorSlides.length - 1}
+              disabled={isEnd}
               className="flex h-12.5 w-12.5 items-center justify-center rounded-full bg-white disabled:opacity-40"
             >
               <ArrowRightIcon fill="black" />

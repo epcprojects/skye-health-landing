@@ -1,4 +1,4 @@
-import { BookMarkIcon, DeliveredIcon, DiscreteDileveryIcon, DoctorIcon, FacebookIcon, FingerprintIcon, InfinityIcon, InstagramIcon, LinkedinIcon, LockIcon, MouseIcon, SupportIcon, XIcon } from "@/public/icons";
+import { BookMarkIcon, DeliveredIcon, DiscreteDeliveryHoveredIcon, DiscreteDileveryIcon, DoctorHoveredIcon, DoctorIcon, FacebookIcon, FingerprintHoveredIcon, FingerprintIcon, InfinityHoveredIcon, InfinityIcon, InstagramIcon, LinkedinIcon, LockHoveredIcon, LockIcon, MouseIcon, SupportHoveredIcon, SupportIcon, XIcon } from "@/public/icons";
 import { images } from "../ui";
 
 export type MenuItem = {
@@ -170,12 +170,12 @@ export const products = [
   },
   {
     id: "ghk-cu-2",
-    title: "GHK-Cu (Copper Peptide)",
+    title: "GHK-Cu (Copper Peptide) GHK-Cu (Copper Peptide) GHK-Cu (Copper Peptide) GHK-Cu (Copper Peptide)",
     image: images.landingpageimages.PeptideProduct,
   },
   {
     id: "ghk-cu-3",
-    title: "GHK-Cu (Copper Peptide)",
+    title: "GHK-Cu (Copper Peptide) GHK-Cu (Copper Peptide)GHK-Cu (Copper Peptide)GHK-Cu (Copper Peptide)GHK-Cu (Copper Peptide)GHK-Cu (Copper Peptide)GHK-Cu (Copper Peptide)",
     image: images.landingpageimages.PeptideProduct,
   },
   {
@@ -307,28 +307,28 @@ export const wellnessCards = [
     image: images.landingpageimages.DirectDoorImage,
   },
   {
-    id: "healthy-aging-2",
+    id: "healthy-aging-3",
     title: "Healthy Aging",
     description:
       "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
     image: images.landingpageimages.DirectDoorImage,
   },
   {
-    id: "healthy-aging-2",
+    id: "healthy-aging-4",
     title: "Healthy Aging",
     description:
       "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
     image: images.landingpageimages.DirectDoorImage,
   },
   {
-    id: "healthy-aging-2",
+    id: "healthy-aging-5",
     title: "Healthy Aging",
     description:
       "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
     image: images.landingpageimages.DirectDoorImage,
   },
   {
-    id: "healthy-aging-2",
+    id: "healthy-aging-6",
     title: "Healthy Aging",
     description:
       "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
@@ -400,6 +400,7 @@ export const featureCards = [
     description:
       "Every treatment plan is reviewed and prescribed by a US-licensed medical provider. We analyze your medical history to ensure safety and suitability before you ever spend a dollar.",
     Icon: DoctorIcon,
+    HoverIcon: DoctorHoveredIcon
   },
   {
     id: "precision",
@@ -407,6 +408,7 @@ export const featureCards = [
     description:
       "Biology isn’t one-size-fits-all. We utilize compounding pharmacies to customize dosages and combine active ingredients, creating protocols that standard pharmacies can’t offer.",
     Icon: FingerprintIcon,
+    HoverIcon: FingerprintHoveredIcon
   },
   {
     id: "pharmacy-grade",
@@ -414,6 +416,7 @@ export const featureCards = [
     description:
       "Quality is non-negotiable. We partner exclusively with FDA-regulated 503A and 503B pharmacies in the USA to ensure the highest standards of purity, potency, and safety.",
     Icon: LockIcon,
+    HoverIcon: LockHoveredIcon
   },
   {
     id: "support",
@@ -421,6 +424,7 @@ export const featureCards = [
     description:
       "Your care doesn’t end at checkout. Message your clinical team anytime to adjust dosages, ask questions, or manage side effects. No appointment necessary.",
     Icon: SupportIcon,
+    HoverIcon: SupportHoveredIcon
   },
   {
     id: "discrete-delivery",
@@ -428,6 +432,7 @@ export const featureCards = [
     description:
       "Your privacy matters. All treatments are shipped fast and free in unbranded, minimalist packaging. No loud logos. Your business stays your business.",
     Icon: DiscreteDileveryIcon,
+    HoverIcon: DiscreteDeliveryHoveredIcon
   },
   {
     id: "flexible",
@@ -435,6 +440,7 @@ export const featureCards = [
     description:
       "You are in control. Pause, cancel, or adjust your delivery frequency at any time directly from your dashboard. No hidden fees or locked-in contracts.",
     Icon: InfinityIcon,
+    HoverIcon: InfinityHoveredIcon
   },
 ];
 

@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
-:root {
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
+} */
+ :root {
+  --background: #ffffff;
+  --foreground: #171717;
+  color-scheme: light;
 }
+
 
 @theme inline {
   --color-background: var(--background);
@@ -13,20 +19,55 @@
   --color-primary: #04306D;
   --color-primary-dark: #021D43;
   --color-lightblue: #E6F0FF;
-  --color-primarylight: #0752BA;
+  --color-primary-light: #0752BA;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--manrope) !important;
+}
+.crt-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.crt-root {
+  display: inline-block;
+  line-height: 1.2;
+  vertical-align: top;
+  outline: none;
+}
+
+.crt-wrap {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.crt-cell {
+  display: inline-block;
+  overflow: hidden;
+  height: 1em; /* show exactly one glyph */
+}
+
+
+.crt-glyph {
+  display: block;
+  height: 1em;
+  line-height: 1em;
+}
+
+.crt-root:hover .crt-stack {
+  transform: translateY(-50%);
 }
 .font-manrope {
   font-family: var(--manrope) !important;

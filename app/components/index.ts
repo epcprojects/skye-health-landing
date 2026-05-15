@@ -16,7 +16,9 @@ import HeaderInner from "./layout/HeaderInner";
 import FooterInner from "./layout/FooterInner";
 import HeroSection from "./cards/HeroSection";
 import CategoryCard from "./cards/CategoryCard";
+import CharRollText from "./Animations/CharRollText";
 export {
+    CharRollText,
     CategoryCard,
     HeroSection,
     FooterInner,

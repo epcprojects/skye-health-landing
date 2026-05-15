@@ -15,14 +15,14 @@ const Header = () => {
     <header className="flex flex-col fixed left-0 right-0 top-0 z-50">
       <div className="bg-neutral-900 py-2.5 flex  justify-center">
         <div className="flex  items-center md:flex-row flex-col gap-2.5 px-4 lg:px-0">
-          <p className="text-sm text-center text-white">
+          <p className="text-sm text-center text-white/70">
             Clinically guided therapies. Pharmacy-grade quality.{" "}
           </p>
           <button
             onClick={() => {
               "";
             }}
-            className="text-sm text-white py-1 px-3 rounded-full bg-neutral-800 flex flex-row items-center gap-2.5"
+            className="text-sm cursor-pointer text-white py-1 px-3 rounded-full bg-white/10 flex flex-row items-center gap-2.5"
           >
             Start Now
             <ArrowRightIcon />
@@ -54,7 +54,7 @@ const Header = () => {
             onClick={() => {
               "search";
             }}
-            className="w-15 cursor-pointer rounded-full h-15 flex items-center border border-white/33 backdrop-blur-sm justify-center"
+            className="w-15 hover:bg-black/20 hover:border-white/60 cursor-pointer rounded-full h-15 flex items-center border border-white/33 backdrop-blur-sm justify-center"
           >
             <SearchIcon />
           </button>
@@ -73,6 +73,7 @@ const Header = () => {
             onClick={() => {
               console.log("clicked");
             }}
+            minWidth
             iconPosition="end"
             icon= {showCart ?<HeartIcon/>:undefined}
           />

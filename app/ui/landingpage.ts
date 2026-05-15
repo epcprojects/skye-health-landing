@@ -26,7 +26,11 @@ import CommunityImageOne from "@/public/images/CommunityImageOne.png"
 import CommunityImageTwo from "@/public/images/CommunityImagetwo.png"
 import CommunityImageThree from "@/public/images/CommunityImagethree.png"
 import CommunityImageFour from "@/public/images/CommunityImagefour.png"
+import herosectionskyhealthoverlay from "@/public/images/skyhealthherooverlay.png"
+import BgGlowImage from "@/public/images/CardsBgGlowImage.png"
 export const landingpageimages = {
+  BgGlowImage,
+  herosectionskyhealthoverlay,
   CommunityImageOne,
   CommunityImageTwo,
   CommunityImageThree,

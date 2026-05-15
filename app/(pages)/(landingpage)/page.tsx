@@ -1,10 +1,9 @@
 "use client";
 import Image from "next/image";
 import { images } from "@/app/ui";
+import { ArrowRightIcon } from "@/public/icons";
 import {
-  ArrowRightIcon,
-} from "@/public/icons";
-import {
+  CharRollText,
   DoctorSwiper,
   FAQAccordion,
   FeatureCard,
@@ -27,7 +26,6 @@ import { useState } from "react";
 import Link from "next/link";
 import ProcessCard from "@/app/components/cards/ProcessCard";
 import CommunitySwiper from "@/app/components/cards/CommunitySwiper";
-
 
 export default function Home() {
   const cardActions: Record<TherapyCardId, () => void> = {
@@ -88,12 +86,15 @@ export default function Home() {
         <Image
           src={images.landingpageimages.SkyHealthBgLogoImage}
           alt={"sky health bg logo"}
-          className="hidden lg:absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          className="absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8  flex flex-col gap-8 lg:gap-25">
           <div className="flex flex-col gap-4 lg:gap-7.5">
             <p className="text-4xl xl:text-[90px] font-semibold text-center lg:text-start text-white">
-              Your Health. <span className="text-white/40">Elevated.</span>
+              Your Health.{" "}
+              <span className="text-white/40">
+                <CharRollText as="span" text="Elevated." auto />
+              </span>
             </p>
             <p className="text-xl xl:text-2xl text-center lg:text-start text-white">
               Experience a new standard of personalized care.
@@ -114,30 +115,32 @@ export default function Home() {
         </div>
       </section>
       <section className="py-12 lg:py-24 flex flex-col gap-12">
-        <div className="container max-w-360 mx-auto flex flex-col items-center gap-5">
-          <p className="text-4xl text-center px-4 lg:px-0 lg:text-start lg:text-[64px] font-semibold text-black tracking-[-2%]">
-            Discover Our Products
-          </p>
-          <div className="w-full overflow-x-auto px-4 scrollbar-hide lg:overflow-visible">
-            <div className="flex w-max flex-row gap-3 lg:w-full lg:justify-center">
-              {categories.map((category) => {
-                const isSelected = selectedCategory === category;
+        <div className="container max-w-360 mx-auto flex flex-col items-center gap-12">
+          <div className="flex flex-col items-center gap-5">
+            <p className="text-4xl text-center px-4 lg:px-0 lg:text-start lg:text-[64px] font-semibold text-black tracking-[-2%]">
+              Discover Our Products
+            </p>
+            <div className="w-full overflow-x-auto px-4 scrollbar-hide lg:overflow-visible">
+              <div className="flex w-max flex-row gap-3 lg:w-full lg:justify-center">
+                {categories.map((category) => {
+                  const isSelected = selectedCategory === category;
 
-                return (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setSelectedCategory(category)}
-                    className={`shrink-0 rounded-full px-6.5 py-4 text-lg font-medium text-neutral-900 cursor-pointer ${
-                      isSelected
-                        ? "bg-[#F3F4F6]"
-                        : "border border-[#E3E3E3] bg-white"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => setSelectedCategory(category)}
+                      className={`shrink-0 rounded-full px-6.5 py-4 text-lg font-medium  cursor-pointer  ${
+                        isSelected
+                          ? "bg-[#F3F4F6] border border-[#F3F4F6] text-neutral-900"
+                          : "text-neutral-700 border border-[#E3E3E3] bg-white hover:bg-[#F9FAFB] hover:border hover:border-[#F3F4F6]"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -181,6 +184,7 @@ export default function Home() {
               <ThemeButton
                 variant="outlined"
                 size="lg"
+                minWidth
                 onClick={() => {}}
                 label="Join SKYE"
                 className="w-full"
@@ -344,6 +348,7 @@ export default function Home() {
               Icon={feature.Icon}
               title={feature.title}
               description={feature.description}
+              HoverIcon={feature.HoverIcon}
             />
           ))}
         </div>
@@ -376,7 +381,7 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="example@email.com"
-                  className="lg:py-5 lg:px-7.5 px-4 py-4 placeholder:text-white text-base lg:text-xl border border-white/35 text-white bg-[#021D43] lg:w-125 rounded-full outline-none "
+                  className="lg:py-5 lg:px-7.5 px-4 py-4 placeholder:text-white/40 text-base lg:text-xl hover:border-white/40  border border-white/20 text-white hover:bg-primary-dark bg-primary-dark/70 lg:w-125 rounded-full outline-none "
                 />
               </div>
             </div>
@@ -401,7 +406,7 @@ export default function Home() {
               Empowering Thousands of Users.
             </p>
           </div>
-         <CommunitySwiper />
+          <CommunitySwiper />
           <div className="self-center flex flex-col md:flex-row gap-3">
             <ThemeButton
               onClick={() => {
