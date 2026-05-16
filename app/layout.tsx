@@ -58,7 +58,7 @@ Personalized. Delivered."
         ></meta>
         <meta
           property="og:image"
-          content="https://www.paramounthealthrx.com/images/paramounthealthrx-og-image.png"
+          content="https://skye-health.vercel.app/images/paramounthealthrx-og-image.png"
         ></meta>
         <meta property="og:image:width" content="750"></meta>
         <meta property="og:image:height" content="750"></meta>

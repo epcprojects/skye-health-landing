@@ -4,6 +4,11 @@ import ThemeInput, { InputType } from "@/app/components/inputs/ThemeInput";
 import AppModal from "@/app/components/modals/AppModal";
 import { CartStepContent } from "@/app/components/serveys/CartStepContent";
 import { SurveyAnswers } from "@/app/components/serveys/SurveyQuestionnaire";
+import {
+  CREATE_PRODUCT_EMAIL_RESPONSES,
+  CreateProductEmailResponsesMutationResult,
+  CreateProductEmailResponsesMutationVariables,
+} from "@/app/graphql/mutations/product-email-response";
 import { CREATE_OR_UPDATE_SURVEY_RESPONSE } from "@/app/graphql/mutations/survey";
 import {
   FETCH_SURVEY_FOR_PRODUCTS,
@@ -52,6 +57,8 @@ const Page = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
+  const [emailSubmissionError, setEmailSubmissionError] = useState("");
+  const [externalUserId, setExternalUserId] = useState("");
   const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
@@ -78,6 +85,9 @@ const Page = () => {
   const trimmedEmail = email.trim();
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const shouldShowEmailError = emailTouched && !isEmailValid;
+  const hasEmailError = shouldShowEmailError || !!emailSubmissionError;
+  const emailErrorMessage =
+    emailSubmissionError || "Please enter a valid email address.";
 
   //servey functions
 
@@ -169,6 +179,11 @@ const Page = () => {
   );
 
   const [createCart] = useMutation<CreateCartMutationResult>(CREATE_CART);
+  const [createProductEmailResponses, { loading: isCreatingProductEmail }] =
+    useMutation<
+      CreateProductEmailResponsesMutationResult,
+      CreateProductEmailResponsesMutationVariables
+    >(CREATE_PRODUCT_EMAIL_RESPONSES);
 
   function buildSurveyAnswerInputs(
     survey: SurveyType,
@@ -193,6 +208,9 @@ const Page = () => {
   }
 
   const cartItems = useAppSelector(selectCartItems);
+  const emailProductIds = Array.from(
+    new Set(cartItems.map((item) => item.productId)),
+  );
 
   const SHIPPING_COST = 9.99;
   const TAX_RATE = 0.12;
@@ -208,17 +226,12 @@ const Page = () => {
   }));
 
   const handleDeferConfirmAccept = useCallback(async () => {
-    if (!survey) return;
+    if (!survey || !externalUserId) return;
 
     const confirm = deferConfirm;
     setIsRedirecting(true);
 
     try {
-      const externalUserId =
-        typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random()}`;
-
       const cartResult = await createCart({
         variables: {
           cartItems: cartItemInputs,
@@ -262,7 +275,7 @@ const Page = () => {
     cartItemInputs,
     tax,
     createCart,
-    isRedirecting,
+    externalUserId,
   ]);
 
   useEffect(() => {
@@ -274,6 +287,8 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setEmail("");
     setEmailTouched(false);
+    setEmailSubmissionError("");
+    setExternalUserId("");
     setHasCapturedEmail(false);
     setCurrentQuestionIndex(0);
     setIsEmailModalOpen(false);
@@ -296,14 +311,46 @@ const Page = () => {
 
   const router = useRouter();
 
-  const handleEmailConfirm = () => {
+  const handleEmailConfirm = async () => {
     setEmailTouched(true);
+    setEmailSubmissionError("");
 
     if (!isEmailValid) return;
 
-    setEmail(trimmedEmail);
-    setHasCapturedEmail(true);
-    setIsEmailModalOpen(false);
+    if (emailProductIds.length === 0) {
+      setEmailSubmissionError("No products were found for this questionnaire.");
+      return;
+    }
+
+    try {
+      const response = await createProductEmailResponses({
+        variables: {
+          input: {
+            email: trimmedEmail,
+            productIds: emailProductIds,
+          },
+        },
+      });
+
+      const nextExternalUserId =
+        response.data?.createProductEmailResponses?.publicEmailResponse
+          ?.externalUserId;
+
+      if (!nextExternalUserId) {
+        throw new Error("No external user ID was returned.");
+      }
+
+      setEmail(trimmedEmail);
+      setExternalUserId(nextExternalUserId);
+      setHasCapturedEmail(true);
+      setIsEmailModalOpen(false);
+    } catch (error) {
+      setEmailSubmissionError(
+        error instanceof Error
+          ? error.message
+          : "We couldn't save your email right now. Please try again.",
+      );
+    }
   };
 
   useEffect(() => {
@@ -407,12 +454,14 @@ const Page = () => {
 
       {!showInfoPage && (
         <div className="container mx-auto max-w-7xl px-4 pt-16 md:pt-24 md:px-8 space-y-12">
-          {/* <AppModal
+          <AppModal
             isOpen={isEmailModalOpen}
             onClose={() => undefined}
-            onConfirm={() => handleEmailConfirm()}
+            onConfirm={() => {
+              void handleEmailConfirm();
+            }}
             title="Please enter your email to continue."
-            confirmLabel="Continue"
+            confirmLabel={isCreatingProductEmail ? "Continuing..." : "Continue"}
             confirmBtnVarient="primary"
             hideCancelBtn
             hideCrossButton
@@ -420,7 +469,7 @@ const Page = () => {
             outSideClickClose={false}
             scrollNeeded={false}
             bodyPaddingClasses="p-4 md:p-6"
-            confimBtnDisable={!isEmailValid}
+            confimBtnDisable={!isEmailValid || isCreatingProductEmail}
           >
             <div className="space-y-4">
               <p className="text-sm leading-6 text-neutral-600 md:text-base">
@@ -432,14 +481,20 @@ const Page = () => {
                 label="Email address"
                 placeholder="Enter your email address"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailSubmissionError) {
+                    setEmailSubmissionError("");
+                  }
+                }}
                 onBlur={() => setEmailTouched(true)}
-                error={shouldShowEmailError}
-                errorMessage="Please enter a valid email address."
+                error={hasEmailError}
+                errorMessage={emailErrorMessage}
                 autoComplete="email"
+                disabled={isCreatingProductEmail}
               />
             </div>
-          </AppModal> */}
+          </AppModal>
 
           <CartStepContent
             survey={survey}

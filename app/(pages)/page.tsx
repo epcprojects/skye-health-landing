@@ -55,45 +55,47 @@ import { toastAlert } from "../components/ToastAlert";
 import { useAppDispatch } from "../Redux/store";
 
 export default function Home() {
+  const router = useRouter();
+
   const cardActions: Record<TherapyCardId, () => void> = {
     "lose-weight": () => {
-      console.log("Lose Weight clicked");
+      router.push("products?category=Weight Loss");
     },
     "better-sex": () => {
-      console.log("Better Sex clicked");
+      router.push("products?category=Sexual Wellness");
     },
     "sleep-better": () => {
-      console.log("Sleep Better clicked");
+      router.push("products?category=Hormones");
     },
     "regrow-hair": () => {
-      console.log("Regrow Hair clicked");
+      router.push("products?category=General Health");
     },
     "younger-skin": () => {
-      console.log("Younger Skin clicked");
+      router.push("products");
     },
     "heal-joints": () => {
-      console.log("Heal Joints clicked");
+      router.push("products?category=General Health");
     },
     "sharp-focus": () => {
-      console.log("Sharp Focus clicked");
+      router.push("products?category=Supplies");
     },
     "live-longer": () => {
-      console.log("Live Longer clicked");
+      router.push("products");
     },
   };
 
   const processCardActions: Record<string, () => void> = {
     "set-your-goal": () => {
-      console.log("Set Your Goal clicked");
+      router.push("/products");
     },
     "expert-review": () => {
-      console.log("Expert Review clicked");
+      router.push("/products");
     },
     "the-protocol": () => {
-      console.log("The Protocol clicked");
+      router.push("/products");
     },
     "direct-to-door": () => {
-      console.log("Direct to Door clicked");
+      router.push("/products");
     },
   };
 
@@ -102,7 +104,6 @@ export default function Home() {
   const PER_PAGE = 10;
   const MAX_PRODUCTS = 10;
 
-  const router = useRouter();
   const dispatch = useAppDispatch();
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -241,7 +242,7 @@ export default function Home() {
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8  flex flex-col gap-8 lg:gap-25">
           <div className="flex flex-col gap-4 lg:gap-7.5">
-            <p className="text-[40px] leading-26  xl:text-[90px] font-semibold text-center lg:text-start text-white">
+            <p className="text-[40px] leading-12 xl:leading-26  xl:text-[90px] font-semibold text-center lg:text-start text-white">
               Your Health.{" "}
               <span className="text-white/40 inline-block pt-2">
                 <CharRollText as="span" text="Elevated." auto />
@@ -266,7 +267,7 @@ export default function Home() {
         </div>
       </section>
       <section className="py-12 lg:py-24 flex flex-col gap-12">
-        <div className="container max-w-360 px-4 md:px-8 mx-auto flex flex-col items-center gap-12">
+        <div className="container max-w-370 px-4 md:px-8 mx-auto flex flex-col items-center gap-12">
           <div className="flex flex-col items-center gap-5">
             <p className="text-4xl text-center px-4 lg:px-0 lg:text-start lg:text-[64px] font-semibold text-black tracking-[-2%]">
               Discover Our Products
@@ -386,7 +387,9 @@ export default function Home() {
               <ThemeButton
                 variant="blackFilled"
                 size="lg"
-                onClick={() => {}}
+                onClick={() => {
+                  router.push("/products");
+                }}
                 label="Start Assessment"
                 className="w-full"
               />
@@ -395,7 +398,9 @@ export default function Home() {
                 variant="outlined"
                 size="lg"
                 minWidth
-                onClick={() => {}}
+                onClick={() => {
+                  router.push("/products");
+                }}
                 label="Join SKYE"
                 className="w-full"
               />
@@ -463,7 +468,7 @@ export default function Home() {
           <div>
             <ThemeButton
               onClick={() => {
-                "";
+                router.push("/products");
               }}
               label={"Get Your Products"}
               variant="primaryFilled"
@@ -491,7 +496,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row gap-5.5">
               <ThemeButton
                 onClick={() => {
-                  "";
+                  router.push("/products");
                 }}
                 size="xxl"
                 className="font-semibold!"
@@ -499,7 +504,7 @@ export default function Home() {
               />
               <ThemeButton
                 onClick={() => {
-                  "";
+                  router.push("/products");
                 }}
                 size="xxl"
                 variant="whiteOutlined"
@@ -531,7 +536,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2  gap-3 lg:gap-5.5">
               <ThemeButton
                 onClick={() => {
-                  "";
+                  router.push("/products");
                 }}
                 size="sm"
                 variant="blackFilled"
@@ -539,7 +544,7 @@ export default function Home() {
               />
               <ThemeButton
                 onClick={() => {
-                  "";
+                  router.push("/products");
                 }}
                 size="sm"
                 variant="outlined"
@@ -629,7 +634,7 @@ export default function Home() {
           <div className="self-center flex flex-col md:flex-row gap-3">
             <ThemeButton
               onClick={() => {
-                "";
+                router.push("/products");
               }}
               size="xxl"
               variant="outlined"
@@ -637,7 +642,7 @@ export default function Home() {
             />
             <ThemeButton
               onClick={() => {
-                "";
+                router.push("/products");
               }}
               size="xxl"
               variant="outlined"

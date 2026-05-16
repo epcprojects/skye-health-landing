@@ -333,7 +333,7 @@ export function SurveyQuestionnaire({
 
           <div className="h-2.5 w-full overflow-hidden rounded-full bg-neutral-200">
             <div
-              className="h-full rounded-full bg-secondary transition-all duration-300"
+              className="h-full rounded-full bg-primary transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>

@@ -85,7 +85,7 @@ const DoctorSwiper = () => {
               type="button"
               onClick={() => swiperRef.current?.slidePrev()}
               disabled={isBeginning}
-              className="flex h-12.5 w-12.5 rotate-180 items-center justify-center rounded-full bg-white disabled:opacity-40"
+              className="flex h-12.5 w-12.5 cursor-pointer rotate-180 items-center justify-center rounded-full bg-white disabled:opacity-40"
             >
               <ArrowRightIcon fill="black" />
             </button>
@@ -105,7 +105,7 @@ const DoctorSwiper = () => {
               type="button"
               onClick={() => swiperRef.current?.slideNext()}
               disabled={isEnd}
-              className="flex h-12.5 w-12.5 items-center justify-center rounded-full bg-white disabled:opacity-40"
+              className="flex h-12.5 w-12.5 cursor-pointer items-center justify-center rounded-full bg-white disabled:opacity-40"
             >
               <ArrowRightIcon fill="black" />
             </button>

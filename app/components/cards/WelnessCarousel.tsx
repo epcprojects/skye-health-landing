@@ -9,6 +9,7 @@ import WellnessCard from "./WellnessCard";
 import { WellnessCardId, wellnessCards } from "@/app/constants/constants";
 
 import "swiper/css";
+import { useRouter } from "next/navigation";
 
 const WellnessCarousel = () => {
   const swiperRef = useRef<SwiperType | null>(null);
@@ -16,25 +17,26 @@ const WellnessCarousel = () => {
   const [progress, setProgress] = useState(0);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const router = useRouter();
 
   const cardActions: Record<WellnessCardId, () => void> = {
     "healthy-aging": () => {
-      console.log("Healthy Aging clicked");
+      router.push("/products");
     },
     "immune-support": () => {
-      console.log("Immune Support clicked");
+      router.push("/products");
     },
     "better-skin": () => {
-      console.log("Better Skin clicked");
+      router.push("/products");
     },
     performance: () => {
-      console.log("Better Skin clicked");
+      router.push("/products");
     },
     recovery: () => {
-      console.log("Better Skin clicked");
+      router.push("/products");
     },
     weightmanagement: () => {
-      console.log("Better Skin clicked");
+      router.push("/products");
     },
   };
 

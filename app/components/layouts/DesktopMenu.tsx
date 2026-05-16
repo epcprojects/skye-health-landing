@@ -3,16 +3,24 @@ import { menuItems } from "@/app/constants/constants";
 import { DownArrow } from "@/public/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CharRollText from "../Animations/CharRollText";
 
 const DesktopMenu = () => {
   const pathname = usePathname();
   const [visibleItemCount, setVisibleItemCount] = useState(menuItems.length);
+  const [isMoreMenuHovered, setIsMoreMenuHovered] = useState(false);
+  const [isMoreMenuPinned, setIsMoreMenuPinned] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const updateVisibleItemCount = () => {
       const width = window.innerWidth;
+
+      if (width < 780) {
+        setVisibleItemCount(2);
+        return;
+      }
 
       if (width < 1280) {
         setVisibleItemCount(3);
@@ -72,6 +80,37 @@ const DesktopMenu = () => {
     pathname === href || pathname.startsWith(`${href}/`);
 
   const isMoreActive = overflowItems.some((item) => isItemActive(item.href));
+  const isMoreMenuOpen = isMoreMenuHovered || isMoreMenuPinned;
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!moreMenuRef.current?.contains(event.target as Node)) {
+        setIsMoreMenuPinned(false);
+        setIsMoreMenuHovered(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMoreMenuPinned(false);
+        setIsMoreMenuHovered(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMoreMenuPinned(false);
+    setIsMoreMenuHovered(false);
+  }, [pathname]);
 
   return (
     <nav className="flex flex-row items-center gap-6">
@@ -99,7 +138,7 @@ const DesktopMenu = () => {
             </Link>
 
             {hasChildren && (
-              <div className="absolute left-0 top-full hidden rounded-lg  px-1 py-2 min-w-48 flex-col bg-white shadow-lg group-hover:flex">
+              <div className="absolute left-0 top-full hidden rounded-lg  px-1 py-2 md:min-w-48 flex-col bg-white shadow-lg group-hover:flex">
                 {item.children?.map((child) => (
                   <Link
                     key={child.label}
@@ -117,26 +156,40 @@ const DesktopMenu = () => {
 
       {overflowItems.length > 0 && (
         <div
-          className={`relative group px-4 py-3 rounded-full ${
-            isMoreActive ? "bg-black/20" : "hover:bg-black/20"
+          ref={moreMenuRef}
+          onMouseEnter={() => setIsMoreMenuHovered(true)}
+          onMouseLeave={() => setIsMoreMenuHovered(false)}
+          className={`relative px-4 py-3 rounded-full ${
+            isMoreActive || isMoreMenuOpen ? "bg-black/20" : "hover:bg-black/20"
           }`}
         >
           <div
+            aria-haspopup="menu"
+            aria-expanded={isMoreMenuOpen}
+            onClick={() => setIsMoreMenuPinned((prev) => !prev)}
             className={`text-lg flex flex-row items-center gap-2 cursor-pointer ${
-              isMoreActive
+              isMoreActive || isMoreMenuOpen
                 ? "text-white"
-                : "text-white/70 group-hover:text-white"
+                : "text-white/70 hover:text-white"
             }`}
           >
             <CharRollText text="More" />
             <DownArrow />
           </div>
 
-          <div className="absolute left-0 top-full hidden rounded-lg px-1 py-2 min-w-48 flex-col bg-white shadow-lg group-hover:flex">
+          <div
+            className={`absolute right-0 top-full rounded-lg px-1  lg:py-2 min-w-40 lg:min-w-48 flex-col bg-white shadow-lg ${
+              isMoreMenuOpen ? "flex" : "hidden"
+            }`}
+          >
             {overflowItems.map((item) => (
               <Link
                 key={`${item.label}-${item.href}`}
                 href={item.href}
+                onClick={() => {
+                  setIsMoreMenuPinned(false);
+                  setIsMoreMenuHovered(false);
+                }}
                 className="px-4 py-2 text-base rounded-lg text-black hover:bg-gray-100"
               >
                 {item.label}

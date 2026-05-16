@@ -54,7 +54,7 @@ const Header = () => {
             </p>
             <button
               onClick={() => {
-                "";
+                router.push("/products");
               }}
               className="text-sm cursor-pointer text-white py-1 px-3 rounded-full bg-white/10 flex flex-row items-center gap-2.5"
             >

@@ -228,10 +228,10 @@ const Page = () => {
                         }`}
                       >
                         <p className="text-lg mb-3 font-semibold text-neutral-800 break-all">
-                          {option.unitQuantity}
+                          {option.strength || "Option"}
                         </p>
                         <p className="text-base font-semibold text-neutral-800 break-all">
-                          {option.strength || "Option"}
+                          {option.unitQuantity}
                         </p>
                         <p className="text-base mt-3 text-gray-700">
                           $

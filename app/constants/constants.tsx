@@ -30,35 +30,35 @@ export type MenuItem = {
 export const menuItems: MenuItem[] = [
   {
     label: "Peptide Therapy",
-    href: "/",
+    href: "/products?category=Peptides",
   },
   {
     label: "Hormones",
-    href: "/hormones",
+    href: "/products?category=Hormones",
   },
   {
     label: "Longevity",
-    href: "/longevity",
+    href: "/products?",
   },
   {
     label: "Sleep",
-    href: "/longevity",
+    href: "/products?category=General Health",
   },
   {
     label: "Hair Regrowth",
-    href: "/longevity",
+    href: "/products?",
   },
   {
     label: "Weight Loss",
-    href: "/longevity",
+    href: "/products?category=Weight Loss",
   },
   {
     label: "More",
-    href: "/longevity",
+    href: "/products?",
     children: [
       {
-        label: "Weight Loss",
-        href: "/longevity",
+        label: "All Products",
+        href: "/products",
       },
     ],
   },
@@ -115,7 +115,7 @@ export const footerLinkSections = [
     links: [
       {
         label: "Home",
-        href: "/",
+        href: "/products",
       },
       {
         label: "Products",
@@ -123,7 +123,7 @@ export const footerLinkSections = [
       },
       {
         label: "Science",
-        href: "/science",
+        href: "/products",
       },
       {
         label: "FAQs",
@@ -131,7 +131,7 @@ export const footerLinkSections = [
       },
       {
         label: "Contact",
-        href: "/contact",
+        href: "/products",
       },
     ],
   },
@@ -140,19 +140,19 @@ export const footerLinkSections = [
     links: [
       {
         label: "Terms of Service",
-        href: "/terms-of-service",
+        href: "/products",
       },
       {
         label: "Privacy Policy",
-        href: "/privacy-policy",
+        href: "/products",
       },
       {
         label: "Lab Certifications",
-        href: "/lab-certifications",
+        href: "/products",
       },
       {
         label: "Returns Policy",
-        href: "/returns-policy",
+        href: "/products",
       },
     ],
   },

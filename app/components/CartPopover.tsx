@@ -84,7 +84,7 @@ export default function CartPopover() {
                 </div>
 
                 {/* Items */}
-                <div className="overflow-visible p-5">
+                <div className="p-5  max-h-120 overflow-y-scroll ">
                   <div className="space-y-4">
                     {items.length === 0 ? (
                       <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-600">
