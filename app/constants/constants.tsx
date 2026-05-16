@@ -38,7 +38,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "Longevity",
-    href: "/products?",
+    href: "/products?category=all",
   },
   {
     label: "Sleep",
@@ -46,7 +46,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "Hair Regrowth",
-    href: "/products?",
+    href: "/products?category=all",
   },
   {
     label: "Weight Loss",
@@ -54,7 +54,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "More",
-    href: "/products?",
+    href: "/products?category=all",
     children: [
       {
         label: "All Products",

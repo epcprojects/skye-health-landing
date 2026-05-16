@@ -283,11 +283,19 @@ export function SurveyQuestionnaire({
     }
   };
 
-  // const goBack = () => {
-  //   if (currentQuestionIndex > 0) {
-  //     setCurrentQuestionIndex((prev) => prev - 1);
-  //   }
-  // };
+  const goBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => {
+        const nextIndex = prev - 1;
+
+        requestAnimationFrame(() => {
+          scrollToTop();
+        });
+
+        return nextIndex;
+      });
+    }
+  };
 
   const isCurrentAnswered = currentQuestion
     ? isQuestionAnswered(currentQuestion, answers[currentQuestion.id])
@@ -376,16 +384,15 @@ export function SurveyQuestionnaire({
               />
 
               <div className="flex items-center justify-between gap-3 pt-4">
-                {/* <button
+                <button
                   type="button"
                   onClick={goBack}
                   disabled={currentQuestionIndex === 0}
-                  className="rounded-xl border border-neutral-300 px-5 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-xl border border-neutral-300 px-5 py-2.5 md:py-4 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Back
-                </button> */}
+                </button>
 
-                {/* {currentQuestion.questionType !== "single_select" && ( */}
                 <button
                   type="button"
                   onClick={goNext}

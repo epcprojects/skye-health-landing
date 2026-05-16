@@ -82,13 +82,22 @@ const Page = () => {
   });
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
+  const normalizedCategoryFromUrl = categoryFromUrl?.trim();
+  const isAllCategoryFromUrl =
+    normalizedCategoryFromUrl?.toLowerCase() === "all";
 
   useEffect(() => {
-    if (categoryFromUrl) {
-      setSelectedCategory(categoryFromUrl);
-      setActiveProductFilter("category");
+    if (!normalizedCategoryFromUrl) return;
+
+    if (isAllCategoryFromUrl) {
+      setSelectedCategory("");
+      setActiveProductFilter("all");
+      return;
     }
-  }, [categoryFromUrl]);
+
+    setSelectedCategory(normalizedCategoryFromUrl);
+    setActiveProductFilter("category");
+  }, [isAllCategoryFromUrl, normalizedCategoryFromUrl]);
 
   const { data: categoriesData } = useQuery<{ productCategories: string[] }>(
     FETCH_CATEGORIES,
