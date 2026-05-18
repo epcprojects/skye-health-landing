@@ -15,8 +15,9 @@ import ThemeButton from "./buttons/ThemeInput";
 import ThemeInput from "./inputs/ThemeInput";
 import Dropdown from "./ThemeDropDown";
 import WhoWeForCard from "./WhoWeForCard";
-
+import InnerFAQ from "./cards/InnerFAQ";
 export {
+  InnerFAQ,
   WhoWeForCard,
   Dropdown,
   ThemeInput,

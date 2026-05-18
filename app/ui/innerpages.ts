@@ -10,7 +10,13 @@ import SkyHealthOverlayImage from "@/public/images/skyhealthoverlay.png"
 import QualityControlImage from "@/public/images/QualityControlImage.png"
 import PeptideImage from "@/public/images/BiologyPeptides.png"
 import ManufacturingPageImage from "@/public/images/ManufacturingPageImage.png"
+import LabVerificationCardImage from "@/public/images/LabVerificationCardImage.png"
+import LabV2BgImage from "@/public/images/IndependentLabV2BgImage.png"
+import CustomerSupportImage from "@/public/images/CustomerSupportImage.png"
 export const  innerImages = {
+    CustomerSupportImage,
+    LabV2BgImage,
+    LabVerificationCardImage,
     ManufacturingPageImage,
     PeptideImage,
     QualityControlImage,

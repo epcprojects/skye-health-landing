@@ -1,6 +1,8 @@
 "use client";
 import CategoryCard from "@/app/components/cards/CategoryCard";
 import HeroSection from "@/app/components/cards/HeroSection";
+import { DocumentationAccessIcon, IndependentLabsIcon } from "@/public/icons";
+import TestingOverviewIcon from "@/public/icons/TestingOverviewIcon";
 import React from "react";
 
 const Page = () => {
@@ -16,39 +18,39 @@ const Page = () => {
           console.log("Explore Science clicked");
         }}
       />
-      <section className="py-24">
-        <div className="container max-w-360 mx-auto px-8 flex flex-col gap-16">
+      <section className="py-8 lg:py-24">
+        <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-16">
           <div className="flex flex-col gap-2 items-center">
-            <p className="text-2xl text-gray-800 leading-[150%]">
+            <p className="text-xl lg:text-2xl text-gray-800 leading-[150%]">
               Lab Testing & COA
             </p>
-            <p className="text-[64px] font-semibold leading-[120%] tracking-[-2%]  text-black ">
+            <p className="text-3xl lg:text-[64px] font-semibold leading-[120%] tracking-[-2%] text-center   text-black ">
               Verification Through{" "}
               <span className="text-[#009FFF]">Independent Analysis.</span>
             </p>
-            <p className="text-[28px] text-gray-800 text-center">
+            <p className="text-xl lg:text-[28px] text-gray-800 text-center">
               Each SKYE RESEARCH batch undergoes third-party testing to confirm
               purity, identity, and stability. Testing is not a marketing
               feature — it is a foundational quality requirement.
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 items-stretch gap-6">
             <CategoryCard
-              icon={undefined}
+              icon={<TestingOverviewIcon/>}
               title={"Testing Overview"}
               description={
                 "Analytical processes may include chromatographic separation, molecular mass confirmation, and contaminant screening. These tests verify that the compound matches its intended sequence and meets purity thresholds."
               }
             />
             <CategoryCard
-              icon={undefined}
+              icon={<IndependentLabsIcon/>}
               title={"Why Independent Labs Matter"}
               description={
                 "Third-party verification reduces bias and ensures objective analysis. It allows customers to confirm data independently rather than relying on brand claims."
               }
             />
             <CategoryCard
-              icon={undefined}
+              icon={<DocumentationAccessIcon/>}
               title={"Documentation Access"}
               description={
                 "Certificates of Analysis are available by lot number, giving full transparency into the analytical results associated with each production batch."

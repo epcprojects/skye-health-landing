@@ -58,8 +58,29 @@ import XIcon from "./XIcon";
 import FacebookIcon from "./FacebookIcon";
 import DownArrow from "./DownArrow";
 import SearchIcon from "./SearchIcon";
-
+import IndependentLabsIcon from "./IndependentLabsIcon";
+import TestTubeIcon from "./TestTubeIcon";
+import DocumentationAccessIcon from "./DocumentationAccessIcon";
+import SecurityCheckIcon from "./SecurityCheckIcon";
+import DocumentationCheckIcon from "./DocumentationCheckIcon";
+import OrderQueriesIcon from "./OrderQueriesIcon";
+import SecurityFilledIcon from "./SecurityFilledIcon";
+import PulseRectangleIcon from "./PulseRectangleIcon";
+import SmallTickIcon from "./SmallTickIcon";
+import MoleculesIcon from "./MoleculesIcon";
+import FlameIcon from "./FlameIcon";
 export {
+  FlameIcon,
+  MoleculesIcon,
+  SmallTickIcon,
+  PulseRectangleIcon,
+  SecurityFilledIcon,
+  OrderQueriesIcon,
+  SecurityCheckIcon,
+  DocumentationCheckIcon,
+  IndependentLabsIcon,
+  TestTubeIcon,
+  DocumentationAccessIcon,
   NewShoppingCartIcon,
   AddIcon,
   RxIcon,

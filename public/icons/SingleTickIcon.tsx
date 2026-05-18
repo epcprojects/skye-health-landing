@@ -3,17 +3,17 @@ import React from "react";
 const SingleTickIcon = () => {
   return (
     <svg
-      width="14"
-      height="10"
-      viewBox="0 0 14 10"
+      width="10"
+      height="7"
+      viewBox="0 0 10 7"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M3.6575 8.30505L0 4.64755L1.5128 3.13476L5.17029 6.79225L12.0337 0L13.5465 1.5128L5.16987 9.81818L3.65707 8.30539L3.6575 8.30505Z"
-        fill="#996F4C"
+        d="M2.51453 5.70972L0 3.19519L1.04005 2.15514L3.55458 4.66967L8.27318 0L9.31323 1.04005L3.55429 6.75L2.51424 5.70995L2.51453 5.70972Z"
+        fill="#021D43"
       />
     </svg>
   );

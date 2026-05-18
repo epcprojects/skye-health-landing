@@ -1,29 +1,29 @@
 "use client";
 import Image, { StaticImageData } from "next/image";
-import { ArrowRightIcon } from "@/public/icons";
+import { ArrowRightIcon, FlameIcon } from "@/public/icons";
 import { useMemo, useState } from "react";
 
 import Link from "next/link";
 import ProcessCard from "@/app/components/cards/ProcessCard";
 import CommunitySwiper from "@/app/components/cards/CommunitySwiper";
 import NEWFAQ from "@/app/components/cards/FAQAccordion";
-import CharRollText from "../components/Animations/CharRollText";
-import TherapyCard from "../components/cards/TherapyCard";
+import CharRollText from "../../components/Animations/CharRollText";
+import TherapyCard from "../../components/cards/TherapyCard";
 import {
   featureCards,
   processCards,
   steps,
   TherapyCardId,
   therapyCards,
-} from "../constants/constants";
-import { images } from "../ui";
-import ProductCard from "../components/cards/ProductCard";
-import ThemeButton from "../components/Button/ThemeButton";
-import WellnessCarousel from "../components/cards/WelnessCarousel";
-import DoctorSwiper from "../components/cards/DoctorSlider";
-import StepCard from "../components/cards/StepCard";
-import FeatureCard from "../components/cards/FeatureCard";
-import { Images } from "../images";
+} from "../../constants/constants";
+// import { images } from "../../ui";
+import ProductCard from "../../components/cards/ProductCard";
+import ThemeButton from "../../components/Button/ThemeButton";
+import WellnessCarousel from "../../components/cards/WelnessCarousel";
+import DoctorSwiper from "../../components/cards/DoctorSlider";
+import StepCard from "../../components/cards/StepCard";
+import FeatureCard from "../../components/cards/FeatureCard";
+import { Images } from "../../images";
 import { useQuery } from "@apollo/client/react";
 import {
   ALL_PRODUCTS,
@@ -31,7 +31,7 @@ import {
   AllProductsVariables,
   FETCH_CATEGORIES,
   ProductType,
-} from "../graphql/queries/products";
+} from "../../graphql/queries/products";
 import { useRouter } from "next/navigation";
 
 import CapsuleImage from "@/public/images/capsule.png";
@@ -50,9 +50,11 @@ import TabletImage from "@/public/images/Tablet.png";
 import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
 import TrocheImage from "@/public/images/Troche.png";
 import VialImage from "@/public/images/Vial.png";
-import { addProductToCart } from "../Redux/slices/cart/cartSlice";
-import { toastAlert } from "../components/ToastAlert";
-import { useAppDispatch } from "../Redux/store";
+// import { addProductToCart } from "../../Redux/slices/cart/cartSlice";
+import { toastAlert } from "../../components/ToastAlert";
+import { useAppDispatch } from "../../Redux/store";
+import { addProductToCart } from "@/app/Redux/slices/cart/cartSlice";
+import { images } from "@/app/ui";
 
 export default function Home() {
   const router = useRouter();
@@ -298,7 +300,11 @@ export default function Home() {
                     : "bg-white border border-[#E3E3E3]"
                 }`}
               >
-                <Image src={Images.landingPage.indemand} alt={""} /> In Demand
+                <div className="w-10 h-10 flex items-center justify-center rounded-full  border border-[#F0F0F0] ">
+                     <FlameIcon/>
+                </div>
+                {/* <Image src={Images.landingPage.indemand} alt={""} />  */}
+                In Demand
               </button>
 
               {productCategories.map((category) => {

@@ -1,6 +1,6 @@
+import Footer from "@/app/components/layouts/Footer";
+import Header from "@/app/components/layouts/Header";
 import React, { ReactNode } from "react";
-import Header from "../components/layouts/Header";
-import Footer from "../components/layouts/Footer";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -34,17 +34,17 @@ const menuItems = [
   // },
 ];
 
-export default function MainLayout({ children }: MainLayoutProps) {
+export default function LandingLayout({ children }: MainLayoutProps) {
   return (
     <div className="">
       <div className="fixed  z-50 w-full">
         {/* <HeaderNew menuItems={menuItems}/> */}
         {/* <Header menuItems={menuItems} /> */}
-        {/* <Header /> */}
+        <Header />
       </div>
       {children}
       {/* <Footer menuItems={menuItems} /> */}
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

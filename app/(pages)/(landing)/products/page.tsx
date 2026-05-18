@@ -14,7 +14,7 @@ import { Images } from "@/app/images";
 import { addProductToCart } from "@/app/Redux/slices/cart/cartSlice";
 import { setProducts } from "@/app/Redux/slices/products/productsSlice";
 import { useAppDispatch } from "@/app/Redux/store";
-import { CrossIcon, SearchIcon } from "@/public/icons";
+import { CrossIcon, FlameIcon, SearchIcon } from "@/public/icons";
 import { useQuery } from "@apollo/client/react";
 import Image, { StaticImageData } from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -351,7 +351,11 @@ const Page = () => {
                     : "bg-white border border-[#E3E3E3]"
                 }`}
               >
-                <Image src={Images.landingPage.indemand} alt={""} /> In Demand
+                {/* <Image src={Images.landingPage.indemand} alt={""} /> */}
+                <div className="w-10 h-10 flex items-center justify-center rounded-full  border border-[#F0F0F0] ">
+                     <FlameIcon/>
+                </div>
+                 In Demand
               </button>
 
               {productCategories.map((category) => {

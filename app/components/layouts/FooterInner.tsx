@@ -9,9 +9,9 @@ import { footerLinkSections, socialLinks } from "@/app/constants/constants";
 const FooterInner = () => {
   return (
     <footer className="px-4 xl:px-8 pb-5">
-      <section className="bg-primary-dark rounded-[48px] flex flex-col ">
+      <section className="bg-primary-dark rounded-xl lg:rounded-[48px] flex flex-col ">
         <div className="py-16 px-4 xl:px-12">
-          <div className="container max-w-7xl mx-auto flex flex-col gap-24">
+          <div className="container max-w-7xl mx-auto flex flex-col  gap-6 lg:gap-24">
             <Image
               src={images.innerImages.InnerFooterLogo}
               alt={"sky health logo"}

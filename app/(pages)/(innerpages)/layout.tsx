@@ -1,14 +1,14 @@
 import FooterInner from "@/app/components/layouts/FooterInner";
-import HeaderInner from "@/app/components/layouts/HeaderInner";
-
-export default function LandingPageLayout({
+import Header from "@/app/components/layouts/Header";
+export default function InnerPageLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <>
-      <HeaderInner />
+     <Header />
+      {/* <HeaderInner /> */}
       <main className="flex-1">{children}</main>
       <FooterInner />
     </>

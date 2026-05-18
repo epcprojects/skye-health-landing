@@ -28,18 +28,18 @@ const HeroSection = ({
         className="object-cover object-center "
       />
 
-      <div className="relative pb-24 pt-47 container max-w-360 mx-auto px-8 flex flex-col gap-10.5 items-center z-10">
+      <div className="relative pb-24 pt-47 container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-10.5 items-center z-10">
         <div className="flex flex-col items-center gap-5">
-          <h1 className="text-6xl font-semibold text-neutral-100 leading-[100%] tracking-[-2%]">
+          <h1 className="text-3xl text-center lg:text-start lg:text-6xl font-semibold text-neutral-100 leading-[100%] tracking-[-2%]">
             {title}
           </h1>
 
-          <p className="text-2xl leading-[150%]  text-neutral-100 text-center">
+          <p className="text-xl lg:text-2xl leading-[150%]  text-neutral-100 text-center">
             {description}
           </p>
         </div>
 
-        <div className="flex flex-row gap-5.5">
+        <div className="flex flex-col lg:flex-row gap-3 lg:gap-5.5">
           <ThemeButton
             onClick={onShopNowClick ?? (() => {})}
             label={"Shop Now"}
