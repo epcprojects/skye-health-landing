@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useMemo, useCallback } from "react";
 import { QuestionType, SurveyType } from "@/app/graphql/queries/survey";
 import ThemeInput from "../inputs/ThemeInput";
 import CustomCheckbox from "../CustomCheckBox";
@@ -15,6 +15,7 @@ export interface SurveyAnswers {
 interface SurveyQuestionnaireProps {
   survey: SurveyType;
   answers: SurveyAnswers;
+  currentQuestionIndex: number;
   onSingleSelect: (questionId: string, optionId: string) => void;
   onMultiSelect: (
     questionId: string,
@@ -23,7 +24,7 @@ interface SurveyQuestionnaireProps {
   ) => void;
   onTextChange: (questionId: string, value: string) => void;
   onComplete: () => void;
-  onQuestionIndexChange?: (index: number) => void;
+  onQuestionIndexChange: (index: number) => void;
 }
 
 interface SurveyQuestionProps {
@@ -204,6 +205,7 @@ function SurveyQuestion({
 export function SurveyQuestionnaire({
   survey,
   answers,
+  currentQuestionIndex,
   onSingleSelect,
   onMultiSelect,
   onTextChange,
@@ -215,12 +217,6 @@ export function SurveyQuestionnaire({
       survey.questions?.slice().sort((a, b) => a.position - b.position) ?? [],
     [survey.questions],
   );
-
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
-  useEffect(() => {
-    onQuestionIndexChange?.(currentQuestionIndex);
-  }, [currentQuestionIndex, onQuestionIndexChange]);
 
   function isQuestionAnswered(
     question: QuestionType,
@@ -269,14 +265,9 @@ export function SurveyQuestionnaire({
 
   const goNext = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex((prev) => {
-        const nextIndex = prev + 1;
-
-        requestAnimationFrame(() => {
-          scrollToTop();
-        });
-
-        return nextIndex;
+      onQuestionIndexChange(currentQuestionIndex + 1);
+      requestAnimationFrame(() => {
+        scrollToTop();
       });
     } else {
       onComplete();
@@ -285,14 +276,9 @@ export function SurveyQuestionnaire({
 
   const goBack = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => {
-        const nextIndex = prev - 1;
-
-        requestAnimationFrame(() => {
-          scrollToTop();
-        });
-
-        return nextIndex;
+      onQuestionIndexChange(currentQuestionIndex - 1);
+      requestAnimationFrame(() => {
+        scrollToTop();
       });
     }
   };
@@ -362,14 +348,9 @@ export function SurveyQuestionnaire({
                   ) {
                     setTimeout(() => {
                       if (currentQuestionIndex < totalQuestions - 1) {
-                        setCurrentQuestionIndex((prev) => {
-                          const nextIndex = prev + 1;
-
-                          requestAnimationFrame(() => {
-                            scrollToTop();
-                          });
-
-                          return nextIndex;
+                        onQuestionIndexChange(currentQuestionIndex + 1);
+                        requestAnimationFrame(() => {
+                          scrollToTop();
                         });
                       }
                     }, 150);

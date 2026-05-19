@@ -4,6 +4,7 @@ import { SurveyAnswers, SurveyQuestionnaire } from "./SurveyQuestionnaire";
 interface CartStepContentProps {
   survey?: SurveyType;
   surveyAnswers: SurveyAnswers;
+  currentQuestionIndex: number;
   onSingleSelect: (questionId: string, optionId: string) => void;
   onMultiSelect: (
     questionId: string,
@@ -12,12 +13,13 @@ interface CartStepContentProps {
   ) => void;
   onTextChange: (questionId: string, value: string) => void;
   onComplete: () => void;
-  onQuestionIndexChange?: (index: number) => void;
+  onQuestionIndexChange: (index: number) => void;
 }
 
 export const CartStepContent = ({
   survey,
   surveyAnswers,
+  currentQuestionIndex,
   onSingleSelect,
   onMultiSelect,
   onTextChange,
@@ -33,6 +35,7 @@ export const CartStepContent = ({
         <SurveyQuestionnaire
           survey={survey}
           answers={surveyAnswers}
+          currentQuestionIndex={currentQuestionIndex}
           onSingleSelect={onSingleSelect}
           onMultiSelect={onMultiSelect}
           onTextChange={onTextChange}

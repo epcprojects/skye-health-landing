@@ -32,7 +32,7 @@ import {
   CREATE_CART,
   CreateCartMutationResult,
 } from "@/app/graphql/mutations/cart";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -82,6 +82,10 @@ const Page = () => {
   }, [surveyFromQuery]);
 
   const survey = surveyFromState;
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const questionCount = survey?.questions?.length ?? 0;
+  const stepFromUrl = searchParams.get("step");
   const trimmedEmail = email.trim();
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const shouldShowEmailError = emailTouched && !isEmailValid;
@@ -284,6 +288,22 @@ const Page = () => {
   }, [surveyFromQuery]);
 
   useEffect(() => {
+    if (!survey) {
+      setCurrentQuestionIndex(0);
+      return;
+    }
+
+    const parsedStep = Number.parseInt(stepFromUrl ?? "1", 10);
+    const normalizedStep = Number.isFinite(parsedStep) && parsedStep > 0 ? parsedStep : 1;
+    const nextIndex = Math.min(
+      normalizedStep - 1,
+      Math.max(questionCount - 1, 0),
+    );
+
+    setCurrentQuestionIndex(nextIndex);
+  }, [questionCount, stepFromUrl, survey]);
+
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setEmail("");
     setEmailTouched(false);
@@ -310,6 +330,25 @@ const Page = () => {
   }, [currentQuestionIndex, hasCapturedEmail, loading, showInfoPage, survey]);
 
   const router = useRouter();
+
+  const handleQuestionIndexChange = useCallback(
+    (nextIndex: number) => {
+      const normalizedIndex = Math.max(nextIndex, 0);
+      const nextParams = new URLSearchParams(searchParams.toString());
+
+      if (normalizedIndex === 0) {
+        nextParams.delete("step");
+      } else {
+        nextParams.set("step", String(normalizedIndex + 1));
+      }
+
+      const nextQuery = nextParams.toString();
+      const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
+
+      router.push(nextUrl, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   const handleEmailConfirm = async () => {
     setEmailTouched(true);
@@ -499,11 +538,12 @@ const Page = () => {
           <CartStepContent
             survey={survey}
             surveyAnswers={surveyAnswers}
+            currentQuestionIndex={currentQuestionIndex}
             onSingleSelect={handleSingleSelect}
             onMultiSelect={handleMultiSelect}
             onTextChange={setTextAnswer}
             onComplete={() => handleDeferConfirmAccept()}
-            onQuestionIndexChange={setCurrentQuestionIndex}
+            onQuestionIndexChange={handleQuestionIndexChange}
           />
 
           <div className="flex items-center gap-2 justify-center ">
