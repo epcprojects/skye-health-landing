@@ -87,8 +87,16 @@ export default function CartPopover() {
                 <div className="p-5  max-h-120 overflow-y-scroll ">
                   <div className="space-y-4">
                     {items.length === 0 ? (
-                      <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-600">
+                      <div className="rounded-xl flex flex-col items-center justify-center border border-dashed border-gray-200 p-6 text-center text-sm text-gray-600">
                         Your cart is empty.
+                        <button
+                          onClick={() => {
+                            router.push("/products");
+                          }}
+                          className="block text-primary-light cursor-pointer w-fit mt-2"
+                        >
+                          Add Products
+                        </button>
                       </div>
                     ) : (
                       items.map((item) => {

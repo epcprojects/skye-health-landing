@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import { QuestionType, SurveyType } from "@/app/graphql/queries/survey";
 import ThemeInput from "../inputs/ThemeInput";
 import CustomCheckbox from "../CustomCheckBox";
@@ -35,6 +35,74 @@ interface SurveyQuestionProps {
   onTextChange: (value: string) => void;
 }
 
+function endsWithColon(text?: string) {
+  return /:\s*$/.test(text ?? "");
+}
+
+const DEFER_OPTION_TEXT = "no consent - defer exam.";
+
+function isDeferOption(question: QuestionType, optionId: string) {
+  const option = question.questionOptions?.find((opt) => opt.id === optionId);
+  if (!option) return false;
+
+  const isTextMatch =
+    option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
+  const isConfiguredDefer = !!question.deferOptionIds?.includes(
+    option.qualiphyRecordId,
+  );
+
+  return isTextMatch || isConfiguredDefer;
+}
+
+function parseInlineTextMap(question: QuestionType, raw: string) {
+  const result: Record<string, string> = {};
+  const options =
+    question.questionOptions
+      ?.slice()
+      .sort((a, b) => a.position - b.position)
+      .filter((opt) => endsWithColon(opt.optionText)) ?? [];
+
+  if (!raw?.trim() || options.length === 0) return result;
+  const lines = raw.split(/\r?\n/).map((line) => line.trim());
+  const labelToId = new Map(
+    options.map((opt) => [opt.optionText.trim().toLowerCase(), opt.id]),
+  );
+
+  let matchedAnyLine = false;
+  for (const line of lines) {
+    for (const [label, id] of labelToId.entries()) {
+      if (!line.toLowerCase().startsWith(label)) continue;
+      const value = line.slice(label.length).trim();
+      result[id] = value;
+      matchedAnyLine = true;
+      break;
+    }
+  }
+
+  // If prior saved valueText is old/plain format, do not prefill inline fields.
+  if (!matchedAnyLine) return {};
+
+  for (const opt of options) {
+    if (!(opt.id in result)) result[opt.id] = "";
+  }
+  return result;
+}
+
+function buildInlineTextValue(
+  question: QuestionType,
+  textMap: Record<string, string>,
+) {
+  const options =
+    question.questionOptions
+      ?.slice()
+      .sort((a, b) => a.position - b.position)
+      .filter((opt) => endsWithColon(opt.optionText)) ?? [];
+
+  return options
+    .map((opt) => `${opt.optionText.trim()} ${textMap[opt.id] ?? ""}`.trimEnd())
+    .join("\n");
+}
+
 function SurveyQuestion({
   question,
   answers,
@@ -44,6 +112,18 @@ function SurveyQuestion({
 }: SurveyQuestionProps) {
   const optionIds = answers?.questionOptionIds ?? [];
   const valueText = answers?.valueText ?? "";
+  const optionTextMap = useMemo(
+    () => parseInlineTextMap(question, valueText),
+    [question, valueText],
+  );
+  const colonOptions =
+    question.questionOptions
+      ?.slice()
+      .sort((a, b) => a.position - b.position)
+      .filter((opt) => endsWithColon(opt.optionText)) ?? [];
+  const inlineInputOptions = colonOptions.filter(
+    (opt) => !isDeferOption(question, opt.id),
+  );
 
   return (
     <div className="overflow-hidden">
@@ -120,32 +200,61 @@ function SurveyQuestion({
               {question.questionOptions
                 ?.slice()
                 .sort((a, b) => a.position - b.position)
-                .map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => onSingleSelect(opt.id)}
-                    className={[
-                      "w-full rounded-xl border p-3 text-left transition sm:p-4 flex items-center justify-between gap-3",
-                      optionIds.includes(opt.id)
-                        ? "border-primary/30 border-2 bg-lightblue"
-                        : "border-neutral-300 bg-white hover:bg-neutral-50",
-                    ].join(" ")}
-                  >
-                    <span className="text-sm text-neutral-900 sm:text-lg">
-                      {opt.optionText}
-                    </span>
-                  </button>
-                ))}
+                .map((opt) => {
+                  const hasInlineInput =
+                    endsWithColon(opt.optionText) &&
+                    !isDeferOption(question, opt.id);
+                  return (
+                    <div
+                      key={opt.id}
+                      className={[
+                        "w-full rounded-xl border p-3 text-left transition sm:p-4",
+                        optionIds.includes(opt.id)
+                          ? "border-primary-light/80 border-2 bg-blue-50"
+                          : "border-neutral-300 bg-white hover:bg-neutral-50",
+                      ].join(" ")}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => onSingleSelect(opt.id)}
+                        className="w-full cursor-pointer text-left flex items-center justify-between gap-3"
+                      >
+                        <span className="text-sm text-neutral-900 sm:text-lg">
+                          {opt.optionText}
+                        </span>
+                      </button>
+
+                      {hasInlineInput && (
+                        <ThemeInput
+                          label=""
+                          value={optionTextMap[opt.id] ?? ""}
+                          onChange={(e) => {
+                            const nextMap = {
+                              ...optionTextMap,
+                              [opt.id]: e.target.value,
+                            };
+                            onTextChange(
+                              buildInlineTextValue(question, nextMap),
+                            );
+                          }}
+                          placeholder="Add more details (optional)"
+                          className="w-full rounded-lg! px-3 py-2! text-base! md:px-4! mt-2 md:mt-3 md:py-5! md:text-base!"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
             </div>
 
-            <ThemeInput
-              label=""
-              value={valueText}
-              onChange={(e) => onTextChange(e.target.value)}
-              placeholder="Enter your answer"
-              className="w-full rounded-xl! p-3 text-sm! md:px-4! mt-8 md:py-7! md:text-lg!"
-            />
+            {inlineInputOptions.length === 0 && (
+              <ThemeInput
+                label=""
+                value={valueText}
+                onChange={(e) => onTextChange(e.target.value)}
+                placeholder="Add more details (optional)"
+                className="w-full rounded-xl! p-3 text-sm! md:px-4! mt-8 md:py-7! md:text-lg!"
+              />
+            )}
           </div>
         )}
 
@@ -182,7 +291,7 @@ function SurveyQuestion({
               label=""
               value={valueText}
               onChange={(e) => onTextChange(e.target.value)}
-              placeholder="Enter your answer"
+              placeholder="Add more details (optional)"
               className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8  md:text-lg!"
             />
           </div>
@@ -266,9 +375,6 @@ export function SurveyQuestionnaire({
   const goNext = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
       onQuestionIndexChange(currentQuestionIndex + 1);
-      requestAnimationFrame(() => {
-        scrollToTop();
-      });
     } else {
       onComplete();
     }
@@ -277,11 +383,12 @@ export function SurveyQuestionnaire({
   const goBack = () => {
     if (currentQuestionIndex > 0) {
       onQuestionIndexChange(currentQuestionIndex - 1);
-      requestAnimationFrame(() => {
-        scrollToTop();
-      });
     }
   };
+
+  useEffect(() => {
+    scrollToTop();
+  }, [currentQuestionIndex]);
 
   const isCurrentAnswered = currentQuestion
     ? isQuestionAnswered(currentQuestion, answers[currentQuestion.id])
@@ -293,11 +400,16 @@ export function SurveyQuestionnaire({
   const isDeferOption = useCallback(
     (questionId: string, optionId: string) => {
       const question = survey?.questions?.find((q) => q.id === questionId);
-      if (!question?.deferOptionIds?.length) return false;
-      const option = question.questionOptions?.find((o) => o.id === optionId);
-      return option
-        ? question.deferOptionIds.includes(option.qualiphyRecordId)
-        : false;
+      const option = question?.questionOptions?.find((o) => o.id === optionId);
+      if (!option) return false;
+
+      const isTextMatch =
+        option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
+      const isConfiguredDefer = !!question?.deferOptionIds?.includes(
+        option.qualiphyRecordId,
+      );
+
+      return isTextMatch || isConfiguredDefer;
     },
     [survey],
   );
@@ -349,9 +461,6 @@ export function SurveyQuestionnaire({
                     setTimeout(() => {
                       if (currentQuestionIndex < totalQuestions - 1) {
                         onQuestionIndexChange(currentQuestionIndex + 1);
-                        requestAnimationFrame(() => {
-                          scrollToTop();
-                        });
                       }
                     }, 150);
                   }

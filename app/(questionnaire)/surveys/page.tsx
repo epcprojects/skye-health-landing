@@ -4,11 +4,6 @@ import ThemeInput, { InputType } from "@/app/components/inputs/ThemeInput";
 import AppModal from "@/app/components/modals/AppModal";
 import { CartStepContent } from "@/app/components/serveys/CartStepContent";
 import { SurveyAnswers } from "@/app/components/serveys/SurveyQuestionnaire";
-import {
-  CREATE_PRODUCT_EMAIL_RESPONSES,
-  CreateProductEmailResponsesMutationResult,
-  CreateProductEmailResponsesMutationVariables,
-} from "@/app/graphql/mutations/product-email-response";
 import { CREATE_OR_UPDATE_SURVEY_RESPONSE } from "@/app/graphql/mutations/survey";
 import {
   FETCH_SURVEY_FOR_PRODUCTS,
@@ -33,8 +28,14 @@ import {
   CreateCartMutationResult,
 } from "@/app/graphql/mutations/cart";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  CREATE_PRODUCT_EMAIL_RESPONSES,
+  CreateProductEmailResponsesMutationResult,
+  CreateProductEmailResponsesMutationVariables,
+} from "@/app/graphql/mutations/product-email-response";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DEFER_OPTION_TEXT = "no consent - defer exam.";
 
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
@@ -143,11 +144,16 @@ const Page = () => {
   const isDeferOption = useCallback(
     (questionId: string, optionId: string) => {
       const question = survey?.questions?.find((q) => q.id === questionId);
-      if (!question?.deferOptionIds?.length) return false;
-      const option = question.questionOptions?.find((o) => o.id === optionId);
-      return option
-        ? question.deferOptionIds.includes(option.qualiphyRecordId)
-        : false;
+      const option = question?.questionOptions?.find((o) => o.id === optionId);
+      if (!option) return false;
+
+      const isTextMatch =
+        option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
+      const isConfiguredDefer = !!question?.deferOptionIds?.includes(
+        option.qualiphyRecordId,
+      );
+
+      return isTextMatch || isConfiguredDefer;
     },
     [survey],
   );
@@ -294,7 +300,8 @@ const Page = () => {
     }
 
     const parsedStep = Number.parseInt(stepFromUrl ?? "1", 10);
-    const normalizedStep = Number.isFinite(parsedStep) && parsedStep > 0 ? parsedStep : 1;
+    const normalizedStep =
+      Number.isFinite(parsedStep) && parsedStep > 0 ? parsedStep : 1;
     const nextIndex = Math.min(
       normalizedStep - 1,
       Math.max(questionCount - 1, 0),
