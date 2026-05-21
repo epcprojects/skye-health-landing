@@ -50,9 +50,12 @@ export default function CartPopover() {
           {/* Button */}
           <PopoverButton
             aria-label="Open cart"
-            className="relative flex items-center rounded-[5px] border border-neutral-200 cursor-pointer outline-0 order-2 xl:order-0 justify-center bg-white  h-9 w-9 "
+            className="relative flex items-center rounded-[5px] border hover:bg-primary-light hover:border-primary-light hover:text-white border-neutral-200 cursor-pointer outline-0 order-2 xl:order-0 justify-center bg-white  h-9 w-9 "
           >
-            <ShoppingCartIcon classname="w-4.5 h-4.5 sm:w-6 sm:h-6" />
+            <ShoppingCartIcon
+              classname="w-4.5 h-4.5 sm:w-6 sm:h-6"
+              fill="currentColor"
+            />
             {count > 0 ? (
               <span className="absolute md:-right-3 md:-top-4 inline-flex lg:h-6 h-4 w-4 lg:min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] lg:text-xs font-semibold text-white">
                 {count}
