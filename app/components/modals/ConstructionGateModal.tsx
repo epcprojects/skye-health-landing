@@ -89,12 +89,12 @@ const ConstructionGateModal = () => {
         className="w-full max-w-[520px] overflow-hidden rounded-[28px] border border-white/40 bg-white shadow-2xl"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="bg-radial from-white to-french-pass px-5 py-7 text-center sm:px-8 sm:py-9">
+        <div className="bg-radial from-white to-[#D8EAFF] px-5 py-7 text-center sm:px-8 sm:py-9">
           <div className="mx-auto mb-6 flex justify-center">
             <Image
               src={Images.layout.logo}
               alt="Paramount HealthRx"
-              className="h-auto w-44"
+              className="h-auto w-60"
               priority
             />
           </div>
