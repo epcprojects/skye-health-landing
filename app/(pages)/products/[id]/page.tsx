@@ -208,7 +208,7 @@ const Page = () => {
             {dosageOptions.length > 1 && (
               <div className="bg-neutral-100 rounded-[20px] p-4 space-y-3.5">
                 <p className="text-xl text-gray-900 font-medium">
-                  Select peptide dosage
+                  Select dosage
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {dosageOptions.map((option) => {
