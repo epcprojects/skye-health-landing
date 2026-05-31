@@ -73,7 +73,7 @@ Personalized. Delivered."
           <StoreProvider>
             {children}
             <CustomToastContainer />
-            {/* <ConstructionGateModal /> */}
+            <ConstructionGateModal />
             <ConsultationPopup
               media={
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[30px]">

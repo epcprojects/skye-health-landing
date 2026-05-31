@@ -5,7 +5,7 @@ import OtpInput from "react-otp-input";
 import Image from "next/image";
 import { Images } from "@/app/images";
 
-const ACCESS_CODE = "119944";
+const ACCESS_CODE = "009955";
 const SESSION_UNLOCK_KEY = "construction_gate_unlocked";
 
 const ConstructionGateModal = () => {
