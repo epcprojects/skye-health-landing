@@ -207,10 +207,22 @@ const Header = () => {
                                 <Menu as="div" className="relative w-full">
                                   <MenuButton className="w-full text-xs px-2.5 py-2 border border-slate-200 justify-between flex gap-1 md:gap-2 items-center rounded-full outline-none text-slate-900 bg-white">
                                     <span className="text-gray-700 truncate text-start">
-                                      {item.pricingOptions?.find(
-                                        (pricing) =>
-                                          pricing.id === item.selectedPricingId,
-                                      )?.strength || "Select option"}
+                                      {(() => {
+                                        const selected =
+                                          item.pricingOptions?.find(
+                                            (pricing) =>
+                                              pricing.id ===
+                                              item.selectedPricingId,
+                                          );
+                                        return selected
+                                          ? [
+                                              selected.strength,
+                                              selected.unitQuantity,
+                                            ]
+                                              .filter(Boolean)
+                                              .join(" - ")
+                                          : "Select option";
+                                      })()}
                                     </span>
                                     <span>
                                       <svg
@@ -254,7 +266,14 @@ const Header = () => {
                                                     : "",
                                                 ].join(" ")}
                                               >
-                                                <span>{pricing.strength}</span>
+                                                <span>
+                                                  {[
+                                                    pricing.strength,
+                                                    pricing.unitQuantity,
+                                                  ]
+                                                    .filter(Boolean)
+                                                    .join(" - ")}
+                                                </span>
                                                 {isSelected && (
                                                   <span className="text-sky-500 text-base leading-none">
                                                     ✓

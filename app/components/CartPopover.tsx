@@ -173,11 +173,22 @@ export default function CartPopover() {
                                         >
                                           <MenuButton className="w-full text-xs px-2.5 py-2 border border-slate-200 justify-between flex gap-1 items-center rounded-full outline-none text-slate-900 bg-white">
                                             <span className="text-balck font-medium truncate text-start">
-                                              {item.pricingOptions?.find(
-                                                (pricing) =>
-                                                  pricing.id ===
-                                                  item.selectedPricingId,
-                                              )?.strength || "Select option"}
+                                              {(() => {
+                                                const selected =
+                                                  item.pricingOptions?.find(
+                                                    (pricing) =>
+                                                      pricing.id ===
+                                                      item.selectedPricingId,
+                                                  );
+                                                return selected
+                                                  ? [
+                                                      selected.strength,
+                                                      selected.unitQuantity,
+                                                    ]
+                                                      .filter(Boolean)
+                                                      .join(" - ")
+                                                  : "Select option";
+                                              })()}
                                             </span>
                                             <span>
                                               <svg
@@ -238,7 +249,12 @@ export default function CartPopover() {
                                                           ].join(" ")}
                                                         >
                                                           <span>
-                                                            {pricing.strength}
+                                                            {[
+                                                              pricing.strength,
+                                                              pricing.unitQuantity,
+                                                            ]
+                                                              .filter(Boolean)
+                                                              .join(" - ")}
                                                           </span>
                                                           {isSelected && (
                                                             <span className="text-sky-500 text-base leading-none">

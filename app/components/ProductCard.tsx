@@ -3,7 +3,9 @@
 import { PlusIcon } from "@/public/icons";
 import Image, { StaticImageData } from "next/image";
 import { Images } from "../images";
-import { useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { ProductUnitPricingType } from "../graphql/queries/products";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 export type Product = {
   id: string;
@@ -12,25 +14,58 @@ export type Product = {
   stock: boolean;
   price: string | number;
   image: string | StaticImageData;
-  // size: string;
   dosing: string;
   timing: string;
-  // type: string;
   warnings: string;
 };
 
 interface ProductCardProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   product: Product;
-  onAddToCart?: (id: string) => void;
+  onAddToCart: (selectedPricingId?: string) => void;
   onCardClick?: (id: string) => void;
+  isInDemand?: boolean;
+  bgImage?: string | StaticImageData;
+  productUnitPricings?: ProductUnitPricingType[];
 }
 
 export default function ProductCard({
   product,
   onAddToCart,
   onCardClick,
+  isInDemand = false,
+  bgImage,
+  productUnitPricings = [],
 }: ProductCardProps) {
+  const showDemandHover = isInDemand && bgImage;
+  const [selectedPricingId, setSelectedPricingId] = useState<string>(
+    productUnitPricings[0]?.id ?? "",
+  );
+
+  const selectedPricing = useMemo(
+    () =>
+      productUnitPricings.find((pricing) => pricing.id === selectedPricingId) ??
+      productUnitPricings[0],
+    [productUnitPricings, selectedPricingId],
+  );
+
+  const variantOptions = useMemo(
+    () =>
+      productUnitPricings.map((pricing) => ({
+        value: pricing.id,
+        label: [pricing.strength, pricing.unitQuantity]
+          .filter(Boolean)
+          .join(" - "),
+      })),
+    [productUnitPricings],
+  );
+
+  const displayPriceValue =
+    selectedPricing?.retailPrice ?? selectedPricing?.cost ?? product.price;
+
+  const displayPrice =
+    typeof displayPriceValue === "number"
+      ? `$${displayPriceValue.toFixed(2)}`
+      : displayPriceValue;
   const [imageLoaded, setImageLoaded] = useState(false);
   return (
     <div
@@ -78,13 +113,6 @@ export default function ProductCard({
               <h2 className="text-gunmetal font-medium line-clamp-2 text-lg md:text-xl">
                 {product.title}
               </h2>
-
-              {/* <Tooltip
-                heading="Warning & Precautions"
-                content={product.warnings}
-              >
-                <InformationIcon />
-              </Tooltip> */}
             </div>
 
             <div className="flex items-center flex-wrap gap-2">
@@ -93,11 +121,94 @@ export default function ProductCard({
                   {product.category}
                 </span>
               )}
-              {product.dosing && (
+              {variantOptions.length > 1 && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Menu as="div" className="relative z-30">
+                    <MenuButton
+                      className={`text-sm px-2.5 py-1 border cursor-pointer  justify-between flex gap-1 items-center rounded-full outline-none transition-colors duration-300 ${
+                        showDemandHover
+                          ? "border-gray-200 bg-white text-gray-700 group-hover:bg-white/20 group-hover:text-white group-hover:border-white"
+                          : "border-gray-200 bg-white text-gray-700"
+                      }`}
+                    >
+                      <span className="font-medium truncate text-start max-w-38">
+                        {variantOptions.find(
+                          (option) => option.value === selectedPricing?.id,
+                        )?.label || "Select option"}
+                      </span>
+                      <span>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M12.3531 6.35359L7.99958 10.7071L3.646 6.35362L4.3531 5.64651L7.99957 9.29293L11.646 5.64648L12.3531 6.35359Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </span>
+                    </MenuButton>
+
+                    <MenuItems
+                      anchor="bottom start"
+                      className="z-[200] absolute left-0 top-full mt-2 min-w-32 bg-white border border-slate-200 rounded-xl shadow-[0px_14px_34px_rgba(0,0,0,0.1)] p-1 text-sm focus:outline-none"
+                    >
+                      <div className="space-y-1 max-h-60 overflow-auto">
+                        {variantOptions.map((option) => {
+                          const isSelected =
+                            option.value === selectedPricing?.id;
+                          return (
+                            <MenuItem key={option.value} as={Fragment}>
+                              {({ focus }) => (
+                                <button
+                                  onClick={() =>
+                                    setSelectedPricingId(option.value)
+                                  }
+                                  className={[
+                                    "flex w-full items-center font-medium whitespace-nowrap cursor-pointer justify-between gap-2 rounded-md py-2 px-4 text-sm text-neutral-800",
+                                    focus ? "bg-gray-100" : "",
+                                    isSelected ? "bg-slate-100" : "",
+                                  ].join(" ")}
+                                >
+                                  <span>{option.label}</span>
+                                  {isSelected && (
+                                    <span className="text-sky-500 text-base leading-none">
+                                      ✓
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+                            </MenuItem>
+                          );
+                        })}
+                      </div>
+                    </MenuItems>
+                  </Menu>
+                </div>
+              )}
+              {variantOptions.length === 1 && (
+                <div
+                  className={`text-sm px-2.5 py-1 border justify-between flex gap-1 items-center rounded-full outline-none transition-colors duration-300 ${
+                    showDemandHover
+                      ? "border-gray-200 bg-white text-gray-700 group-hover:bg-white/20 group-hover:text-black group-hover:border-white"
+                      : "border-gray-200 bg-white text-gray-700"
+                  }`}
+                >
+                  <span className="font-medium truncate text-start ">
+                    {variantOptions[0]?.label}
+                  </span>
+                </div>
+              )}
+              {/* {product.dosing && (
                 <span className="block w-fit rounded-full bg-white border border-gray-200 py-1 px-3 text-gray-700 font-medium text-xs md:text-sm">
                   {product.dosing}
                 </span>
-              )}
+              )} */}
               {product.timing && (
                 <span className="block w-fit rounded-full bg-white border border-gray-200 py-1 px-3 text-gray-700 font-medium text-xs md:text-sm">
                   {product.timing}
@@ -111,7 +222,7 @@ export default function ProductCard({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onAddToCart?.(product.id);
+                  onAddToCart(selectedPricing?.id);
                 }}
                 className="text-sm md:text-lg font-medium text-black hover:bg-neutral-200 cursor-pointer flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-full flex-1  justify-center"
               >
@@ -119,7 +230,7 @@ export default function ProductCard({
               </button>
 
               <h2 className="text-gunmetal font-bold text-sm md:text-lg lg:text-[28px] min-w-16 text-end">
-                ${product.price}
+                {displayPrice}
               </h2>
             </div>
           </div>

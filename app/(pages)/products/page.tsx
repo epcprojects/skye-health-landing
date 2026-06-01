@@ -432,9 +432,10 @@ const Page = () => {
               <ProductCard
                 key={p.id}
                 product={cardProduct}
+                productUnitPricings={p.productUnitPricings}
                 onCardClick={(id: string) => router.push(`/products/${id}`)}
-                onAddToCart={() => {
-                  dispatch(addProductToCart({ product: p }));
+                onAddToCart={(selectedPricingId) => {
+                  dispatch(addProductToCart({ product: p, selectedPricingId }));
                   toastAlert("Added to Cart Successfully", true);
                 }}
               />
