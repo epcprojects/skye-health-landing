@@ -4,6 +4,7 @@ import { ProductType } from "@/app/graphql/queries/products";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type CartItem = {
+  cartItemId: string;
   productId: string;
   qty: number;
   unitPrice: number; // snapshot at time of add
@@ -21,7 +22,7 @@ export type CartItem = {
 };
 
 type CartState = {
-  itemsById: Record<string, CartItem>; // key = productId
+  itemsById: Record<string, CartItem>; // key = cartItemId
   allIds: string[];
 };
 
@@ -41,10 +42,28 @@ const buildPricingOptions = (product: ProductType) => {
     .map((pricing) => ({
       id: pricing.id,
       label: pricing.unitQuantity || pricing.strength || "Option",
-      unitPrice: parsePrice(pricing.retailPrice ?? pricing.cost ?? product.price),
+      unitPrice: parsePrice(
+        pricing.retailPrice ?? pricing.cost ?? product.price,
+      ),
       strength: pricing.strength,
       unitQuantity: pricing.unitQuantity,
     }));
+};
+
+const buildCartItemId = (productId: string, selectedPricingId?: string) =>
+  selectedPricingId ? `${productId}::${selectedPricingId}` : productId;
+
+const resolveCartItemId = (
+  state: CartState,
+  payload: { cartItemId?: string; productId?: string },
+) => {
+  if (payload.cartItemId && state.itemsById[payload.cartItemId]) {
+    return payload.cartItemId;
+  }
+  if (payload.productId && state.itemsById[payload.productId]) {
+    return payload.productId;
+  }
+  return undefined;
 };
 
 const cartSlice = createSlice({
@@ -66,20 +85,18 @@ const cartSlice = createSlice({
       const selectedPricing =
         pricingOptions.find((pricing) => pricing.id === selectedPricingId) ||
         pricingOptions[0];
-      const resolvedUnitPrice = selectedPricing?.unitPrice ?? parsePrice(product.price);
+      const resolvedUnitPrice =
+        selectedPricing?.unitPrice ?? parsePrice(product.price);
+      const cartItemId = buildCartItemId(productId, selectedPricing?.id);
 
       if (qty <= 0) return;
 
-      const existing = state.itemsById[productId];
+      const existing = state.itemsById[cartItemId];
       if (existing) {
-        if (selectedPricing) {
-          existing.selectedPricingId = selectedPricing.id;
-          existing.selectedStrength = selectedPricing.label;
-          existing.unitPrice = selectedPricing.unitPrice;
-        }
         existing.qty += qty;
       } else {
-        state.itemsById[productId] = {
+        state.itemsById[cartItemId] = {
+          cartItemId,
           productId,
           qty,
           unitPrice: resolvedUnitPrice,
@@ -89,7 +106,7 @@ const cartSlice = createSlice({
           selectedPricingId: selectedPricing?.id,
           selectedStrength: selectedPricing?.label,
         };
-        state.allIds.push(productId);
+        state.allIds.push(cartItemId);
       }
     },
 
@@ -113,45 +130,62 @@ const cartSlice = createSlice({
       } = action.payload;
       if (qty <= 0) return;
 
-      const existing = state.itemsById[productId];
+      const cartItemId = buildCartItemId(productId);
+      const existing = state.itemsById[cartItemId];
       if (existing) {
         existing.qty += qty;
       } else {
-        state.itemsById[productId] = {
+        state.itemsById[cartItemId] = {
+          cartItemId,
           productId,
           qty,
           unitPrice,
           nameSnapshot,
           imageSnapshot,
         };
-        state.allIds.push(productId);
+        state.allIds.push(cartItemId);
       }
     },
 
     setQty: (
       state,
-      action: PayloadAction<{ productId: string; qty: number }>,
+      action: PayloadAction<{
+        cartItemId?: string;
+        productId?: string;
+        qty: number;
+      }>,
     ) => {
-      const { productId, qty } = action.payload;
-      const item = state.itemsById[productId];
+      const { qty } = action.payload;
+      const cartItemId = resolveCartItemId(state, action.payload);
+      if (!cartItemId) return;
+      const item = state.itemsById[cartItemId];
       if (!item) return;
 
       if (qty <= 0) {
-        delete state.itemsById[productId];
-        state.allIds = state.allIds.filter((id) => id !== productId);
+        delete state.itemsById[cartItemId];
+        state.allIds = state.allIds.filter((id) => id !== cartItemId);
         return;
       }
 
       item.qty = qty;
     },
 
-    incrementQty: (state, action: PayloadAction<{ productId: string }>) => {
-      const item = state.itemsById[action.payload.productId];
+    incrementQty: (
+      state,
+      action: PayloadAction<{ cartItemId?: string; productId?: string }>,
+    ) => {
+      const cartItemId = resolveCartItemId(state, action.payload);
+      if (!cartItemId) return;
+      const item = state.itemsById[cartItemId];
       if (item) item.qty += 1;
     },
 
-    decrementQty: (state, action: PayloadAction<{ productId: string }>) => {
-      const id = action.payload.productId;
+    decrementQty: (
+      state,
+      action: PayloadAction<{ cartItemId?: string; productId?: string }>,
+    ) => {
+      const id = resolveCartItemId(state, action.payload);
+      if (!id) return;
       const item = state.itemsById[id];
       if (!item) return;
 
@@ -162,8 +196,12 @@ const cartSlice = createSlice({
       }
     },
 
-    removeFromCart: (state, action: PayloadAction<{ productId: string }>) => {
-      const id = action.payload.productId;
+    removeFromCart: (
+      state,
+      action: PayloadAction<{ cartItemId?: string; productId?: string }>,
+    ) => {
+      const id = resolveCartItemId(state, action.payload);
+      if (!id) return;
       if (state.itemsById[id]) {
         delete state.itemsById[id];
         state.allIds = state.allIds.filter((x) => x !== id);
@@ -172,10 +210,16 @@ const cartSlice = createSlice({
 
     setCartItemPricing: (
       state,
-      action: PayloadAction<{ productId: string; pricingId: string }>,
+      action: PayloadAction<{
+        cartItemId?: string;
+        productId?: string;
+        pricingId: string;
+      }>,
     ) => {
-      const { productId, pricingId } = action.payload;
-      const item = state.itemsById[productId];
+      const { pricingId } = action.payload;
+      const cartItemId = resolveCartItemId(state, action.payload);
+      if (!cartItemId) return;
+      const item = state.itemsById[cartItemId];
       if (!item || !item.pricingOptions?.length) return;
 
       const selectedPricing = item.pricingOptions.find(

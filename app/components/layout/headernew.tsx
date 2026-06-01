@@ -314,7 +314,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
                   Your cart is empty.
                 </div>
               ) : (
-                items.map((item) => {
+                items.map((item, index) => {
                   const name = item.nameSnapshot ?? "Untitled Product";
                   const imageSrc =
                     item.imageSnapshot ||
@@ -322,7 +322,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
 
                   return (
                     <div
-                      key={item.productId}
+                      key={(item.cartItemId, index)}
                       className="flex items-start gap-4 w-full"
                     >
                       <div className="space-x-5 flex w-full">
@@ -355,13 +355,13 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
                                 if (next > item.qty) {
                                   dispatch(
                                     incrementQty({
-                                      productId: item.productId,
+                                      cartItemId: item.cartItemId,
                                     }),
                                   );
                                 } else if (next < item.qty) {
                                   dispatch(
                                     decrementQty({
-                                      productId: item.productId,
+                                      cartItemId: item.cartItemId,
                                     }),
                                   );
                                 }
@@ -422,7 +422,8 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
                                                 onClick={() => {
                                                   dispatch(
                                                     setCartItemPricing({
-                                                      productId: item.productId,
+                                                      cartItemId:
+                                                        item.cartItemId,
                                                       pricingId: pricing.id,
                                                     }),
                                                   );
@@ -465,7 +466,7 @@ const HeaderNew: React.FC<HeaderProps> = ({ menuItems }) => {
                             onClick={() =>
                               dispatch(
                                 removeFromCart({
-                                  productId: item.productId,
+                                  cartItemId: item.cartItemId,
                                 }),
                               )
                             }

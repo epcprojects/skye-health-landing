@@ -102,7 +102,7 @@ export default function CartPopover() {
                         </button>
                       </div>
                     ) : (
-                      items.map((item) => {
+                      items.map((item, index) => {
                         // item shape from cartSlice:
                         // { productId, qty, unitPrice, nameSnapshot?, imageSnapshot? }
 
@@ -113,7 +113,7 @@ export default function CartPopover() {
 
                         return (
                           <div
-                            key={item.productId}
+                            key={(item.cartItemId, index)}
                             className="flex items-start gap-4 w-full"
                           >
                             <div className="space-x-5 flex w-full">
@@ -150,13 +150,13 @@ export default function CartPopover() {
                                         if (next > item.qty) {
                                           dispatch(
                                             incrementQty({
-                                              productId: item.productId,
+                                              cartItemId: item.cartItemId,
                                             }),
                                           );
                                         } else if (next < item.qty) {
                                           dispatch(
                                             decrementQty({
-                                              productId: item.productId,
+                                              cartItemId: item.cartItemId,
                                             }),
                                           );
                                         }
@@ -230,8 +230,8 @@ export default function CartPopover() {
                                                             dispatch(
                                                               setCartItemPricing(
                                                                 {
-                                                                  productId:
-                                                                    item.productId,
+                                                                  cartItemId:
+                                                                    item.cartItemId,
                                                                   pricingId:
                                                                     pricing.id,
                                                                 },
@@ -279,7 +279,7 @@ export default function CartPopover() {
                                     onClick={() =>
                                       dispatch(
                                         removeFromCart({
-                                          productId: item.productId,
+                                          cartItemId: item.cartItemId,
                                         }),
                                       )
                                     }
