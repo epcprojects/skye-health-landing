@@ -442,7 +442,7 @@ export default function Home() {
         <Image
           src={images.landingpageimages.SkyeHealthMobile}
           alt={"Mobile App"}
-          className="hidden sm:absolute bottom-0 2xl:right-0 -right-40"
+          className="hidden sm:flex sm:absolute bottom-0 2xl:right-0 -right-40"
         />
         <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-16 relative">
           <div className="flex flex-col gap-4 ">
