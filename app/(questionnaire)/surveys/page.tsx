@@ -262,9 +262,13 @@ const Page = () => {
       });
 
       dispatch(clearCart());
-      window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
-        externalUserId,
-      )}`;
+      if (confirm) {
+        window.location.href = "/";
+      } else {
+        window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
+          externalUserId,
+        )}`;
+      }
       setSurveyAnswers({});
       setSurveyFromState(undefined);
       setDeferConfirm(null);
