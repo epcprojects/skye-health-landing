@@ -58,8 +58,12 @@ import XIcon from "./XIcon";
 import FacebookIcon from "./FacebookIcon";
 import DownArrow from "./DownArrow";
 import SearchIcon from "./SearchIcon";
+import WaveIcon from "./WaveIcon";
+import PhoneFilledIcon from "./PhoneFilledIcon";
 
 export {
+  PhoneFilledIcon,
+  WaveIcon,
   NewShoppingCartIcon,
   AddIcon,
   RxIcon,

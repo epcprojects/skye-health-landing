@@ -8,15 +8,21 @@ import { CREATE_OR_UPDATE_SURVEY_RESPONSE } from "@/app/graphql/mutations/survey
 import {
   FETCH_SURVEY_FOR_PRODUCTS,
   FetchSurveyType,
+  QuestionType,
   SurveyType,
 } from "@/app/graphql/queries/survey";
+import {
+  IS_USER_EXIST,
+  IsUserExistQueryResult,
+  IsUserExistQueryVariables,
+} from "@/app/graphql/queries/auth";
 import {
   clearCart,
   selectCartItems,
   selectCartProductIds,
 } from "@/app/Redux/slices/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -36,6 +42,205 @@ import {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DEFER_OPTION_TEXT = "no consent - defer exam.";
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+
+type SavedProgramAnswer = {
+  question: string;
+  answer: string;
+};
+
+type SavedProgramPayload = {
+  program?: string;
+  answers?: SavedProgramAnswer[];
+};
+
+const normalizeText = (value?: string | null) =>
+  value?.trim().toLowerCase() ?? "";
+
+const findSavedAnswer = (
+  answers: SavedProgramAnswer[],
+  question: string,
+) => {
+  return answers.find(
+    (entry) => normalizeText(entry.question) === normalizeText(question),
+  )?.answer;
+};
+
+const findQuestionByBody = (survey: SurveyType, body: string) => {
+  return survey.questions.find(
+    (question) => normalizeText(question.body) === normalizeText(body),
+  );
+};
+
+const findQuestionByBodyStartsWith = (survey: SurveyType, body: string) => {
+  return survey.questions.find((question) =>
+    normalizeText(question.body).startsWith(normalizeText(body)),
+  );
+};
+
+const findOptionIdByAnswer = (
+  question: QuestionType | undefined,
+  answer?: string,
+) => {
+  if (!question || !answer) return undefined;
+
+  const normalizedAnswer = normalizeText(answer);
+
+  return question.questionOptions.find((option) => {
+    const normalizedOptionText = normalizeText(option.optionText);
+    const normalizedValue = normalizeText(option.value);
+
+    return (
+      normalizedOptionText === normalizedAnswer ||
+      normalizedValue === normalizedAnswer ||
+      normalizedOptionText.includes(normalizedAnswer) ||
+      normalizedAnswer.includes(normalizedOptionText) ||
+      (normalizedAnswer.startsWith("yes") && normalizedOptionText === "yes") ||
+      (normalizedAnswer.startsWith("no") && normalizedOptionText === "no")
+    );
+  })?.id;
+};
+
+const buildWeightLossPrefillAnswers = (
+  survey: SurveyType,
+  savedAnswers: SavedProgramAnswer[],
+): SurveyAnswers => {
+  const nextAnswers: SurveyAnswers = {};
+
+  const glp1Answer = findSavedAnswer(
+    savedAnswers,
+    "Are you currently taking a GLP-1 medication?",
+  );
+  const glp1Question = findQuestionByBody(
+    survey,
+    "Are you currently taking a GLP-1 medication?",
+  );
+  const glp1OptionId = findOptionIdByAnswer(glp1Question, glp1Answer);
+  if (glp1Question && glp1OptionId) {
+    nextAnswers[glp1Question.id] = {
+      questionOptionIds: [glp1OptionId],
+    };
+  }
+
+  const currentGlp1Answer = findSavedAnswer(
+    savedAnswers,
+    "Which GLP-1 are you taking?",
+  );
+  const currentGlp1Question = findQuestionByBody(
+    survey,
+    "Which GLP-1 are you taking?",
+  );
+  if (currentGlp1Question && currentGlp1Answer) {
+    nextAnswers[currentGlp1Question.id] = {
+      valueText: currentGlp1Answer,
+    };
+  }
+
+  const doseKnownAnswer = findSavedAnswer(
+    savedAnswers,
+    "Do you know your current dose?",
+  );
+  const doseKnownQuestion = findQuestionByBody(
+    survey,
+    "Do you know your current dose?",
+  );
+  const doseKnownOptionId = findOptionIdByAnswer(
+    doseKnownQuestion,
+    doseKnownAnswer,
+  );
+  if (doseKnownQuestion && doseKnownOptionId) {
+    nextAnswers[doseKnownQuestion.id] = {
+      questionOptionIds: [doseKnownOptionId],
+    };
+  }
+
+  const currentDoseAnswer = findSavedAnswer(
+    savedAnswers,
+    "Enter your current dose (mg/week)",
+  );
+  const currentDoseQuestion = findQuestionByBody(
+    survey,
+    "What is your current dose?",
+  );
+  if (currentDoseQuestion && currentDoseAnswer) {
+    nextAnswers[currentDoseQuestion.id] = {
+      valueText: currentDoseAnswer,
+    };
+  }
+
+  const currentMedicationAnswer =
+    currentGlp1Answer ||
+    findSavedAnswer(savedAnswers, "Which medication are you taking?");
+  const currentMedicationQuestion = findQuestionByBody(
+    survey,
+    "Which medication are you taking?",
+  );
+  const currentMedicationOptionId = findOptionIdByAnswer(
+    currentMedicationQuestion,
+    currentMedicationAnswer,
+  );
+  if (currentMedicationQuestion && currentMedicationOptionId) {
+    nextAnswers[currentMedicationQuestion.id] = {
+      questionOptionIds: [currentMedicationOptionId],
+    };
+  }
+
+  const preferredMedicationAnswer = findSavedAnswer(
+    savedAnswers,
+    "Which medication would you like?",
+  );
+  const preferredMedicationQuestion = findQuestionByBodyStartsWith(
+    survey,
+    "Which medication would you like?",
+  );
+  const preferredMedicationOptionId = findOptionIdByAnswer(
+    preferredMedicationQuestion,
+    preferredMedicationAnswer,
+  );
+  if (preferredMedicationQuestion && preferredMedicationOptionId) {
+    nextAnswers[preferredMedicationQuestion.id] = {
+      questionOptionIds: [preferredMedicationOptionId],
+    };
+  }
+
+  const isCurrentlyTakingGlp1 = normalizeText(glp1Answer).startsWith("yes");
+
+  if (!isCurrentlyTakingGlp1) {
+    if (currentGlp1Question && !nextAnswers[currentGlp1Question.id]) {
+      nextAnswers[currentGlp1Question.id] = {
+        valueText: "Not currently taking a GLP-1 medication",
+      };
+    }
+
+    if (doseKnownQuestion && !nextAnswers[doseKnownQuestion.id]) {
+      const noOptionId = findOptionIdByAnswer(doseKnownQuestion, "No");
+
+      if (noOptionId) {
+        nextAnswers[doseKnownQuestion.id] = {
+          questionOptionIds: [noOptionId],
+        };
+      }
+    }
+
+    if (currentDoseQuestion && !nextAnswers[currentDoseQuestion.id]) {
+      nextAnswers[currentDoseQuestion.id] = {
+        valueText: "N/A",
+      };
+    }
+
+    if (
+      currentMedicationQuestion &&
+      !nextAnswers[currentMedicationQuestion.id] &&
+      preferredMedicationOptionId
+    ) {
+      nextAnswers[currentMedicationQuestion.id] = {
+        questionOptionIds: [preferredMedicationOptionId],
+      };
+    }
+  }
+
+  return nextAnswers;
+};
 
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
@@ -61,6 +266,8 @@ const Page = () => {
   const [emailSubmissionError, setEmailSubmissionError] = useState("");
   const [externalUserId, setExternalUserId] = useState("");
   const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
+  const [hasAppliedSavedProgramAnswers, setHasAppliedSavedProgramAnswers] =
+    useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [surveyFromState, setSurveyFromState] = useState<
@@ -189,6 +396,12 @@ const Page = () => {
   );
 
   const [createCart] = useMutation<CreateCartMutationResult>(CREATE_CART);
+  const [checkUserExists] = useLazyQuery<
+    IsUserExistQueryResult,
+    IsUserExistQueryVariables
+  >(IS_USER_EXIST, {
+    fetchPolicy: "no-cache",
+  });
   const [createProductEmailResponses, { loading: isCreatingProductEmail }] =
     useMutation<
       CreateProductEmailResponsesMutationResult,
@@ -265,9 +478,22 @@ const Page = () => {
       if (confirm) {
         window.location.href = "/";
       } else {
-        window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
-          externalUserId,
-        )}`;
+        const { data } = await checkUserExists({
+          variables: {
+            email: trimmedEmail,
+          },
+        });
+        const userExists = !!data?.isUserExist;
+
+        if (userExists) {
+          window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/login?externalUserId=${encodeURIComponent(
+            externalUserId,
+          )}`;
+        } else {
+          window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
+            externalUserId,
+          )}`;
+        }
       }
       setSurveyAnswers({});
       setSurveyFromState(undefined);
@@ -290,6 +516,8 @@ const Page = () => {
     tax,
     createCart,
     externalUserId,
+    checkUserExists,
+    trimmedEmail,
   ]);
 
   useEffect(() => {
@@ -321,6 +549,7 @@ const Page = () => {
     setEmailSubmissionError("");
     setExternalUserId("");
     setHasCapturedEmail(false);
+    setHasAppliedSavedProgramAnswers(false);
     setCurrentQuestionIndex(0);
     setIsEmailModalOpen(false);
   }, [survey?.id]);
@@ -360,6 +589,89 @@ const Page = () => {
     },
     [pathname, router, searchParams],
   );
+
+  useEffect(() => {
+    if (
+      loading ||
+      !survey ||
+      !hasCapturedEmail ||
+      hasAppliedSavedProgramAnswers ||
+      typeof window === "undefined"
+    ) {
+      return;
+    }
+
+    if (
+      normalizeText(survey.name) !== "weight loss program" &&
+      normalizeText(survey.category) !== "weight loss program"
+    ) {
+      setHasAppliedSavedProgramAnswers(true);
+      return;
+    }
+
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) {
+      setHasAppliedSavedProgramAnswers(true);
+      return;
+    }
+
+    try {
+      const parsedSavedProgram = JSON.parse(
+        rawSavedProgram,
+      ) as SavedProgramPayload;
+
+      if (
+        parsedSavedProgram.program !== "weight-loss" ||
+        !parsedSavedProgram.answers?.length
+      ) {
+        setHasAppliedSavedProgramAnswers(true);
+        return;
+      }
+
+      const prefilledAnswers = buildWeightLossPrefillAnswers(
+        survey,
+        parsedSavedProgram.answers,
+      );
+
+      const prefilledQuestionIds = new Set(Object.keys(prefilledAnswers));
+
+      if (prefilledQuestionIds.size === 0) {
+        setHasAppliedSavedProgramAnswers(true);
+        return;
+      }
+
+      setSurveyAnswers((prev) => ({
+        ...prefilledAnswers,
+        ...prev,
+      }));
+
+      const sortedQuestions =
+        survey.questions?.slice().sort(
+          (first, second) => first.position - second.position,
+        ) ?? [];
+      const firstUnansweredIndex = sortedQuestions.findIndex(
+        (question) => !prefilledQuestionIds.has(question.id),
+      );
+
+      if (firstUnansweredIndex > 0) {
+        handleQuestionIndexChange(firstUnansweredIndex);
+      }
+
+      setHasAppliedSavedProgramAnswers(true);
+    } catch (error) {
+      console.error("Failed to apply saved weight-loss answers:", error);
+      setHasAppliedSavedProgramAnswers(true);
+    }
+  }, [
+    handleQuestionIndexChange,
+    hasAppliedSavedProgramAnswers,
+    hasCapturedEmail,
+    loading,
+    survey,
+  ]);
 
   const handleEmailConfirm = async () => {
     setEmailTouched(true);

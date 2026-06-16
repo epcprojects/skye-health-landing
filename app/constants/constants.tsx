@@ -67,8 +67,13 @@ export const menuItems: MenuItem[] = [
 export const therapyCards = [
   {
     id: "lose-weight",
-    label: "Lose Weight",
+    label: "Loss Weight",
     image: images.landingpageimages.LoseWeightImage,
+  },
+  {
+    id: "hormones-therapy",
+    label: "Hormones ",
+    image: images.landingpageimages.LiveLongerImage,
   },
   {
     id: "better-sex",
@@ -100,11 +105,11 @@ export const therapyCards = [
     label: "Sharp Focus",
     image: images.landingpageimages.SharpFocusImage,
   },
-  {
-    id: "live-longer",
-    label: "Live Longer",
-    image: images.landingpageimages.LiveLongerImage,
-  },
+  // {
+  //   id: "live-longer",
+  //   label: "Live Longer",
+  //   image: images.landingpageimages.LiveLongerImage,
+  // },
 ] as const;
 
 export type TherapyCardId = (typeof therapyCards)[number]["id"];

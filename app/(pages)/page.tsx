@@ -23,6 +23,8 @@ import WellnessCarousel from "../components/cards/WelnessCarousel";
 import DoctorSwiper from "../components/cards/DoctorSlider";
 import StepCard from "../components/cards/StepCard";
 import FeatureCard from "../components/cards/FeatureCard";
+import WeightLossProgramModal from "../components/modals/WeightLossProgramModal";
+import HormoneProgramModal from "../components/modals/HormoneProgramModal";
 import { Images } from "../images";
 import { useQuery } from "@apollo/client/react";
 import {
@@ -30,6 +32,7 @@ import {
   AllProductsType,
   AllProductsVariables,
   FETCH_CATEGORIES,
+  ProductStatusEnum,
   ProductType,
 } from "../graphql/queries/products";
 import { useRouter } from "next/navigation";
@@ -50,16 +53,88 @@ import TabletImage from "@/public/images/Tablet.png";
 import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
 import TrocheImage from "@/public/images/Troche.png";
 import VialImage from "@/public/images/Vial.png";
-import { addProductToCart } from "../Redux/slices/cart/cartSlice";
+import {
+  addProductToCart,
+  selectCartItems,
+  setQty,
+} from "../Redux/slices/cart/cartSlice";
 import { toastAlert } from "../components/ToastAlert";
-import { useAppDispatch } from "../Redux/store";
+import { useAppDispatch, useAppSelector } from "../Redux/store";
+
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+
+type SavedProgramAnswer = {
+  question: string;
+  answer: string;
+};
+
+type SavedProgramPayload = {
+  program?: string;
+  answers?: SavedProgramAnswer[];
+};
+
+const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
+  id: "d6852ae2-0d52-4cc1-8cf9-9ba7eaef0848",
+  sku: "WL-PROGRAM",
+  name: "Weight Loss Program",
+  description: "",
+  category: "Weight Loss Program",
+  brand: "",
+  price: 199,
+  retailPrice: 199,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Greenwich",
+  productUnitPricings: [
+    {
+      id: "d6852ae2-0d52-4cc1-8cf9-9ba7eaef0848",
+      sku: "WL-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 199,
+      retailPrice: 199,
+    },
+  ],
+};
+
+const getWeightLossProgramMonths = () => {
+  if (typeof window === "undefined") return 1;
+
+  try {
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) return 1;
+
+    const parsedSavedProgram = JSON.parse(rawSavedProgram) as SavedProgramPayload;
+    const monthsAnswer = parsedSavedProgram.answers?.find(
+      (entry) => entry.question === "How many months?",
+    )?.answer;
+
+    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
+
+    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
+  } catch (error) {
+    console.error("Failed to read saved weight-loss program months:", error);
+    return 1;
+  }
+};
 
 export default function Home() {
   const router = useRouter();
+  const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
+  const [isHormoneModalOpen, setIsHormoneModalOpen] = useState(false);
+  const cartItems = useAppSelector(selectCartItems);
 
   const cardActions: Record<TherapyCardId, () => void> = {
     "lose-weight": () => {
-      router.push("products?category=Weight Loss");
+      setIsWeightLossModalOpen(true);
     },
     "better-sex": () => {
       router.push("products?category=Sexual Wellness");
@@ -79,8 +154,8 @@ export default function Home() {
     "sharp-focus": () => {
       router.push("products?category=Supplies");
     },
-    "live-longer": () => {
-      router.push("products");
+    "hormones-therapy": () => {
+      router.push("products?category=Hormones");
     },
   };
 
@@ -234,6 +309,43 @@ export default function Home() {
 
   return (
     <>
+      <WeightLossProgramModal
+        isOpen={isWeightLossModalOpen}
+        onClose={() => setIsWeightLossModalOpen(false)}
+        onStartQuestionnaire={() => {
+          const selectedMonths = getWeightLossProgramMonths();
+          const hasWeightLossProgramInCart = cartItems.some(
+            (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+          );
+
+          if (!hasWeightLossProgramInCart) {
+            dispatch(
+              addProductToCart({
+                product: WEIGHT_LOSS_PROGRAM_PRODUCT,
+                qty: selectedMonths,
+              }),
+            );
+          } else {
+            dispatch(
+              setQty({
+                productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+                qty: selectedMonths,
+              }),
+            );
+          }
+
+          setIsWeightLossModalOpen(false);
+          router.push("/surveys?step=1");
+        }}
+      />
+      <HormoneProgramModal
+        isOpen={isHormoneModalOpen}
+        onClose={() => setIsHormoneModalOpen(false)}
+        onStartQuestionnaire={() => {
+          setIsHormoneModalOpen(false);
+          router.push("/products?category=Hormones");
+        }}
+      />
       <section className="bg-primary pt-44 lg:pt-59 pb-12 lg:pb-24 relative">
         <Image
           src={images.landingpageimages.SkyHealthBgLogoImage}
@@ -438,7 +550,7 @@ export default function Home() {
         </div>
       </section>
       <DoctorSwiper />
-      <section className="py-8 lg:py-30 relative">
+      <section className="py-8 lg:py-30 relative overflow-hidden">
         <Image
           src={images.landingpageimages.SkyeHealthMobile}
           alt={"Mobile App"}

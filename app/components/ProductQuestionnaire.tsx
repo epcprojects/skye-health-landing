@@ -77,7 +77,7 @@ const PRODUCTS: Product[] = [
           { id: "lose_1_15", label: "Losing 1–15 lbs" },
           { id: "lose_16_50", label: "Losing 16–50 lbs" },
           { id: "lose_51_plus", label: "Losing 51+ lbs" },
-          { id: "not_sure", label: "Not sure, I just need to lose weight" },
+          { id: "not_sure", label: "Not sure, I just need to loss weight" },
         ],
       },
       {
@@ -123,7 +123,7 @@ const PRODUCTS: Product[] = [
           { id: "lose_1_15", label: "Losing 1–15 lbs" },
           { id: "lose_16_50", label: "Losing 16–50 lbs" },
           { id: "lose_51_plus", label: "Losing 51+ lbs" },
-          { id: "not_sure", label: "Not sure, I just need to lose weight" },
+          { id: "not_sure", label: "Not sure, I just need to loss weight" },
         ],
       },
       {
@@ -170,7 +170,7 @@ const PRODUCTS: Product[] = [
           { id: "lose_1_15", label: "Losing 1–15 lbs" },
           { id: "lose_16_50", label: "Losing 16–50 lbs" },
           { id: "lose_51_plus", label: "Losing 51+ lbs" },
-          { id: "not_sure", label: "Not sure, I just need to lose weight" },
+          { id: "not_sure", label: "Not sure, I just need to loss weight" },
         ],
       },
       {

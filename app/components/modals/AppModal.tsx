@@ -40,6 +40,7 @@ interface AppModalProps {
   headerTooltipAutoShowOnceKey?: string;
   headerTooltipAutoHideAfter?: number;
   centerFooter?: boolean;
+  hideHeader?: boolean;
 }
 
 const sizeClasses = {
@@ -76,6 +77,7 @@ const AppModal: React.FC<AppModalProps> = ({
   disableCloseButton = false,
   hideCrossButton = false,
   centerFooter = false,
+  hideHeader = false,
 }) => {
   if (!isOpen) return null;
 
@@ -105,51 +107,53 @@ const AppModal: React.FC<AppModalProps> = ({
         onClick={outSideClickClose ? onClose : undefined}
       >
         <div className={modalClasses} onClick={(e) => e.stopPropagation()}>
-          <div className="px-4 py-3 bg-gray-100 flex sm:rounded-t-2xl items-center justify-between border-b border-gray-200">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="h-9 w-9 shrink-0 rounded-xl bg-white flex items-center justify-center border border-gray-200">
-                {icon}
-              </div>
-              <div>
-                <h2
-                  className={`text-base ${
-                    subtitle ? "md:text-lg" : "md:text-xl"
-                  }  text-black font-semibold`}
-                >
-                  {title}
-                </h2>
-                {subtitle && (
-                  <h3 className="text-gray-500 text-xs md:text-sm">
-                    {subtitle}
-                  </h3>
-                )}
+          {!hideHeader && (
+            <div className="px-4 py-3 bg-gray-100 flex sm:rounded-t-2xl items-center justify-between border-b border-gray-200">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="h-9 w-9 shrink-0 rounded-xl bg-white flex items-center justify-center border border-gray-200">
+                  {icon}
+                </div>
+                <div>
+                  <h2
+                    className={`text-base ${
+                      subtitle ? "md:text-lg" : "md:text-xl"
+                    }  text-black font-semibold`}
+                  >
+                    {title}
+                  </h2>
+                  {subtitle && (
+                    <h3 className="text-gray-500 text-xs md:text-sm">
+                      {subtitle}
+                    </h3>
+                  )}
+                </div>
+
+                {/* {headerTooltip && (
+                  <Tooltip
+                    content={headerTooltip?.toString()}
+                    autoShowOnceKey={headerTooltipAutoShowOnceKey}
+                    autoHideAfter={headerTooltipAutoHideAfter}
+                  >
+                    <InfoFilledIcon />
+                  </Tooltip>
+                )} */}
               </div>
 
-              {/* {headerTooltip && (
-                <Tooltip
-                  content={headerTooltip?.toString()}
-                  autoShowOnceKey={headerTooltipAutoShowOnceKey}
-                  autoHideAfter={headerTooltipAutoHideAfter}
+              {!hideCrossButton && (
+                <button
+                  onClick={disableCloseButton ? undefined : onClose}
+                  disabled={disableCloseButton}
+                  className={`md:p-1 p-1 hover:bg-gray-200 rounded-md ${
+                    disableCloseButton
+                      ? "cursor-not-allowed opacity-50"
+                      : "cursor-pointer"
+                  }`}
                 >
-                  <InfoFilledIcon />
-                </Tooltip>
-              )} */}
+                  <CrossIcon />
+                </button>
+              )}
             </div>
-
-            {!hideCrossButton && (
-              <button
-                onClick={disableCloseButton ? undefined : onClose}
-                disabled={disableCloseButton}
-                className={`md:p-1 p-1 hover:bg-gray-200 rounded-md ${
-                  disableCloseButton
-                    ? "cursor-not-allowed opacity-50"
-                    : "cursor-pointer"
-                }`}
-              >
-                <CrossIcon />
-              </button>
-            )}
-          </div>
+          )}
 
           <div
             className={`flex-1 bg-white ${
