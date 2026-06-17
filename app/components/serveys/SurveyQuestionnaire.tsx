@@ -39,6 +39,69 @@ function endsWithColon(text?: string) {
   return /:\s*$/.test(text ?? "");
 }
 
+function isHeightQuestion(question: QuestionType) {
+  const normalizedQuestion = question.body
+    ?.trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+  return (
+    normalizedQuestion === "height:" ||
+    normalizedQuestion === "what is your height?"
+  );
+}
+
+function parseHeightValue(raw: string) {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return { feet: "", inches: "" };
+  }
+
+  const formattedMatch = trimmed.match(/^(\d*)\s*ft\s*(\d*)\s*in$/i);
+  if (formattedMatch) {
+    return {
+      feet: formattedMatch[1] ?? "",
+      inches: formattedMatch[2] ?? "",
+    };
+  }
+
+  const compactMatch = trimmed.match(/^(\d*)'\s*(\d*)"?$/);
+  if (compactMatch) {
+    return {
+      feet: compactMatch[1] ?? "",
+      inches: compactMatch[2] ?? "",
+    };
+  }
+
+  const numericParts = trimmed.match(/\d+/g) ?? [];
+  return {
+    feet: numericParts[0] ?? "",
+    inches: numericParts[1] ?? "",
+  };
+}
+
+function buildHeightValue(feet: string, inches: string) {
+  const normalizedFeet = feet.trim();
+  const normalizedInches = inches.trim();
+
+  if (!normalizedFeet && !normalizedInches) return "";
+  return `${normalizedFeet}'${normalizedInches}"`;
+}
+
+function sanitizeHeightPart(
+  raw: string,
+  { min, max }: { min: number; max: number },
+) {
+  const digitsOnly = raw.replace(/\D/g, "");
+  if (!digitsOnly) return "";
+
+  const numericValue = Number(digitsOnly);
+  if (!Number.isFinite(numericValue)) return "";
+
+  const clampedValue = Math.min(Math.max(numericValue, min), max);
+  return String(clampedValue);
+}
+
 const DEFER_OPTION_TEXT = "no consent - defer exam.";
 
 function isDeferOption(question: QuestionType, optionId: string) {
@@ -63,16 +126,18 @@ function parseInlineTextMap(question: QuestionType, raw: string) {
       .filter((opt) => endsWithColon(opt.optionText)) ?? [];
 
   if (!raw?.trim() || options.length === 0) return result;
-  const lines = raw.split(/\r?\n/).map((line) => line.trim());
+  const lines = raw.split(/\r?\n/);
   const labelToId = new Map(
     options.map((opt) => [opt.optionText.trim().toLowerCase(), opt.id]),
   );
 
   let matchedAnyLine = false;
   for (const line of lines) {
+    const normalizedLine = line.trimStart();
     for (const [label, id] of labelToId.entries()) {
-      if (!line.toLowerCase().startsWith(label)) continue;
-      const value = line.slice(label.length).trim();
+      if (!normalizedLine.toLowerCase().startsWith(label)) continue;
+      const rawValue = normalizedLine.slice(label.length);
+      const value = rawValue.startsWith(" ") ? rawValue.slice(1) : rawValue;
       result[id] = value;
       matchedAnyLine = true;
       break;
@@ -99,7 +164,7 @@ function buildInlineTextValue(
       .filter((opt) => endsWithColon(opt.optionText)) ?? [];
 
   return options
-    .map((opt) => `${opt.optionText.trim()} ${textMap[opt.id] ?? ""}`.trimEnd())
+    .map((opt) => `${opt.optionText.trim()} ${textMap[opt.id] ?? ""}`)
     .join("\n");
 }
 
@@ -124,6 +189,8 @@ function SurveyQuestion({
   const inlineInputOptions = colonOptions.filter(
     (opt) => !isDeferOption(question, opt.id),
   );
+  const isHeightField = question.questionType === "text" && isHeightQuestion(question);
+  const heightValue = useMemo(() => parseHeightValue(valueText), [valueText]);
 
   return (
     <div className="overflow-hidden">
@@ -228,7 +295,15 @@ function SurveyQuestion({
                         <ThemeInput
                           label=""
                           value={optionTextMap[opt.id] ?? ""}
+                          onFocus={() => {
+                            if (!optionIds.includes(opt.id)) {
+                              onSingleSelect(opt.id);
+                            }
+                          }}
                           onChange={(e) => {
+                            if (!optionIds.includes(opt.id)) {
+                              onSingleSelect(opt.id);
+                            }
                             const nextMap = {
                               ...optionTextMap,
                               [opt.id]: e.target.value,
@@ -238,7 +313,7 @@ function SurveyQuestion({
                             );
                           }}
                           placeholder="Add more details (optional)"
-                          className="w-full rounded-lg! px-3 py-2! text-base! md:px-4! mt-2 md:mt-3 md:py-5! md:text-base!"
+                          className="w-full rounded-lg! px-3 py-2! text-base! md:px-4! mt-2 md:mt-3 md:py-5! md:text-lg!"
                         />
                       )}
                     </div>
@@ -297,15 +372,51 @@ function SurveyQuestion({
           </div>
         )}
 
-        {question.questionType === "text" && (
-          <ThemeInput
-            label=""
-            value={valueText}
-            onChange={(e) => onTextChange(e.target.value)}
-            placeholder="Enter your answer"
-            className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8  md:text-lg!"
-          />
-        )}
+        {question.questionType === "text" &&
+          (isHeightField ? (
+            <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
+              <ThemeInput
+                label="Feet"
+                type="number"
+                value={heightValue.feet}
+                onChange={(e) =>
+                  onTextChange(
+                    buildHeightValue(
+                      sanitizeHeightPart(e.target.value, { min: 1, max: 8 }),
+                      heightValue.inches,
+                    ),
+                  )
+                }
+                placeholder="Enter feet"
+                maxLength={1}
+                className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! md:text-lg!"
+              />
+              <ThemeInput
+                label="Inches"
+                type="number"
+                value={heightValue.inches}
+                onChange={(e) =>
+                  onTextChange(
+                    buildHeightValue(
+                      heightValue.feet,
+                      sanitizeHeightPart(e.target.value, { min: 0, max: 11 }),
+                    ),
+                  )
+                }
+                placeholder="Enter inches"
+                maxLength={2}
+                className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! md:text-lg!"
+              />
+            </div>
+          ) : (
+            <ThemeInput
+              label=""
+              value={valueText}
+              onChange={(e) => onTextChange(e.target.value)}
+              placeholder="Enter your answer"
+              className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8  md:text-lg!"
+            />
+          ))}
       </div>
     </div>
   );
@@ -344,6 +455,10 @@ export function SurveyQuestionnaire({
         return hasOptions;
 
       case "text":
+        if (isHeightQuestion(question)) {
+          const { feet, inches } = parseHeightValue(answer.valueText ?? "");
+          return feet.trim().length > 0 && inches.trim().length > 0;
+        }
         return hasText;
 
       case "single_select_with_text":

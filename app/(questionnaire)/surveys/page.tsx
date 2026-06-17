@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { ThemeButton } from "@/app/components";
 import ThemeInput, { InputType } from "@/app/components/inputs/ThemeInput";
@@ -57,10 +58,7 @@ type SavedProgramPayload = {
 const normalizeText = (value?: string | null) =>
   value?.trim().toLowerCase() ?? "";
 
-const findSavedAnswer = (
-  answers: SavedProgramAnswer[],
-  question: string,
-) => {
+const findSavedAnswer = (answers: SavedProgramAnswer[], question: string) => {
   return answers.find(
     (entry) => normalizeText(entry.question) === normalizeText(question),
   )?.answer;
@@ -649,9 +647,9 @@ const Page = () => {
       }));
 
       const sortedQuestions =
-        survey.questions?.slice().sort(
-          (first, second) => first.position - second.position,
-        ) ?? [];
+        survey.questions
+          ?.slice()
+          .sort((first, second) => first.position - second.position) ?? [];
       const firstUnansweredIndex = sortedQuestions.findIndex(
         (question) => !prefilledQuestionIds.has(question.id),
       );
@@ -727,33 +725,14 @@ const Page = () => {
   if (isRedirecting) {
     return (
       <div className="flex items-center justify-center h-dvh z-50 md:relative fixed">
-        <div className="bg-linear-[245deg] relative max-w-4xl overflow-hidden rounded-2xl sm:rounded-4xl from-[#86B7EF]  to-[#DCF0F7]">
+        <div className="bg-linear-[245deg] relative max-w-4xl overflow-hidden rounded-2xl sm:rounded-4xl from-white  to-white">
           <div className="noise absolute! inset-0 w-full " />
-          <div className="container  items-center gap-6 lg:gap-5 mx-auto grid grid-cols-1 sm:grid-cols-2 max-w-7xl px-4 xl:px-16 relative">
-            <div className="space-y-6">
-              <div className="space-y-4 flex flex-col lg:flex-none items-center lg:items-start">
-                <div className="space-y-2">
-                  <h1 className="text-neutral-900 text-4xl  lg:text-start text-center  leading-[130%] tracking-tighter font-extrabold">
-                    Modern Medicine. Personalized. Delivered.
-                  </h1>
-                  <h2 className=" text-lg lg:text-2xl   lg:text-start text-center  text-neutral-800">
-                    Peak performance isn&apos;t accidental. It&apos;s
-                    engineered.
-                  </h2>
-                </div>
-              </div>
-            </div>
-
+          <div className="container  items-center gap-6 justify-center lg:gap-5 mx-auto grid grid-cols-1 sm:grid-cols-1 max-w-7xl px-4 xl:px-16 relative">
             <div className="relative">
               <Image
                 alt=""
-                src={Images.landingPage.heroMockup}
-                className="z-20 relative"
-              />
-              <Image
-                alt=""
-                src={Images.landingPage.heroBg}
-                className="absolute bottom-0 right-0 z-10 animate-spin-dead-slow opacity-40"
+                src={Images.layout.logo}
+                className="z-20 relative h-80"
               />
             </div>
           </div>
@@ -963,31 +942,12 @@ const Page = () => {
             <div className="space-y-7.5 ">
               <div className="bg-linear-[245deg] relative overflow-hidden rounded-2xl sm:rounded-4xl from-[#86B7EF]  to-[#DCF0F7]">
                 <div className="noise absolute! inset-0 w-full " />
-                <div className="container  items-center gap-6 lg:gap-5 mx-auto grid grid-cols-1 sm:grid-cols-2 max-w-7xl px-4 xl:px-16 relative">
-                  <div className="space-y-6">
-                    <div className="space-y-4 flex flex-col lg:flex-none items-center lg:items-start">
-                      <div className="space-y-2">
-                        <h1 className="text-neutral-900 text-4xl  lg:text-start text-center  leading-[130%] tracking-tighter font-extrabold">
-                          Modern Medicine. Personalized. Delivered.
-                        </h1>
-                        <h2 className=" text-lg lg:text-2xl   lg:text-start text-center  text-neutral-800">
-                          Peak performance isn&apos;t accidental. It&apos;s
-                          engineered.
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
-
+                <div className="container  items-center gap-6 justify-center lg:gap-5 mx-auto grid grid-cols-1 sm:grid-cols-1 max-w-7xl px-4 xl:px-16 relative">
                   <div className="relative">
                     <Image
                       alt=""
-                      src={Images.landingPage.heroMockup}
-                      className="z-20 relative"
-                    />
-                    <Image
-                      alt=""
-                      src={Images.landingPage.heroBg}
-                      className="absolute bottom-0 right-0 z-10 animate-spin-dead-slow opacity-40"
+                      src={Images.layout.logo}
+                      className="z-20 relative h-80"
                     />
                   </div>
                 </div>

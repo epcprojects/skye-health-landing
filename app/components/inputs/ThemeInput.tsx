@@ -21,6 +21,7 @@ type ThemeInputProps = {
   value?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
   className?: string;
   error?: boolean;
   showErrorIcon?: boolean;
@@ -50,6 +51,7 @@ const ThemeInput = React.forwardRef<HTMLInputElement, ThemeInputProps>(
       icon,
       maxLength,
       onBlur,
+      onFocus,
       disabled = false,
     },
     ref,
@@ -100,6 +102,7 @@ const ThemeInput = React.forwardRef<HTMLInputElement, ThemeInputProps>(
             ${className}`}
             name={name}
             onBlur={onBlur}
+            onFocus={onFocus}
             placeholder={placeholder}
             required={required}
             value={value}
