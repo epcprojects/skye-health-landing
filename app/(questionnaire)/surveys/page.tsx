@@ -240,6 +240,75 @@ const buildWeightLossPrefillAnswers = (
   return nextAnswers;
 };
 
+const parseFeetAndInches = (rawHeight?: string) => {
+  const trimmed = rawHeight?.trim();
+  if (!trimmed) {
+    return { feet: 0, inches: 0 };
+  }
+
+  const formattedMatch = trimmed.match(/^(\d*)\s*ft\s*(\d*)\s*in$/i);
+  if (formattedMatch) {
+    return {
+      feet: Number.parseFloat(formattedMatch[1] || "0"),
+      inches: Number.parseFloat(formattedMatch[2] || "0"),
+    };
+  }
+
+  const compactMatch = trimmed.match(/^(\d*)'\s*(\d*)"?$/);
+  if (compactMatch) {
+    return {
+      feet: Number.parseFloat(compactMatch[1] || "0"),
+      inches: Number.parseFloat(compactMatch[2] || "0"),
+    };
+  }
+
+  const numericParts = trimmed.match(/\d+/g) ?? [];
+  return {
+    feet: Number.parseFloat(numericParts[0] || "0"),
+    inches: Number.parseFloat(numericParts[1] || "0"),
+  };
+};
+
+const parseWeightInKg = (rawWeight?: string) => {
+  const trimmed = rawWeight?.trim().toLowerCase();
+  if (!trimmed) return null;
+
+  const numericValue = Number.parseFloat(trimmed.replace(/,/g, ""));
+  if (!Number.isFinite(numericValue) || numericValue <= 0) return null;
+
+  if (
+    trimmed.includes("kg") ||
+    trimmed.includes("kilogram") ||
+    trimmed.includes("kilograms")
+  ) {
+    return numericValue;
+  }
+
+  return numericValue * 0.45359237;
+};
+
+const calculateBmiValue = (heightText?: string, weightText?: string) => {
+  const { feet, inches } = parseFeetAndInches(heightText);
+  const weightKg = parseWeightInKg(weightText);
+
+  if (!Number.isFinite(feet) || !Number.isFinite(inches) || feet <= 0) {
+    return null;
+  }
+
+  if (!weightKg) return null;
+
+  const totalInches = feet * 12 + inches;
+  const heightMeters = totalInches * 0.0254;
+
+  if (!Number.isFinite(heightMeters) || heightMeters <= 0) return null;
+
+  const bmi = weightKg / (heightMeters * heightMeters);
+
+  if (!Number.isFinite(bmi) || bmi <= 0) return null;
+
+  return bmi.toFixed(1);
+};
+
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
   const dispatch = useAppDispatch();
@@ -670,6 +739,52 @@ const Page = () => {
     loading,
     survey,
   ]);
+
+  useEffect(() => {
+    if (!survey) return;
+
+    const heightQuestion = findQuestionByBody(survey, "What is your height?");
+    const weightQuestion = findQuestionByBody(survey, "What is your weight?");
+    const bmiQuestion = findQuestionByBody(survey, "What is your BMI?");
+
+    if (!heightQuestion || !weightQuestion || !bmiQuestion) {
+      return;
+    }
+
+    const heightValue = surveyAnswers[heightQuestion.id]?.valueText;
+    const weightValue = surveyAnswers[weightQuestion.id]?.valueText;
+    const bmiValue = calculateBmiValue(heightValue, weightValue);
+
+    setSurveyAnswers((prev) => {
+      const currentBmiValue = prev[bmiQuestion.id]?.valueText?.trim() ?? "";
+
+      if (!bmiValue && !currentBmiValue) {
+        return prev;
+      }
+
+      if (!bmiValue && currentBmiValue) {
+        return {
+          ...prev,
+          [bmiQuestion.id]: {
+            ...prev[bmiQuestion.id],
+            valueText: "",
+          },
+        };
+      }
+
+      if (bmiValue === currentBmiValue) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [bmiQuestion.id]: {
+          ...prev[bmiQuestion.id],
+          valueText: bmiValue ?? "",
+        },
+      };
+    });
+  }, [survey, surveyAnswers]);
 
   const handleEmailConfirm = async () => {
     setEmailTouched(true);

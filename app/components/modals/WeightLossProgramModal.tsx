@@ -44,7 +44,7 @@ const summarySections = [
 const pricingOptions = [
   { months: 1, total: 199 },
   { months: 2, total: 398 },
-  { months: 3, total: 597 },
+  // { months: 3, total: 597 },
 ] as const;
 
 const WeightLossProgramModal = ({
@@ -351,7 +351,7 @@ const WeightLossProgramModal = ({
 
         <div className="mt-8">
           <p className="text-[20px] text-[#5B667A]">How many months?</p>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
             {pricingOptions.map((option) => {
               const isSelected = selectedMonths === option.months;
 

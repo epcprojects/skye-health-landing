@@ -63,6 +63,10 @@ function isWeightQuestion(question: QuestionType) {
   );
 }
 
+function isBmiQuestion(question: QuestionType) {
+  return normalizeText(question.body) === "what is your bmi?";
+}
+
 function parseHeightValue(raw: string) {
   const trimmed = raw.trim();
   if (!trimmed) {
@@ -519,10 +523,10 @@ function SurveyQuestion({
 
               {isWeightField && bmiData && (
                 <div className="rounded-xl border border-neutral-300 bg-white px-5 py-4 md:px-4 md:py-3">
-                  <span className="text-2xl font-semibold text-neutral-900 md:text-3xl">
+                  <span className="text-2xl font-semibold text-neutral-900 md:text-2xl">
                     BMI = {bmiData.value}
                   </span>{" "}
-                  <span className="text-xl text-neutral-400 md:text-2xl">
+                  <span className="text-lg text-neutral-400 md:text-xl">
                     ({bmiData.category})
                   </span>
                 </div>
@@ -546,7 +550,10 @@ export function SurveyQuestionnaire({
 }: SurveyQuestionnaireProps) {
   const sortedQuestions = useMemo(
     () =>
-      survey.questions?.slice().sort((a, b) => a.position - b.position) ?? [],
+      survey.questions
+        ?.filter((question) => !isBmiQuestion(question))
+        .slice()
+        .sort((a, b) => a.position - b.position) ?? [],
     [survey.questions],
   );
 
