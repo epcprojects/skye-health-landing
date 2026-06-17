@@ -67,7 +67,7 @@ export const menuItems: MenuItem[] = [
 export const therapyCards = [
   {
     id: "lose-weight",
-    label: "Loss Weight",
+    label: "Lose Weight",
     image: images.landingpageimages.LoseWeightImage,
   },
   {

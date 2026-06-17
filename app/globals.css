@@ -34,6 +34,13 @@ body {
   color: var(--foreground);
   font-family: var(--manrope) !important;
 }
+
+html {
+   overflow: hidden auto !important;
+   padding-right: 0px !important;
+}
+
+
 .crt-btn {
   background: transparent;
   border: 0;

@@ -354,7 +354,9 @@ const Page = () => {
                 <Image src={Images.landingPage.indemand} alt={""} /> In Demand
               </button>
 
-              {productCategories.map((category) => {
+              {productCategories
+                .filter((category) => category !== "Weight Loss Program")
+                .map((category) => {
                 const isSelected =
                   activeProductFilter === "category" &&
                   selectedCategory === category;
