@@ -28,6 +28,8 @@ interface SurveyQuestionnaireProps {
 }
 
 interface SurveyQuestionProps {
+  survey: SurveyType;
+  allAnswers: SurveyAnswers;
   question: QuestionType;
   answers: SurveyAnswerEntry | undefined;
   onSingleSelect: (optionId: string) => void;
@@ -39,15 +41,25 @@ function endsWithColon(text?: string) {
   return /:\s*$/.test(text ?? "");
 }
 
+function normalizeText(text?: string | null) {
+  return text?.trim().toLowerCase().replace(/\s+/g, " ") ?? "";
+}
+
 function isHeightQuestion(question: QuestionType) {
-  const normalizedQuestion = question.body
-    ?.trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
+  const normalizedQuestion = normalizeText(question.body);
 
   return (
     normalizedQuestion === "height:" ||
     normalizedQuestion === "what is your height?"
+  );
+}
+
+function isWeightQuestion(question: QuestionType) {
+  const normalizedQuestion = normalizeText(question.body);
+
+  return (
+    normalizedQuestion === "weight:" ||
+    normalizedQuestion === "what is your weight?"
   );
 }
 
@@ -100,6 +112,73 @@ function sanitizeHeightPart(
 
   const clampedValue = Math.min(Math.max(numericValue, min), max);
   return String(clampedValue);
+}
+
+function findAnswerValueByQuestion(
+  survey: SurveyType,
+  answers: SurveyAnswers,
+  body: string,
+) {
+  const matchingQuestion = survey.questions?.find(
+    (question) => normalizeText(question.body) === normalizeText(body),
+  );
+
+  return matchingQuestion
+    ? (answers[matchingQuestion.id]?.valueText ?? "")
+    : "";
+}
+
+function parseWeightValue(raw: string) {
+  const trimmed = raw.trim().toLowerCase();
+  if (!trimmed) return null;
+
+  const numericValue = Number.parseFloat(trimmed.replace(/,/g, ""));
+  if (!Number.isFinite(numericValue) || numericValue <= 0) return null;
+
+  if (
+    trimmed.includes("kg") ||
+    trimmed.includes("kilogram") ||
+    trimmed.includes("kilograms")
+  ) {
+    return numericValue;
+  }
+
+  return numericValue * 0.45359237;
+}
+
+function getBmiData(heightRaw: string, weightRaw: string) {
+  const { feet, inches } = parseHeightValue(heightRaw);
+  const feetValue = Number.parseFloat(feet || "0");
+  const inchesValue = Number.parseFloat(inches || "0");
+  const weightKg = parseWeightValue(weightRaw);
+
+  if (
+    !Number.isFinite(feetValue) ||
+    !Number.isFinite(inchesValue) ||
+    feetValue <= 0 ||
+    !weightKg
+  ) {
+    return null;
+  }
+
+  const totalInches = feetValue * 12 + inchesValue;
+  const heightMeters = totalInches * 0.0254;
+
+  if (!Number.isFinite(heightMeters) || heightMeters <= 0) return null;
+
+  const bmi = weightKg / (heightMeters * heightMeters);
+
+  if (!Number.isFinite(bmi) || bmi <= 0) return null;
+
+  let category = "Obesity";
+  if (bmi < 18.5) category = "Underweight";
+  else if (bmi < 25) category = "Normal weight";
+  else if (bmi < 30) category = "Overweight";
+
+  return {
+    value: bmi.toFixed(1),
+    category,
+  };
 }
 
 const DEFER_OPTION_TEXT = "no consent - defer exam.";
@@ -169,6 +248,8 @@ function buildInlineTextValue(
 }
 
 function SurveyQuestion({
+  survey,
+  allAnswers,
   question,
   answers,
   onSingleSelect,
@@ -189,8 +270,22 @@ function SurveyQuestion({
   const inlineInputOptions = colonOptions.filter(
     (opt) => !isDeferOption(question, opt.id),
   );
-  const isHeightField = question.questionType === "text" && isHeightQuestion(question);
+  const isHeightField =
+    question.questionType === "text" && isHeightQuestion(question);
+  const isWeightField =
+    question.questionType === "text" && isWeightQuestion(question);
   const heightValue = useMemo(() => parseHeightValue(valueText), [valueText]);
+  const bmiData = useMemo(() => {
+    if (!isWeightField) return null;
+
+    const savedHeight = findAnswerValueByQuestion(
+      survey,
+      allAnswers,
+      "What is your height?",
+    );
+
+    return getBmiData(savedHeight, valueText);
+  }, [allAnswers, isWeightField, survey, valueText]);
 
   return (
     <div className="overflow-hidden">
@@ -409,13 +504,30 @@ function SurveyQuestion({
               />
             </div>
           ) : (
-            <ThemeInput
-              label=""
-              value={valueText}
-              onChange={(e) => onTextChange(e.target.value)}
-              placeholder="Enter your answer"
-              className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8  md:text-lg!"
-            />
+            <div className="space-y-3">
+              <ThemeInput
+                label=""
+                value={valueText}
+                onChange={(e) => onTextChange(e.target.value)}
+                placeholder={
+                  isWeightField
+                    ? "Enter your weight in pounds (lbs)"
+                    : "Enter your answer"
+                }
+                className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8  md:text-lg!"
+              />
+
+              {isWeightField && bmiData && (
+                <div className="rounded-xl border border-neutral-300 bg-white px-5 py-4 md:px-4 md:py-3">
+                  <span className="text-2xl font-semibold text-neutral-900 md:text-3xl">
+                    BMI = {bmiData.value}
+                  </span>{" "}
+                  <span className="text-xl text-neutral-400 md:text-2xl">
+                    ({bmiData.category})
+                  </span>
+                </div>
+              )}
+            </div>
           ))}
       </div>
     </div>
@@ -564,6 +676,8 @@ export function SurveyQuestionnaire({
           {currentQuestion && (
             <div className="space-y-6">
               <SurveyQuestion
+                survey={survey}
+                allAnswers={answers}
                 question={currentQuestion}
                 answers={answers[currentQuestion.id]}
                 onSingleSelect={(optionId) => {
