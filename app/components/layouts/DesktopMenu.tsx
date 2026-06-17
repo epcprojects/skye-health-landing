@@ -122,7 +122,7 @@ const DesktopMenu = () => {
         return (
           <div
             key={item.label}
-            className={`relative group px-4 py-3 rounded-full ${
+            className={`relative group px-4 py-2.5 rounded-full ${
               isActive ? "bg-black/20" : "hover:bg-black/20"
             }`}
           >
@@ -132,7 +132,10 @@ const DesktopMenu = () => {
                 isActive ? "text-white" : "text-white/70 group-hover:text-white"
               }`}
             >
-              <CharRollText text={item.label} />
+              <CharRollText
+                text={item.label}
+                classes="h-5.25! leading-[15.5px]!"
+              />
               {/* {item.label} */}
               {hasChildren && <DownArrow />}
             </Link>
