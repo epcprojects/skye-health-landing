@@ -60,8 +60,14 @@ import {
 } from "../Redux/slices/cart/cartSlice";
 import { toastAlert } from "../components/ToastAlert";
 import { useAppDispatch, useAppSelector } from "../Redux/store";
+import {
+  canAddProductWithCartRules,
+  WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+} from "../lib/cartRules";
 
 const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-weight-loss-program-prefill-source";
 
 type SavedProgramAnswer = {
   question: string;
@@ -74,7 +80,7 @@ type SavedProgramPayload = {
 };
 
 const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
-  id: "d6852ae2-0d52-4cc1-8cf9-9ba7eaef0848",
+  id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
   sku: "WL-PROGRAM",
   name: "Weight Loss Program",
   description: "",
@@ -91,7 +97,7 @@ const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
   vendor: "Greenwich",
   productUnitPricings: [
     {
-      id: "d6852ae2-0d52-4cc1-8cf9-9ba7eaef0848",
+      id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
       sku: "WL-PROGRAM",
       quantity: 999,
       strength: "",
@@ -112,7 +118,9 @@ const getWeightLossProgramMonths = () => {
 
     if (!rawSavedProgram) return 1;
 
-    const parsedSavedProgram = JSON.parse(rawSavedProgram) as SavedProgramPayload;
+    const parsedSavedProgram = JSON.parse(
+      rawSavedProgram,
+    ) as SavedProgramPayload;
     const monthsAnswer = parsedSavedProgram.answers?.find(
       (entry) => entry.question === "How many months?",
     )?.answer;
@@ -314,6 +322,19 @@ export default function Home() {
         onClose={() => setIsWeightLossModalOpen(false)}
         onStartQuestionnaire={() => {
           const selectedMonths = getWeightLossProgramMonths();
+          const cartGuard = canAddProductWithCartRules(
+            cartItems,
+            WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+          );
+
+          if (!cartGuard.allowed) {
+            toastAlert(
+              cartGuard.message ?? "Unable to add product to cart.",
+              false,
+            );
+            return;
+          }
+
           const hasWeightLossProgramInCart = cartItems.some(
             (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
           );
@@ -331,6 +352,13 @@ export default function Home() {
                 productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
                 qty: selectedMonths,
               }),
+            );
+          }
+
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(
+              WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
+              "card-flow",
             );
           }
 
@@ -414,38 +442,38 @@ export default function Home() {
               </button>
 
               {productCategories
-                .filter((category) => category !== "Weight Loss Program")
+                // .filter((category) => category !== "Weight Loss Program")
                 .map((category) => {
-                const isSelected =
-                  activeProductFilter === "category" &&
-                  selectedCategory === category;
+                  const isSelected =
+                    activeProductFilter === "category" &&
+                    selectedCategory === category;
 
-                return (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      setActiveProductFilter("category");
-                      setSelectedCategory(category);
-                      setExtraProducts([]);
-                    }}
-                    className={`py-1 lg:py-1.5 px-1 lg:px-2 lg:pr-3 hover:border-primary-light cursor-pointer flex flex-row items-center gap-2.5  rounded-xl text-sm lg:text-base font-medium text-neutral-900 whitespace-nowrap ${
-                      isSelected
-                        ? "bg-primary-light text-white"
-                        : "bg-white border border-[#E3E3E3]"
-                    }`}
-                  >
-                    <Image
-                      src={getCategoryChipImage(category)}
-                      alt={category}
-                    />
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setActiveProductFilter("category");
+                        setSelectedCategory(category);
+                        setExtraProducts([]);
+                      }}
+                      className={`py-1 lg:py-1.5 px-1 lg:px-2 lg:pr-3 hover:border-primary-light cursor-pointer flex flex-row items-center gap-2.5  rounded-xl text-sm lg:text-base font-medium text-neutral-900 whitespace-nowrap ${
+                        isSelected
+                          ? "bg-primary-light text-white"
+                          : "bg-white border border-[#E3E3E3]"
+                      }`}
+                    >
+                      <Image
+                        src={getCategoryChipImage(category)}
+                        alt={category}
+                      />
 
-                    <span className="sm:hidden">
-                      {getMobileCategoryLabel(category)}
-                    </span>
-                    <span className="hidden sm:inline">{category}</span>
-                  </button>
-                );
-              })}
+                      <span className="sm:hidden">
+                        {getMobileCategoryLabel(category)}
+                      </span>
+                      <span className="hidden sm:inline">{category}</span>
+                    </button>
+                  );
+                })}
             </div>
           </div>
           {loading && allProducts.length === 0 && (
@@ -474,6 +502,19 @@ export default function Home() {
                   isInDemand={activeProductFilter === "in_demand"}
                   title={product.name}
                   onBuyClick={() => {
+                    const cartGuard = canAddProductWithCartRules(
+                      cartItems,
+                      product.id,
+                    );
+
+                    if (!cartGuard.allowed) {
+                      toastAlert(
+                        cartGuard.message ?? "Unable to add product to cart.",
+                        false,
+                      );
+                      return;
+                    }
+
                     dispatch(addProductToCart({ product }));
                     toastAlert("Added to Cart Successfully", true);
                   }}

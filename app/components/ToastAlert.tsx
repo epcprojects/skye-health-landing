@@ -20,7 +20,9 @@ export const toastAlert = (
     pauseOnHover: true,
     draggable: true,
     style: {
-      width: "260px",
+      minWidth: "120px",
+      width: "fit-content",
+      maxWidth: "320px",
       minHeight: "44px",
       padding: "12px 16px",
       color: "#111827",
@@ -41,10 +43,10 @@ export const toastAlert = (
       ...toastConfig,
       style: {
         ...toastConfig.style,
-        backgroundColor: "#FEF3F2",
-        color: "red",
+        backgroundColor: "#dc2626",
+        color: "white",
       },
-      icon: <AlertIcon />,
+      icon: <AlertIcon fill="white" />,
     });
   }
 };

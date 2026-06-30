@@ -13,7 +13,8 @@ import { useIsMobile } from "@/app/hooks/useIsMobile";
 import { Images } from "@/app/images";
 import { addProductToCart } from "@/app/Redux/slices/cart/cartSlice";
 import { setProducts } from "@/app/Redux/slices/products/productsSlice";
-import { useAppDispatch } from "@/app/Redux/store";
+import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
+import { canAddProductWithCartRules } from "@/app/lib/cartRules";
 import { CrossIcon, SearchIcon } from "@/public/icons";
 import { useQuery } from "@apollo/client/react";
 import Image, { StaticImageData } from "next/image";
@@ -41,6 +42,9 @@ const PER_PAGE = 12;
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) =>
+    state.cart.allIds.map((id) => state.cart.itemsById[id]).filter(Boolean),
+  );
   const isMobile = useIsMobile();
   const router = useRouter();
 
@@ -354,9 +358,7 @@ const Page = () => {
                 <Image src={Images.landingPage.indemand} alt={""} /> In Demand
               </button>
 
-              {productCategories
-                .filter((category) => category !== "Weight Loss Program")
-                .map((category) => {
+              {productCategories.map((category) => {
                 const isSelected =
                   activeProductFilter === "category" &&
                   selectedCategory === category;
@@ -437,6 +439,16 @@ const Page = () => {
                 productUnitPricings={p.productUnitPricings}
                 onCardClick={(id: string) => router.push(`/products/${id}`)}
                 onAddToCart={(selectedPricingId) => {
+                  const cartGuard = canAddProductWithCartRules(cartItems, p.id);
+
+                  if (!cartGuard.allowed) {
+                    toastAlert(
+                      cartGuard.message ?? "Unable to add product to cart.",
+                      false,
+                    );
+                    return;
+                  }
+
                   dispatch(addProductToCart({ product: p, selectedPricingId }));
                   toastAlert("Added to Cart Successfully", true);
                 }}

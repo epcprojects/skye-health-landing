@@ -191,7 +191,7 @@ export default function ProductCard({
                   </Menu>
                 </div>
               )}
-              {variantOptions.length === 1 && (
+              {variantOptions.length > 1 && (
                 <div
                   className={`text-sm px-2.5 py-1 border justify-between flex gap-1 items-center rounded-full outline-none transition-colors duration-300 ${
                     showDemandHover

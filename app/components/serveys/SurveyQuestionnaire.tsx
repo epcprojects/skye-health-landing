@@ -67,6 +67,32 @@ function isBmiQuestion(question: QuestionType) {
   return normalizeText(question.body) === "what is your bmi?";
 }
 
+function findQuestionByBody(survey: SurveyType, body: string) {
+  return survey.questions?.find(
+    (question) => normalizeText(question.body) === normalizeText(body),
+  );
+}
+
+function getSingleSelectAnswerValue(
+  survey: SurveyType,
+  answers: SurveyAnswers,
+  body: string,
+) {
+  const question = findQuestionByBody(survey, body);
+  if (!question) return undefined;
+
+  const selectedOptionId = answers[question.id]?.questionOptionIds?.[0];
+  if (!selectedOptionId) return undefined;
+
+  const selectedOption = question.questionOptions?.find(
+    (option) => option.id === selectedOptionId,
+  );
+
+  return normalizeText(
+    selectedOption?.value || selectedOption?.optionText || undefined,
+  );
+}
+
 function parseHeightValue(raw: string) {
   const trimmed = raw.trim();
   if (!trimmed) {
@@ -549,12 +575,55 @@ export function SurveyQuestionnaire({
   onQuestionIndexChange,
 }: SurveyQuestionnaireProps) {
   const sortedQuestions = useMemo(
-    () =>
-      survey.questions
-        ?.filter((question) => !isBmiQuestion(question))
-        .slice()
-        .sort((a, b) => a.position - b.position) ?? [],
-    [survey.questions],
+    () => {
+      const allQuestions =
+        survey.questions
+          ?.filter((question) => !isBmiQuestion(question))
+          .slice()
+          .sort((a, b) => a.position - b.position) ?? [];
+
+      const isWeightLossSurvey =
+        normalizeText(survey.name) === "weight loss program" ||
+        normalizeText(survey.category) === "weight loss program";
+
+      if (!isWeightLossSurvey) {
+        return allQuestions;
+      }
+
+      const glp1Answer = getSingleSelectAnswerValue(
+        survey,
+        answers,
+        "Are you currently taking a GLP-1 medication?",
+      );
+      const doseKnownAnswer = getSingleSelectAnswerValue(
+        survey,
+        answers,
+        "Do you know your current dose?",
+      );
+
+      return allQuestions.filter((question) => {
+        const normalizedBody = normalizeText(question.body);
+
+        if (normalizedBody === "which glp-1 are you taking?") {
+          return glp1Answer !== "no";
+        }
+
+        if (normalizedBody === "do you know your current dose?") {
+          return glp1Answer !== "no";
+        }
+
+        if (normalizedBody === "what is your current dose?") {
+          return glp1Answer !== "no" && doseKnownAnswer !== "no";
+        }
+
+        if (normalizedBody === "which medication are you taking?") {
+          return glp1Answer !== "no";
+        }
+
+        return true;
+      });
+    },
+    [answers, survey],
   );
 
   function isQuestionAnswered(

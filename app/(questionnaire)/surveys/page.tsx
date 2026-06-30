@@ -44,6 +44,8 @@ import {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DEFER_OPTION_TEXT = "no consent - defer exam.";
 const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-weight-loss-program-prefill-source";
 
 type SavedProgramAnswer = {
   question: string;
@@ -668,6 +670,15 @@ const Page = () => {
       return;
     }
 
+    const prefillSource = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
+    );
+
+    if (prefillSource !== "card-flow") {
+      setHasAppliedSavedProgramAnswers(true);
+      return;
+    }
+
     if (
       normalizeText(survey.name) !== "weight loss program" &&
       normalizeText(survey.category) !== "weight loss program"
@@ -694,6 +705,7 @@ const Page = () => {
         parsedSavedProgram.program !== "weight-loss" ||
         !parsedSavedProgram.answers?.length
       ) {
+        window.localStorage.removeItem(WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY);
         setHasAppliedSavedProgramAnswers(true);
         return;
       }
@@ -706,6 +718,7 @@ const Page = () => {
       const prefilledQuestionIds = new Set(Object.keys(prefilledAnswers));
 
       if (prefilledQuestionIds.size === 0) {
+        window.localStorage.removeItem(WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY);
         setHasAppliedSavedProgramAnswers(true);
         return;
       }
@@ -727,9 +740,11 @@ const Page = () => {
         handleQuestionIndexChange(firstUnansweredIndex);
       }
 
+      window.localStorage.removeItem(WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY);
       setHasAppliedSavedProgramAnswers(true);
     } catch (error) {
       console.error("Failed to apply saved weight-loss answers:", error);
+      window.localStorage.removeItem(WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY);
       setHasAppliedSavedProgramAnswers(true);
     }
   }, [

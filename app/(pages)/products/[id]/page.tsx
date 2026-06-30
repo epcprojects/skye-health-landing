@@ -17,6 +17,7 @@ import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { toastAlert } from "@/app/components/ToastAlert";
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
+import { canAddProductWithCartRules } from "@/app/lib/cartRules";
 import {
   selectProductById,
   selectRelatedProducts,
@@ -49,6 +50,9 @@ const Page = () => {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) =>
+    state.cart.allIds.map((id) => state.cart.itemsById[id]).filter(Boolean),
+  );
   const product = useAppSelector((state) =>
     selectProductById(state, params.id as string),
   );
@@ -266,6 +270,19 @@ const Page = () => {
               <button
                 type="button"
                 onClick={() => {
+                  const cartGuard = canAddProductWithCartRules(
+                    cartItems,
+                    product.id,
+                  );
+
+                  if (!cartGuard.allowed) {
+                    toastAlert(
+                      cartGuard.message ?? "Unable to add product to cart.",
+                      false,
+                    );
+                    return;
+                  }
+
                   dispatch(
                     addProductToCart({
                       product,
@@ -370,6 +387,20 @@ const Page = () => {
                         router.push(`/products/${p.id}`)
                       }
                       onAddToCart={() => {
+                        const cartGuard = canAddProductWithCartRules(
+                          cartItems,
+                          p.id,
+                        );
+
+                        if (!cartGuard.allowed) {
+                          toastAlert(
+                            cartGuard.message ??
+                              "Unable to add product to cart.",
+                            false,
+                          );
+                          return;
+                        }
+
                         dispatch(addProductToCart({ product: p }));
                         toastAlert("Added to Cart Successfully", true);
                       }}
