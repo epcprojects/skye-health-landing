@@ -326,14 +326,13 @@ const HormoneProgramModal = ({
         </div>
         <div className="flex items-center gap-3">
           {step !== "sex" && (
-            <button
-              type="button"
+            <ThemeButton
+              label="Back"
               onClick={handleBack}
-              className="inline-flex min-w-28 items-center justify-center gap-2 rounded-2xl border border-[#D8DDE5] px-5 py-3 text-lg text-[#5B667A] transition-colors hover:bg-gray-50"
-            >
-              <span aria-hidden="true">←</span>
-              Back
-            </button>
+              variant="outlined"
+              size="sm"
+              className="py-2.5!"
+            />
           )}
           <ThemeButton
             label="Next"
@@ -341,9 +340,7 @@ const HormoneProgramModal = ({
             disabled={!canMoveNext}
             variant="primaryFilled"
             size="sm"
-            icon={<ArrowRightIcon />}
-            iconPosition="end"
-            className="min-w-28 rounded-xl!"
+            className="py-2.5! border border-primary"
           />
         </div>
       </div>
@@ -669,3 +666,4 @@ therapy journey"
 };
 
 export default HormoneProgramModal;
+
