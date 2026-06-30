@@ -22,6 +22,8 @@ type TherapyAnswer = "yes" | "no" | null;
 type HappyAnswer = "yes" | "no" | null;
 type ModalStep = "intro" | "sex" | "reasons" | "therapy" | "goals" | "summary";
 
+const HORMONE_PROGRAM_STORAGE_KEY = "skye-hormone-program";
+
 const maleReasons = [
   "Low energy or fatigue",
   "Weight gain",
@@ -159,6 +161,75 @@ const HormoneProgramModal = ({
     therapyAnswer,
     therapyDetails,
   ]);
+
+  const questionnaireAnswers = useMemo(() => {
+    const answers: Array<{ question: string; answer: string }> = [];
+
+    if (sexAnswer !== null) {
+      answers.push({
+        question: "What sex were you assigned at birth?",
+        answer: sexAnswer === "male" ? "Male" : "Female",
+      });
+    }
+
+    if (selectedReasons.length > 0) {
+      answers.push({
+        question: "What brings you here today?",
+        answer: selectedReasons.join(" | "),
+      });
+    }
+
+    if (therapyAnswer !== null) {
+      answers.push({
+        question: "Are you currently taking hormone therapy?",
+        answer: therapyAnswer === "yes" ? "Yes" : "No",
+      });
+    }
+
+    if (therapyAnswer === "yes" && therapyDetails.trim()) {
+      answers.push({
+        question: "List medication, strength & duration of treatment",
+        answer: therapyDetails.trim(),
+      });
+    }
+
+    if (therapyAnswer === "yes" && happyWithTreatment !== null) {
+      answers.push({
+        question: "Are you happy with your current treatment?",
+        answer: happyWithTreatment === "yes" ? "Yes" : "No",
+      });
+    }
+
+    if (selectedGoals.length > 0) {
+      answers.push({
+        question: "What do you want to improve?",
+        answer: selectedGoals.join(" | "),
+      });
+    }
+
+    return answers;
+  }, [
+    happyWithTreatment,
+    selectedGoals,
+    selectedReasons,
+    sexAnswer,
+    therapyAnswer,
+    therapyDetails,
+  ]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isOpen) return;
+
+    window.localStorage.setItem(
+      HORMONE_PROGRAM_STORAGE_KEY,
+      JSON.stringify({
+        program: "hormone",
+        updatedAt: new Date().toISOString(),
+        answers: questionnaireAnswers,
+      }),
+    );
+  }, [isOpen, questionnaireAnswers]);
 
   const progressWidth = useMemo(() => {
     if (step === "summary") return "100%";

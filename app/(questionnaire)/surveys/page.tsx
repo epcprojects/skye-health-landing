@@ -46,6 +46,9 @@ const DEFER_OPTION_TEXT = "no consent - defer exam.";
 const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
 const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
   "skye-weight-loss-program-prefill-source";
+const HORMONE_PROGRAM_STORAGE_KEY = "skye-hormone-program";
+const HORMONE_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-hormone-program-prefill-source";
 
 type SavedProgramAnswer = {
   question: string;
@@ -235,6 +238,126 @@ const buildWeightLossPrefillAnswers = (
     ) {
       nextAnswers[currentMedicationQuestion.id] = {
         questionOptionIds: [preferredMedicationOptionId],
+      };
+    }
+  }
+
+  return nextAnswers;
+};
+
+const splitSavedMultiAnswer = (value?: string) =>
+  value
+    ?.split("|")
+    .map((entry) => entry.trim())
+    .filter(Boolean) ?? [];
+
+const buildHormonePrefillAnswers = (
+  survey: SurveyType,
+  savedAnswers: SavedProgramAnswer[],
+): SurveyAnswers => {
+  const nextAnswers: SurveyAnswers = {};
+
+  const sexAnswer = findSavedAnswer(
+    savedAnswers,
+    "What sex were you assigned at birth?",
+  );
+  const sexQuestion = findQuestionByBody(
+    survey,
+    "What sex were you assigned at birth?",
+  );
+  const sexOptionId = findOptionIdByAnswer(sexQuestion, sexAnswer);
+  if (sexQuestion && sexOptionId) {
+    nextAnswers[sexQuestion.id] = {
+      questionOptionIds: [sexOptionId],
+    };
+  }
+
+  const reasonsAnswer = splitSavedMultiAnswer(
+    findSavedAnswer(savedAnswers, "What brings you here today?"),
+  );
+  const reasonsQuestion = findQuestionByBody(
+    survey,
+    "What brings you here today?",
+  );
+  if (reasonsQuestion && reasonsAnswer.length > 0) {
+    const optionIds = reasonsQuestion.questionOptions
+      .filter((option) =>
+        reasonsAnswer.some(
+          (answer) => findOptionIdByAnswer(reasonsQuestion, answer) === option.id,
+        ),
+      )
+      .map((option) => option.id);
+
+    if (optionIds.length > 0) {
+      nextAnswers[reasonsQuestion.id] = {
+        questionOptionIds: optionIds,
+      };
+    }
+  }
+
+  const therapyAnswer = findSavedAnswer(
+    savedAnswers,
+    "Are you currently taking hormone therapy?",
+  );
+  const therapyQuestion = findQuestionByBody(
+    survey,
+    "Are you currently taking hormone therapy?",
+  );
+  const therapyOptionId = findOptionIdByAnswer(therapyQuestion, therapyAnswer);
+  if (therapyQuestion && therapyOptionId) {
+    nextAnswers[therapyQuestion.id] = {
+      questionOptionIds: [therapyOptionId],
+    };
+  }
+
+  const therapyDetailsAnswer = findSavedAnswer(
+    savedAnswers,
+    "List medication, strength & duration of treatment",
+  );
+  const therapyDetailsQuestion = findQuestionByBodyStartsWith(
+    survey,
+    "List medication, strength",
+  );
+  if (therapyDetailsQuestion && therapyDetailsAnswer) {
+    nextAnswers[therapyDetailsQuestion.id] = {
+      valueText: therapyDetailsAnswer,
+    };
+  }
+
+  const happyAnswer = findSavedAnswer(
+    savedAnswers,
+    "Are you happy with your current treatment?",
+  );
+  const happyQuestion = findQuestionByBody(
+    survey,
+    "Are you happy with your current treatment?",
+  );
+  const happyOptionId = findOptionIdByAnswer(happyQuestion, happyAnswer);
+  if (happyQuestion && happyOptionId) {
+    nextAnswers[happyQuestion.id] = {
+      questionOptionIds: [happyOptionId],
+    };
+  }
+
+  const goalsAnswer = splitSavedMultiAnswer(
+    findSavedAnswer(savedAnswers, "What do you want to improve?"),
+  );
+  const goalsQuestion = findQuestionByBody(
+    survey,
+    "What do you want to improve?",
+  );
+  if (goalsQuestion && goalsAnswer.length > 0) {
+    const optionIds = goalsQuestion.questionOptions
+      .filter((option) =>
+        goalsAnswer.some(
+          (answer) => findOptionIdByAnswer(goalsQuestion, answer) === option.id,
+        ),
+      )
+      .map((option) => option.id);
+
+    if (optionIds.length > 0) {
+      nextAnswers[goalsQuestion.id] = {
+        questionOptionIds: optionIds,
       };
     }
   }
@@ -675,7 +798,6 @@ const Page = () => {
     );
 
     if (prefillSource !== "card-flow") {
-      setHasAppliedSavedProgramAnswers(true);
       return;
     }
 
@@ -745,6 +867,101 @@ const Page = () => {
     } catch (error) {
       console.error("Failed to apply saved weight-loss answers:", error);
       window.localStorage.removeItem(WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY);
+      setHasAppliedSavedProgramAnswers(true);
+    }
+  }, [
+    handleQuestionIndexChange,
+    hasAppliedSavedProgramAnswers,
+    hasCapturedEmail,
+    loading,
+    survey,
+  ]);
+
+  useEffect(() => {
+    if (
+      loading ||
+      !survey ||
+      !hasCapturedEmail ||
+      hasAppliedSavedProgramAnswers ||
+      typeof window === "undefined"
+    ) {
+      return;
+    }
+
+    const prefillSource = window.localStorage.getItem(
+      HORMONE_PROGRAM_PREFILL_SOURCE_KEY,
+    );
+
+    if (prefillSource !== "card-flow") {
+      return;
+    }
+
+    if (
+      normalizeText(survey.name) !== "hormone program" &&
+      normalizeText(survey.category) !== "hormone program"
+    ) {
+      window.localStorage.removeItem(HORMONE_PROGRAM_PREFILL_SOURCE_KEY);
+      return;
+    }
+
+    const rawSavedProgram = window.localStorage.getItem(
+      HORMONE_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) {
+      window.localStorage.removeItem(HORMONE_PROGRAM_PREFILL_SOURCE_KEY);
+      setHasAppliedSavedProgramAnswers(true);
+      return;
+    }
+
+    try {
+      const parsedSavedProgram = JSON.parse(
+        rawSavedProgram,
+      ) as SavedProgramPayload;
+
+      if (
+        parsedSavedProgram.program !== "hormone" ||
+        !parsedSavedProgram.answers?.length
+      ) {
+        window.localStorage.removeItem(HORMONE_PROGRAM_PREFILL_SOURCE_KEY);
+        setHasAppliedSavedProgramAnswers(true);
+        return;
+      }
+
+      const prefilledAnswers = buildHormonePrefillAnswers(
+        survey,
+        parsedSavedProgram.answers,
+      );
+      const prefilledQuestionIds = new Set(Object.keys(prefilledAnswers));
+
+      if (prefilledQuestionIds.size === 0) {
+        window.localStorage.removeItem(HORMONE_PROGRAM_PREFILL_SOURCE_KEY);
+        setHasAppliedSavedProgramAnswers(true);
+        return;
+      }
+
+      setSurveyAnswers((prev) => ({
+        ...prefilledAnswers,
+        ...prev,
+      }));
+
+      const sortedQuestions =
+        survey.questions
+          ?.slice()
+          .sort((first, second) => first.position - second.position) ?? [];
+      const firstUnansweredIndex = sortedQuestions.findIndex(
+        (question) => !prefilledQuestionIds.has(question.id),
+      );
+
+      if (firstUnansweredIndex > 0) {
+        handleQuestionIndexChange(firstUnansweredIndex);
+      }
+
+      window.localStorage.removeItem(HORMONE_PROGRAM_PREFILL_SOURCE_KEY);
+      setHasAppliedSavedProgramAnswers(true);
+    } catch (error) {
+      console.error("Failed to apply saved hormone answers:", error);
+      window.localStorage.removeItem(HORMONE_PROGRAM_PREFILL_SOURCE_KEY);
       setHasAppliedSavedProgramAnswers(true);
     }
   }, [

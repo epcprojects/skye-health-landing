@@ -68,6 +68,7 @@ import {
 const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
 const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
   "skye-weight-loss-program-prefill-source";
+const HORMONE_PROGRAM_PREFILL_SOURCE_KEY = "skye-hormone-program-prefill-source";
 
 type SavedProgramAnswer = {
   question: string;
@@ -104,6 +105,35 @@ const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
       unitQuantity: "",
       cost: 199,
       retailPrice: 199,
+    },
+  ],
+};
+
+const HORMONE_PROGRAM_PRODUCT: ProductType = {
+  id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
+  sku: "HRT-PROGRAM",
+  name: "Hormone Program",
+  description: "",
+  category: "Hormone Program",
+  brand: "",
+  price: 0,
+  retailPrice: 0,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Integrity",
+  productUnitPricings: [
+    {
+      id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
+      sku: "HRT-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 0,
+      retailPrice: 0,
     },
   ],
 };
@@ -163,7 +193,7 @@ export default function Home() {
       router.push("products?category=Supplies");
     },
     "hormones-therapy": () => {
-      router.push("products?category=Hormones");
+      setIsHormoneModalOpen(true);
     },
   };
 
@@ -370,8 +400,35 @@ export default function Home() {
         isOpen={isHormoneModalOpen}
         onClose={() => setIsHormoneModalOpen(false)}
         onStartQuestionnaire={() => {
+          const hasHormoneProgramInCart = cartItems.some(
+            (item) => item.productId === HORMONE_PROGRAM_PRODUCT.id,
+          );
+
+          if (!hasHormoneProgramInCart) {
+            dispatch(
+              addProductToCart({
+                product: HORMONE_PROGRAM_PRODUCT,
+                qty: 1,
+              }),
+            );
+          } else {
+            dispatch(
+              setQty({
+                productId: HORMONE_PROGRAM_PRODUCT.id,
+                qty: 1,
+              }),
+            );
+          }
+
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(
+              HORMONE_PROGRAM_PREFILL_SOURCE_KEY,
+              "card-flow",
+            );
+          }
+
           setIsHormoneModalOpen(false);
-          router.push("/products?category=Hormones");
+          router.push("/surveys?step=1");
         }}
       />
       <section className="bg-primary pt-44 lg:pt-59 pb-12 lg:pb-24 relative">
