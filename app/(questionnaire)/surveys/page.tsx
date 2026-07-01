@@ -283,7 +283,8 @@ const buildHormonePrefillAnswers = (
     const optionIds = reasonsQuestion.questionOptions
       .filter((option) =>
         reasonsAnswer.some(
-          (answer) => findOptionIdByAnswer(reasonsQuestion, answer) === option.id,
+          (answer) =>
+            findOptionIdByAnswer(reasonsQuestion, answer) === option.id,
         ),
       )
       .map((option) => option.id);
@@ -1213,7 +1214,7 @@ const Page = () => {
               className="text-neutral-800 w-fit text-center text-base md:text-lg group"
             >
               <span className="font-bold text-primary">Need Help?</span> Call ({" "}
-              <span className="group-hover:underline underline-offset-4">
+              <span className="group-hover:underline underline-offset-4 pe-2">
                 (888) 890-8143
               </span>
               for assistance)
