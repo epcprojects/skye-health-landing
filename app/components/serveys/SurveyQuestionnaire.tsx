@@ -93,6 +93,48 @@ function getSingleSelectAnswerValue(
   );
 }
 
+function startsWithNormalized(text?: string | null, prefix?: string) {
+  return normalizeText(text).startsWith(normalizeText(prefix));
+}
+
+function isWeightLossSurvey(survey: SurveyType) {
+  return (
+    normalizeText(survey.name) === "weight loss program" ||
+    normalizeText(survey.category) === "weight loss program"
+  );
+}
+
+function isHormoneSurvey(survey: SurveyType) {
+  return (
+    normalizeText(survey.name) === "hormone program" ||
+    normalizeText(survey.category) === "hormone program"
+  );
+}
+
+function isHormoneTherapyFollowupQuestion(question: QuestionType) {
+  return (
+    startsWithNormalized(question.body, "List medication, strength") ||
+    startsWithNormalized(question.body, "Are you happy with your current treatment?")
+  );
+}
+
+function isFemaleHormoneQuestion(question: QuestionType) {
+  return (
+    startsWithNormalized(question.body, "Pregnancy") ||
+    startsWithNormalized(question.body, "Menstrual") ||
+    startsWithNormalized(question.body, "Uterus") ||
+    startsWithNormalized(question.body, "Cervical screening") ||
+    startsWithNormalized(question.body, "Breast screening")
+  );
+}
+
+function isMaleHormoneQuestion(question: QuestionType) {
+  return (
+    startsWithNormalized(question.body, "Fertility intent") ||
+    startsWithNormalized(question.body, "PSA")
+  );
+}
+
 function parseHeightValue(raw: string) {
   const trimmed = raw.trim();
   if (!trimmed) {
@@ -582,46 +624,73 @@ export function SurveyQuestionnaire({
           .slice()
           .sort((a, b) => a.position - b.position) ?? [];
 
-      const isWeightLossSurvey =
-        normalizeText(survey.name) === "weight loss program" ||
-        normalizeText(survey.category) === "weight loss program";
+      let visibleQuestions = allQuestions;
 
-      if (!isWeightLossSurvey) {
-        return allQuestions;
+      if (isWeightLossSurvey(survey)) {
+        const glp1Answer = getSingleSelectAnswerValue(
+          survey,
+          answers,
+          "Are you currently taking a GLP-1 medication?",
+        );
+        const doseKnownAnswer = getSingleSelectAnswerValue(
+          survey,
+          answers,
+          "Do you know your current dose?",
+        );
+
+        visibleQuestions = visibleQuestions.filter((question) => {
+          const normalizedBody = normalizeText(question.body);
+
+          if (normalizedBody === "which glp-1 are you taking?") {
+            return glp1Answer !== "no";
+          }
+
+          if (normalizedBody === "do you know your current dose?") {
+            return glp1Answer !== "no";
+          }
+
+          if (normalizedBody === "what is your current dose?") {
+            return glp1Answer !== "no" && doseKnownAnswer !== "no";
+          }
+
+          if (normalizedBody === "which medication are you taking?") {
+            return glp1Answer !== "no";
+          }
+
+          return true;
+        });
       }
 
-      const glp1Answer = getSingleSelectAnswerValue(
-        survey,
-        answers,
-        "Are you currently taking a GLP-1 medication?",
-      );
-      const doseKnownAnswer = getSingleSelectAnswerValue(
-        survey,
-        answers,
-        "Do you know your current dose?",
-      );
+      if (isHormoneSurvey(survey)) {
+        const sexAtBirthAnswer = getSingleSelectAnswerValue(
+          survey,
+          answers,
+          "What sex were you assigned at birth?",
+        );
+        const onHormoneTherapyAnswer = getSingleSelectAnswerValue(
+          survey,
+          answers,
+          "Are you currently taking hormone therapy?",
+        );
 
-      return allQuestions.filter((question) => {
-        const normalizedBody = normalizeText(question.body);
+        visibleQuestions = visibleQuestions.filter((question) => {
+          if (isHormoneTherapyFollowupQuestion(question)) {
+            return onHormoneTherapyAnswer === "yes";
+          }
 
-        if (normalizedBody === "which glp-1 are you taking?") {
-          return glp1Answer !== "no";
-        }
+          if (isFemaleHormoneQuestion(question)) {
+            return sexAtBirthAnswer === "female";
+          }
 
-        if (normalizedBody === "do you know your current dose?") {
-          return glp1Answer !== "no";
-        }
+          if (isMaleHormoneQuestion(question)) {
+            return sexAtBirthAnswer === "male";
+          }
 
-        if (normalizedBody === "what is your current dose?") {
-          return glp1Answer !== "no" && doseKnownAnswer !== "no";
-        }
+          return true;
+        });
+      }
 
-        if (normalizedBody === "which medication are you taking?") {
-          return glp1Answer !== "no";
-        }
-
-        return true;
-      });
+      return visibleQuestions;
     },
     [answers, survey],
   );
