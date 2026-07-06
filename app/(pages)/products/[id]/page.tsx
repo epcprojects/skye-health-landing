@@ -362,7 +362,7 @@ const Page = () => {
                   id: p.id,
                   title: p.name,
                   category: p.category,
-                  stock: p.status === "IN_STOCK",
+                  stock: p.inStock,
                   price:
                     Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
                       ? Number(p.retailPrice ? p.retailPrice : p.price)
