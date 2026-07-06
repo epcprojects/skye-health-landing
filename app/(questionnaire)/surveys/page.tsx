@@ -681,11 +681,11 @@ const Page = () => {
         if (userExists) {
           window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/login?externalUserId=${encodeURIComponent(
             externalUserId,
-          )}`;
+          )}&email=${encodeURIComponent(trimmedEmail)}`;
         } else {
           window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
             externalUserId,
-          )}`;
+          )}&email=${encodeURIComponent(trimmedEmail)}`;
         }
       }
       setSurveyAnswers({});

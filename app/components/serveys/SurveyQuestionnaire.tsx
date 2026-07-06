@@ -186,6 +186,17 @@ function sanitizeHeightPart(
   return String(clampedValue);
 }
 
+function sanitizeWeightValue(raw: string) {
+  const cleaned = raw.replace(/[^\d.]/g, "");
+  const segments = cleaned.split(".");
+
+  if (segments.length <= 1) {
+    return cleaned;
+  }
+
+  return `${segments[0]}.${segments.slice(1).join("")}`;
+}
+
 function findAnswerValueByQuestion(
   survey: SurveyType,
   answers: SurveyAnswers,
@@ -579,8 +590,15 @@ function SurveyQuestion({
             <div className="space-y-3">
               <ThemeInput
                 label=""
+                type={isWeightField ? "number" : "text"}
                 value={valueText}
-                onChange={(e) => onTextChange(e.target.value)}
+                onChange={(e) =>
+                  onTextChange(
+                    isWeightField
+                      ? sanitizeWeightValue(e.target.value)
+                      : e.target.value,
+                  )
+                }
                 placeholder={
                   isWeightField
                     ? "Enter your weight in pounds (lbs)"
