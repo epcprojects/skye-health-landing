@@ -43,7 +43,6 @@ import TabletImage from "@/public/images/Tablet.png";
 import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
 import TrocheImage from "@/public/images/Troche.png";
 import VialImage from "@/public/images/Vial.png";
-import HomePageProductCard from "@/app/components/HomePageProductsCard";
 import ProductCard from "@/app/components/ProductCard";
 
 const Page = () => {

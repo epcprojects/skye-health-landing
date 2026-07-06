@@ -191,10 +191,23 @@ function sanitizeWeightValue(raw: string) {
   const segments = cleaned.split(".");
 
   if (segments.length <= 1) {
-    return cleaned;
+    if (!cleaned) return "";
+
+    const numericValue = Number.parseFloat(cleaned);
+    if (!Number.isFinite(numericValue)) return "";
+
+    const clampedValue = Math.min(Math.max(numericValue, 1), 700);
+    return String(clampedValue);
   }
 
-  return `${segments[0]}.${segments.slice(1).join("")}`;
+  const normalized = `${segments[0]}.${segments.slice(1).join("")}`;
+  if (!normalized) return "";
+
+  const numericValue = Number.parseFloat(normalized);
+  if (!Number.isFinite(numericValue)) return "";
+
+  const clampedValue = Math.min(Math.max(numericValue, 1), 700);
+  return String(clampedValue);
 }
 
 function findAnswerValueByQuestion(
