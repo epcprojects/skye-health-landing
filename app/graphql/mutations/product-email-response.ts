@@ -26,7 +26,9 @@ export type CreateProductEmailResponsesMutationResult = {
 
 export type CreateProductEmailResponsesMutationVariables = {
   input: {
+    dateOfBirth?: string;
     email: string;
     productIds: string[];
+    gender?: string;
   };
 };

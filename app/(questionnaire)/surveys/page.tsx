@@ -435,6 +435,64 @@ const calculateBmiValue = (heightText?: string, weightText?: string) => {
   return bmi.toFixed(1);
 };
 
+const GENDER_OPTIONS = [
+  { label: "Male", value: "MALE" },
+  { label: "Female", value: "FEMALE" },
+] as const;
+
+const sanitizeDatePart = (value: string, maxLength: number) =>
+  value.replace(/\D/g, "").slice(0, maxLength);
+
+const getDateOfBirthError = (month: string, day: string, year: string) => {
+  if (!month && !day && !year) return "";
+  if (month.length !== 2 || day.length !== 2 || year.length !== 4) {
+    return "Please enter a valid date of birth.";
+  }
+
+  const monthNumber = Number.parseInt(month, 10);
+  const dayNumber = Number.parseInt(day, 10);
+  const yearNumber = Number.parseInt(year, 10);
+
+  if (
+    !Number.isFinite(monthNumber) ||
+    !Number.isFinite(dayNumber) ||
+    !Number.isFinite(yearNumber) ||
+    monthNumber < 1 ||
+    monthNumber > 12
+  ) {
+    return "Please enter a valid date of birth.";
+  }
+
+  const dob = new Date(yearNumber, monthNumber - 1, dayNumber);
+  const isValidDate =
+    dob.getFullYear() === yearNumber &&
+    dob.getMonth() === monthNumber - 1 &&
+    dob.getDate() === dayNumber;
+
+  if (!isValidDate) {
+    return "Please enter a valid date of birth.";
+  }
+
+  const today = new Date();
+  let age = today.getFullYear() - yearNumber;
+  const hasHadBirthdayThisYear =
+    today.getMonth() > monthNumber - 1 ||
+    (today.getMonth() === monthNumber - 1 && today.getDate() >= dayNumber);
+
+  if (!hasHadBirthdayThisYear) {
+    age -= 1;
+  }
+
+  if (age < 18) {
+    return "You must be at least 18 years old.";
+  }
+
+  return "";
+};
+
+const buildDateOfBirthValue = (month: string, day: string, year: string) =>
+  `${year}-${month}-${day}`;
+
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
   const dispatch = useAppDispatch();
@@ -457,6 +515,11 @@ const Page = () => {
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailSubmissionError, setEmailSubmissionError] = useState("");
+  const [dateOfBirthMonth, setDateOfBirthMonth] = useState("");
+  const [dateOfBirthDay, setDateOfBirthDay] = useState("");
+  const [dateOfBirthYear, setDateOfBirthYear] = useState("");
+  const [dateOfBirthTouched, setDateOfBirthTouched] = useState(false);
+  const [gender, setGender] = useState("");
   const [externalUserId, setExternalUserId] = useState("");
   const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
   const [hasAppliedSavedProgramAnswers, setHasAppliedSavedProgramAnswers] =
@@ -493,6 +556,23 @@ const Page = () => {
   const hasEmailError = shouldShowEmailError || !!emailSubmissionError;
   const emailErrorMessage =
     emailSubmissionError || "Please enter a valid email address.";
+  const dateOfBirthError = getDateOfBirthError(
+    dateOfBirthMonth,
+    dateOfBirthDay,
+    dateOfBirthYear,
+  );
+  const showDateOfBirthError = dateOfBirthTouched && !!dateOfBirthError;
+  const isDateOfBirthValid =
+    dateOfBirthMonth.length === 2 &&
+    dateOfBirthDay.length === 2 &&
+    dateOfBirthYear.length === 4 &&
+    !dateOfBirthError;
+  const isGenderValid = gender === "MALE" || gender === "FEMALE";
+  const formattedDateOfBirth = buildDateOfBirthValue(
+    dateOfBirthMonth,
+    dateOfBirthDay,
+    dateOfBirthYear,
+  );
 
   //servey functions
 
@@ -685,7 +765,9 @@ const Page = () => {
         } else {
           window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
             externalUserId,
-          )}&email=${encodeURIComponent(trimmedEmail)}`;
+          )}&email=${encodeURIComponent(trimmedEmail)}&dob=${encodeURIComponent(
+            formattedDateOfBirth,
+          )}&gender=${encodeURIComponent(gender)}`;
         }
       }
       setSurveyAnswers({});
@@ -709,6 +791,8 @@ const Page = () => {
     tax,
     createCart,
     externalUserId,
+    formattedDateOfBirth,
+    gender,
     checkUserExists,
     trimmedEmail,
   ]);
@@ -740,6 +824,11 @@ const Page = () => {
     setEmail("");
     setEmailTouched(false);
     setEmailSubmissionError("");
+    setDateOfBirthMonth("");
+    setDateOfBirthDay("");
+    setDateOfBirthYear("");
+    setDateOfBirthTouched(false);
+    setGender("");
     setExternalUserId("");
     setHasCapturedEmail(false);
     setHasAppliedSavedProgramAnswers(false);
@@ -1022,8 +1111,10 @@ const Page = () => {
   const handleEmailConfirm = async () => {
     setEmailTouched(true);
     setEmailSubmissionError("");
+    setDateOfBirthTouched(true);
 
     if (!isEmailValid) return;
+    if (!isDateOfBirthValid || !isGenderValid) return;
 
     if (emailProductIds.length === 0) {
       setEmailSubmissionError("No products were found for this questionnaire.");
@@ -1036,6 +1127,12 @@ const Page = () => {
           input: {
             email: trimmedEmail,
             productIds: emailProductIds,
+            dateOfBirth: buildDateOfBirthValue(
+              dateOfBirthMonth,
+              dateOfBirthDay,
+              dateOfBirthYear,
+            ),
+            gender,
           },
         },
       });
@@ -1149,7 +1246,7 @@ const Page = () => {
             onConfirm={() => {
               void handleEmailConfirm();
             }}
-            title="Please enter your email to continue."
+            title="Please enter following."
             confirmLabel={isCreatingProductEmail ? "Continuing..." : "Continue"}
             confirmBtnVarient="primary"
             hideCancelBtn
@@ -1158,9 +1255,14 @@ const Page = () => {
             outSideClickClose={false}
             scrollNeeded={false}
             bodyPaddingClasses="p-4 md:p-6"
-            confimBtnDisable={!isEmailValid || isCreatingProductEmail}
+            confimBtnDisable={
+              !isEmailValid ||
+              !isDateOfBirthValid ||
+              !isGenderValid ||
+              isCreatingProductEmail
+            }
           >
-            <div className="space-y-4">
+            <div className="space-y-6">
               <p className="text-sm leading-6 text-neutral-600 md:text-base">
                 You&apos;ll create your account after answering a couple
                 questions from the Doctor
@@ -1182,6 +1284,94 @@ const Page = () => {
                 autoComplete="email"
                 disabled={isCreatingProductEmail}
               />
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-normal text-black md:text-base">
+                    Date of birth <span className="text-red-500">*</span>
+                  </span>
+                  <span className="text-sm text-neutral-500 md:text-base">
+                    confirms eligibility
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <ThemeInput
+                    type="text"
+                    label=""
+                    placeholder="MM"
+                    value={dateOfBirthMonth}
+                    onChange={(e) =>
+                      setDateOfBirthMonth(sanitizeDatePart(e.target.value, 2))
+                    }
+                    onBlur={() => setDateOfBirthTouched(true)}
+                    error={showDateOfBirthError}
+                    className="rounded-2xl px-4 text-lg placeholder:text-[#98A2B3]"
+                    maxLength={2}
+                    disabled={isCreatingProductEmail}
+                  />
+                  <ThemeInput
+                    type="text"
+                    label=""
+                    placeholder="DD"
+                    value={dateOfBirthDay}
+                    onChange={(e) =>
+                      setDateOfBirthDay(sanitizeDatePart(e.target.value, 2))
+                    }
+                    onBlur={() => setDateOfBirthTouched(true)}
+                    error={showDateOfBirthError}
+                    className="rounded-2xl px-4 text-lg placeholder:text-[#98A2B3]"
+                    maxLength={2}
+                    disabled={isCreatingProductEmail}
+                  />
+                  <ThemeInput
+                    type="text"
+                    label=""
+                    placeholder="YYYY"
+                    value={dateOfBirthYear}
+                    onChange={(e) =>
+                      setDateOfBirthYear(sanitizeDatePart(e.target.value, 4))
+                    }
+                    onBlur={() => setDateOfBirthTouched(true)}
+                    error={showDateOfBirthError}
+                    className="rounded-2xl px-4 text-lg placeholder:text-[#98A2B3]"
+                    maxLength={4}
+                    disabled={isCreatingProductEmail}
+                  />
+                </div>
+
+                {showDateOfBirthError && (
+                  <p className="text-sm text-red-500">{dateOfBirthError}</p>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <div className="text-sm font-normal text-black md:text-base">
+                  Biological sex <span className="text-red-500">*</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {GENDER_OPTIONS.map((option) => {
+                    const isSelected = gender === option.value;
+
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setGender(option.value)}
+                        disabled={isCreatingProductEmail}
+                        className={`h-12 rounded-xl border px-4 text-lg transition-colors ${
+                          isSelected
+                            ? "border-primary bg-[#ECF3FF] text-primary"
+                            : "border-gray-200 bg-white text-[#121826] hover:border-primary/50"
+                        } ${isCreatingProductEmail ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+                      >
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </AppModal>
 
