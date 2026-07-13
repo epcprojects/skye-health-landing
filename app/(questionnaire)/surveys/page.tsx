@@ -520,6 +520,7 @@ const Page = () => {
   const [dateOfBirthYear, setDateOfBirthYear] = useState("");
   const [dateOfBirthTouched, setDateOfBirthTouched] = useState(false);
   const [gender, setGender] = useState("");
+  const [stateOfResidence, setStateOfResidence] = useState("");
   const [externalUserId, setExternalUserId] = useState("");
   const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
   const [hasAppliedSavedProgramAnswers, setHasAppliedSavedProgramAnswers] =
@@ -829,6 +830,7 @@ const Page = () => {
     setDateOfBirthYear("");
     setDateOfBirthTouched(false);
     setGender("");
+    setStateOfResidence("");
     setExternalUserId("");
     setHasCapturedEmail(false);
     setHasAppliedSavedProgramAnswers(false);
@@ -1282,6 +1284,16 @@ const Page = () => {
                 error={hasEmailError}
                 errorMessage={emailErrorMessage}
                 autoComplete="email"
+                disabled={isCreatingProductEmail}
+              />
+
+              <ThemeInput
+                type="text"
+                label="State of Residence"
+                placeholder="Enter your state of residence"
+                value={stateOfResidence}
+                onChange={(e) => setStateOfResidence(e.target.value)}
+                autoComplete="address-level1"
                 disabled={isCreatingProductEmail}
               />
 
