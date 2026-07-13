@@ -99,8 +99,11 @@ const WeightLossProgramModal = ({
       <div className="mx-auto px-4 py-2 md:px-8 md:py-6">
         <div>
           <h3 className="text-xl font-semibold text-[#121826] md:text-2xl">
-            Weight loss
+            Weight Loss Personalized Treatment Plan
           </h3>
+          <span>
+            (includes medication, ongoing care, refill reviews, and support)
+          </span>
           <div className="mt-2 flex items-end gap-2 text-primary">
             <span className="text-[52px] font-bold leading-none">$199</span>
             <span className="pb-1 text-[20px]">/month</span>
@@ -119,11 +122,17 @@ const WeightLossProgramModal = ({
             <WaveIcon />
             <span>Ongoing progress check-ins</span>
           </div>
-          <div className="flex items-center gap-3">
-            <PhoneFilledIcon />
-            <span>
-              One-time online doctor visit —
-              <span className="font-bold text-primary"> $50</span>
+          <div>
+            <div className="flex items-center gap-3">
+              <PhoneFilledIcon />
+              <span>
+                Physician Review —
+                <span className="font-bold text-primary">$30</span>
+              </span>
+            </div>
+            <span className="block text-base mt-2">
+              Licensed physician review of your health profile and treatment
+              eligibility.
             </span>
           </div>
         </div>
