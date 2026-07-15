@@ -326,96 +326,98 @@ const Page = () => {
           </div>
         )}
 
-        <div className="space-y-4 md:space-y-6">
-          <h2 className="font-extrabold text-2xl lg:text-3xl text-neutral-900">
-            Customers Also Bought
-          </h2>
+        {relatedProducts.length > 0 && (
+          <div className="space-y-4 md:space-y-6">
+            <h2 className="font-extrabold text-2xl lg:text-3xl text-neutral-900">
+              Customers Also Bought
+            </h2>
 
-          <div className="relative ">
-            <div className="absolute -left-4 2xl:-left-20 top-1/2 z-10 -translate-y-1/2">
-              <button
-                onClick={() => swiperRef2.current?.slidePrev()}
-                className="bg-white rounded-full w-10 h-10   border border-neutral-200 flex items-center justify-center hover:drop-shadow"
+            <div className="relative ">
+              <div className="absolute -left-4 2xl:-left-20 top-1/2 z-10 -translate-y-1/2">
+                <button
+                  onClick={() => swiperRef2.current?.slidePrev()}
+                  className="bg-white rounded-full w-10 h-10   border border-neutral-200 flex items-center justify-center hover:drop-shadow"
+                >
+                  <ChevronIcon />
+                </button>
+              </div>
+
+              <div className="absolute -right-4 2xl:-right-20 top-1/2 z-10 -translate-y-1/2">
+                <button
+                  onClick={() => swiperRef2.current?.slideNext()}
+                  className="bg-white rounded-full rotate-180 w-10 h-10 border border-neutral-200 flex items-center justify-center hover:drop-shadow"
+                >
+                  <ChevronIcon />
+                </button>
+              </div>
+              <Swiper
+                pagination={{ clickable: true }}
+                autoplay={false}
+                loop={true}
+                slidesPerView={"auto"}
+                spaceBetween={30}
+                modules={[Autoplay]}
+                className="relative reviewSlider"
+                onSwiper={(swiper) => {
+                  swiperRef2.current = swiper;
+                }}
               >
-                <ChevronIcon />
-              </button>
-            </div>
+                {relatedProducts.map((p: ProductType, index) => {
+                  const mg = extractMg(p.strength);
+                  const image = getProductImage(p);
+                  const cardProduct = {
+                    id: p.id,
+                    title: p.name,
+                    category: p.category,
+                    stock: p.inStock,
+                    price:
+                      Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
+                        ? Number(p.retailPrice ? p.retailPrice : p.price)
+                        : Number(
+                            p.retailPrice ? p.retailPrice : p.price,
+                          ).toFixed(2),
+                    image: image || "",
+                    size: p.strength,
+                    dosing: mg ? `${mg} mg` : "",
+                    timing: "",
+                    type: p.form,
+                    warnings: "",
+                  };
 
-            <div className="absolute -right-4 2xl:-right-20 top-1/2 z-10 -translate-y-1/2">
-              <button
-                onClick={() => swiperRef2.current?.slideNext()}
-                className="bg-white rounded-full rotate-180 w-10 h-10 border border-neutral-200 flex items-center justify-center hover:drop-shadow"
-              >
-                <ChevronIcon />
-              </button>
-            </div>
-            <Swiper
-              pagination={{ clickable: true }}
-              autoplay={false}
-              loop={true}
-              slidesPerView={"auto"}
-              spaceBetween={30}
-              modules={[Autoplay]}
-              className="relative reviewSlider"
-              onSwiper={(swiper) => {
-                swiperRef2.current = swiper;
-              }}
-            >
-              {relatedProducts.map((p: ProductType, index) => {
-                const mg = extractMg(p.strength);
-                const image = getProductImage(p);
-                const cardProduct = {
-                  id: p.id,
-                  title: p.name,
-                  category: p.category,
-                  stock: p.inStock,
-                  price:
-                    Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
-                      ? Number(p.retailPrice ? p.retailPrice : p.price)
-                      : Number(p.retailPrice ? p.retailPrice : p.price).toFixed(
-                          2,
-                        ),
-                  image: image || "",
-                  size: p.strength,
-                  dosing: mg ? `${mg} mg` : "",
-                  timing: "",
-                  type: p.form,
-                  warnings: "",
-                };
-
-                return (
-                  <SwiperSlide key={index} className="max-w-sm! px-0!">
-                    <ProductCard
-                      key={p.id}
-                      product={cardProduct}
-                      onCardClick={(id: string) =>
-                        router.push(`/products/${p.id}`)
-                      }
-                      onAddToCart={() => {
-                        const cartGuard = canAddProductWithCartRules(
-                          cartItems,
-                          p.id,
-                        );
-
-                        if (!cartGuard.allowed) {
-                          toastAlert(
-                            cartGuard.message ??
-                              "Unable to add product to cart.",
-                            false,
-                          );
-                          return;
+                  return (
+                    <SwiperSlide key={index} className="max-w-sm! px-0!">
+                      <ProductCard
+                        key={p.id}
+                        product={cardProduct}
+                        onCardClick={(id: string) =>
+                          router.push(`/products/${p.id}`)
                         }
+                        onAddToCart={() => {
+                          const cartGuard = canAddProductWithCartRules(
+                            cartItems,
+                            p.id,
+                          );
 
-                        dispatch(addProductToCart({ product: p }));
-                        toastAlert("Added to Cart Successfully", true);
-                      }}
-                    />
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
+                          if (!cartGuard.allowed) {
+                            toastAlert(
+                              cartGuard.message ??
+                                "Unable to add product to cart.",
+                              false,
+                            );
+                            return;
+                          }
+
+                          dispatch(addProductToCart({ product: p }));
+                          toastAlert("Added to Cart Successfully", true);
+                        }}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-center">
           <Link
