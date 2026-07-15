@@ -5,13 +5,12 @@ import { useState } from "react";
 import { InfoIcon, PlusIcon } from "@/public/icons";
 import ThemeButton from "../Button/ThemeButton";
 
-
 type ProductsDataCardProps = {
   stockStatus: "in_stock" | "out_of_stock";
   image: string | StaticImageData;
   name: string;
   info: string;
-  tags: readonly  string[];
+  tags: readonly string[];
   price: number;
   onAddToCart: () => void;
 };
@@ -99,7 +98,7 @@ const ProductsDataCard = ({
               onClick={onAddToCart}
               variant="outlinedBluish"
               className="rounded-full!"
-              label={"Add to Cart"}
+              label={"Learn More"}
               icon={<PlusIcon />}
               disabled={!isInStock}
             />

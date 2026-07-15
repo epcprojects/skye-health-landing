@@ -121,7 +121,7 @@ const HomePageProductCard = ({
         >
           <AddIcon />
 
-          <span className="text-base lg:text-lg font-medium">Add to Cart</span>
+          <span className="text-base lg:text-lg font-medium">Learn More</span>
         </button>
 
         <p

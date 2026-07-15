@@ -66,6 +66,8 @@ export default function ProductCard({
     typeof displayPriceValue === "number"
       ? `$${displayPriceValue.toFixed(2)}`
       : displayPriceValue;
+  const shouldHidePrice =
+    product.category?.trim().toLowerCase() === "hormone program";
   const [imageLoaded, setImageLoaded] = useState(false);
   return (
     <div
@@ -226,12 +228,14 @@ export default function ProductCard({
                 }}
                 className="text-sm md:text-lg font-medium text-black hover:bg-neutral-200 cursor-pointer flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-full flex-1  justify-center"
               >
-                <PlusIcon /> Add to Cart
+                <PlusIcon /> Learn More
               </button>
 
-              <h2 className="text-gunmetal font-bold text-sm md:text-lg lg:text-[28px] min-w-16 text-end">
-                {displayPrice}
-              </h2>
+              {!shouldHidePrice && (
+                <h2 className="text-gunmetal font-bold text-sm md:text-lg lg:text-[28px] min-w-16 text-end">
+                  {displayPrice}
+                </h2>
+              )}
             </div>
           </div>
         </div>

@@ -92,6 +92,8 @@ const Page = () => {
     selectedUnitPricing?.cost ??
     product.retailPrice ??
     product.price;
+  const shouldHideHormonePrice =
+    product.category?.trim().toLowerCase() === "hormone program";
 
   const displayStrength = selectedUnitPricing?.strength || product.strength;
 
@@ -200,12 +202,14 @@ const Page = () => {
                 </span>
               </div>
 
-              <h3 className="text-neutral-900 font-extrabold text-3xl lg:text-4xl">
-                $
-                {Number(displayPrice) % 1 === 0
-                  ? Number(displayPrice)
-                  : Number(displayPrice).toFixed(2)}
-              </h3>
+              {!shouldHideHormonePrice && (
+                <h3 className="text-neutral-900 font-extrabold text-3xl lg:text-4xl">
+                  $
+                  {Number(displayPrice) % 1 === 0
+                    ? Number(displayPrice)
+                    : Number(displayPrice).toFixed(2)}
+                </h3>
+              )}
             </div>
 
             {dosageOptions.length > 1 && (
@@ -236,12 +240,14 @@ const Page = () => {
                         <p className="text-base font-semibold text-neutral-800 break-all">
                           {option.unitQuantity}
                         </p>
-                        <p className="text-base mt-3 text-gray-700">
-                          $
-                          {Number(optionPrice) % 1 === 0
-                            ? Number(optionPrice)
-                            : Number(optionPrice).toFixed(2)}
-                        </p>
+                        {!shouldHideHormonePrice && (
+                          <p className="text-base mt-3 text-gray-700">
+                            $
+                            {Number(optionPrice) % 1 === 0
+                              ? Number(optionPrice)
+                              : Number(optionPrice).toFixed(2)}
+                          </p>
+                        )}
                       </button>
                     );
                   })}
@@ -293,11 +299,11 @@ const Page = () => {
                 }}
                 className="rounded-full w-full flex-1 justify-center cursor-pointer hover:bg-primary/90 bg-primary sm:ps-5 p-1.5 sm:p-3 text-white flex items-center gap-3 text-lg sm:text-xl font-medium"
               >
-                Add to Cart
-                <ShoppingCartIcon
+                Learn More
+                {/* <ShoppingCartIcon
                   classname="w-4.5 h-4.5 lg:w-6 lg:h-6"
                   fill="currentColor"
-                />
+                /> */}
               </button>
             </div>
           </div>
