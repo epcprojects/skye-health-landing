@@ -295,28 +295,31 @@ const Header: React.FC<HeaderProps> = ({ menuItems }) => {
                           <p className="text-sm w-full font-medium leading-snug text-gray-900 line-clamp-2">
                             {name}
                           </p>
-                          <QuantityStepper
-                            value={item.qty}
-                            showLabel={false}
-                            onChange={(next) => {
-                              if (next > item.qty) {
-                                dispatch(
-                                  incrementQty({
-                                    cartItemId: item.cartItemId,
-                                  }),
-                                );
-                              } else if (next < item.qty) {
-                                dispatch(
-                                  decrementQty({
-                                    cartItemId: item.cartItemId,
-                                  }),
-                                );
-                              }
-                            }}
-                            min={1}
-                            max={20}
-                            variant="sm"
-                          />
+                          {item.nameSnapshot?.trim().toLowerCase() !==
+                            "hormone program" && (
+                            <QuantityStepper
+                              value={item.qty}
+                              showLabel={false}
+                              onChange={(next) => {
+                                if (next > item.qty) {
+                                  dispatch(
+                                    incrementQty({
+                                      cartItemId: item.cartItemId,
+                                    }),
+                                  );
+                                } else if (next < item.qty) {
+                                  dispatch(
+                                    decrementQty({
+                                      cartItemId: item.cartItemId,
+                                    }),
+                                  );
+                                }
+                              }}
+                              min={1}
+                              max={20}
+                              variant="sm"
+                            />
+                          )}
 
                           <button
                             type="button"
@@ -335,9 +338,12 @@ const Header: React.FC<HeaderProps> = ({ menuItems }) => {
                       </div>
 
                       <div className="text-right">
-                        <p className="text-base font-semibold text-gray-900">
-                          {formatMoney(item.unitPrice * item.qty)}
-                        </p>
+                        {item.nameSnapshot?.trim().toLowerCase() !==
+                          "hormone program" && (
+                          <p className="text-base font-semibold text-gray-900">
+                            {formatMoney(item.unitPrice * item.qty)}
+                          </p>
+                        )}
                       </div>
                     </div>
                   );

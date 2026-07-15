@@ -33,6 +33,10 @@ export function formatMoney(n: number) {
   }).format(n);
 }
 
+function shouldHideCartItemPrice(name?: string) {
+  return name?.trim().toLowerCase() === "hormone program";
+}
+
 export default function CartPopover() {
   const pathname = usePathname();
   const router = useRouter();
@@ -135,36 +139,44 @@ export default function CartPopover() {
                                     </p>
                                   </div>
                                   <div className="text-right">
-                                    <p className="text-base font-semibold text-gray-900">
-                                      {formatMoney(item.unitPrice * item.qty)}
-                                    </p>
+                                    {!shouldHideCartItemPrice(
+                                      item.nameSnapshot,
+                                    ) && (
+                                      <p className="text-base font-semibold text-gray-900">
+                                        {formatMoney(item.unitPrice * item.qty)}
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
 
                                 <div>
                                   <div className="flex flex-row items-center gap-2.5">
-                                    <QuantityStepper
-                                      value={item.qty}
-                                      showLabel={false}
-                                      onChange={(next) => {
-                                        if (next > item.qty) {
-                                          dispatch(
-                                            incrementQty({
-                                              cartItemId: item.cartItemId,
-                                            }),
-                                          );
-                                        } else if (next < item.qty) {
-                                          dispatch(
-                                            decrementQty({
-                                              cartItemId: item.cartItemId,
-                                            }),
-                                          );
-                                        }
-                                      }}
-                                      min={1}
-                                      max={20}
-                                      variant="sm"
-                                    />
+                                    {!shouldHideCartItemPrice(
+                                      item.nameSnapshot,
+                                    ) && (
+                                      <QuantityStepper
+                                        value={item.qty}
+                                        showLabel={false}
+                                        onChange={(next) => {
+                                          if (next > item.qty) {
+                                            dispatch(
+                                              incrementQty({
+                                                cartItemId: item.cartItemId,
+                                              }),
+                                            );
+                                          } else if (next < item.qty) {
+                                            dispatch(
+                                              decrementQty({
+                                                cartItemId: item.cartItemId,
+                                              }),
+                                            );
+                                          }
+                                        }}
+                                        min={1}
+                                        max={20}
+                                        variant="sm"
+                                      />
+                                    )}
                                     {(item.pricingOptions?.length ?? 0) > 1 && (
                                       <div className=" md:min-w-36 w-full md:max-w-36">
                                         <Menu

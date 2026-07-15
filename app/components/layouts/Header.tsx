@@ -173,34 +173,40 @@ const Header = () => {
                               {name}
                             </p>
                             <div className="text-right">
-                              <p className="text-base font-semibold text-gray-900">
-                                {formatMoney(item.unitPrice * item.qty)}
-                              </p>
+                              {item.nameSnapshot?.trim().toLowerCase() !==
+                                "hormone program" && (
+                                <p className="text-base font-semibold text-gray-900">
+                                  {formatMoney(item.unitPrice * item.qty)}
+                                </p>
+                              )}
                             </div>
                           </div>
                           <div className="flex flex-row items-center flex-wrap gap-2.5">
-                            <QuantityStepper
-                              value={item.qty}
-                              showLabel={false}
-                              onChange={(next) => {
-                                if (next > item.qty) {
-                                  dispatch(
-                                    incrementQty({
-                                      cartItemId: item.cartItemId,
-                                    }),
-                                  );
-                                } else if (next < item.qty) {
-                                  dispatch(
-                                    decrementQty({
-                                      cartItemId: item.cartItemId,
-                                    }),
-                                  );
-                                }
-                              }}
-                              min={1}
-                              max={20}
-                              variant="sm"
-                            />
+                            {item.nameSnapshot?.trim().toLowerCase() !==
+                              "hormone program" && (
+                              <QuantityStepper
+                                value={item.qty}
+                                showLabel={false}
+                                onChange={(next) => {
+                                  if (next > item.qty) {
+                                    dispatch(
+                                      incrementQty({
+                                        cartItemId: item.cartItemId,
+                                      }),
+                                    );
+                                  } else if (next < item.qty) {
+                                    dispatch(
+                                      decrementQty({
+                                        cartItemId: item.cartItemId,
+                                      }),
+                                    );
+                                  }
+                                }}
+                                min={1}
+                                max={20}
+                                variant="sm"
+                              />
+                            )}
 
                             {(item.pricingOptions?.length ?? 0) > 1 && (
                               <div className="md:max-w-36 w-full md:min-w-30">
