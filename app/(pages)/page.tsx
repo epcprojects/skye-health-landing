@@ -68,7 +68,8 @@ import {
 const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
 const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
   "skye-weight-loss-program-prefill-source";
-const HORMONE_PROGRAM_PREFILL_SOURCE_KEY = "skye-hormone-program-prefill-source";
+const HORMONE_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-hormone-program-prefill-source";
 
 type SavedProgramAnswer = {
   question: string;
@@ -545,11 +546,11 @@ export default function Home() {
             <div className="text-neutral-600 text-center">No Product Found</div>
           )}
 
-          <div className="container max-w-390 mx-auto grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5   px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
+          <div className="container max-w-390 mx-auto  grid-cols-1 md:grid-cols-3 xl:grid-cols-5 flex-wrap items-center justify-center flex px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
             {allProducts.map((product: ProductType) => (
               <div
                 key={product.id}
-                className="h-full flex w-full"
+                className="h-full flex w-full sm:max-w-72"
                 onClick={() => router.push(`/products/${product.id}`)}
               >
                 <ProductCard

@@ -60,7 +60,7 @@ const ProductCard = ({
 
       <div className="relative">
         <ThemeButton
-          label="Buy Product"
+          label="Learn More"
           variant="outlinedBluish"
           className="w-full"
           onClick={(e) => {

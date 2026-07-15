@@ -764,13 +764,17 @@ const Page = () => {
         if (userExists) {
           window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/login?externalUserId=${encodeURIComponent(
             externalUserId,
-          )}&email=${encodeURIComponent(trimmedEmail)}`;
+          )}&email=${encodeURIComponent(trimmedEmail)}&stateOfResidence=${encodeURIComponent(
+            stateOfResidence,
+          )}`;
         } else {
           window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/patient/signup/?externalUserId=${encodeURIComponent(
             externalUserId,
           )}&email=${encodeURIComponent(trimmedEmail)}&dob=${encodeURIComponent(
             formattedDateOfBirth,
-          )}&gender=${encodeURIComponent(gender)}`;
+          )}&gender=${encodeURIComponent(gender)}&stateOfResidence=${encodeURIComponent(
+            stateOfResidence,
+          )}`;
         }
       }
       setSurveyAnswers({});
@@ -796,6 +800,7 @@ const Page = () => {
     externalUserId,
     formattedDateOfBirth,
     gender,
+    stateOfResidence,
     checkUserExists,
     trimmedEmail,
   ]);
