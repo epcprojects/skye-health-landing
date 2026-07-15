@@ -40,6 +40,8 @@ import {
   CreateProductEmailResponsesMutationResult,
   CreateProductEmailResponsesMutationVariables,
 } from "@/app/graphql/mutations/product-email-response";
+import { US_STATES } from "@/app/constants/constants";
+import Dropdown from "@/app/components/buttons/Dropdown";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DEFER_OPTION_TEXT = "no consent - defer exam.";
@@ -1116,7 +1118,7 @@ const Page = () => {
     setDateOfBirthTouched(true);
 
     if (!isEmailValid) return;
-    if (!isDateOfBirthValid || !isGenderValid) return;
+    if (!isDateOfBirthValid || !isGenderValid || !stateOfResidence) return;
 
     if (emailProductIds.length === 0) {
       setEmailSubmissionError("No products were found for this questionnaire.");
@@ -1135,6 +1137,7 @@ const Page = () => {
               dateOfBirthYear,
             ),
             gender,
+            stateOfResidence,
           },
         },
       });
@@ -1261,6 +1264,7 @@ const Page = () => {
               !isEmailValid ||
               !isDateOfBirthValid ||
               !isGenderValid ||
+              !stateOfResidence ||
               isCreatingProductEmail
             }
           >
@@ -1287,14 +1291,17 @@ const Page = () => {
                 disabled={isCreatingProductEmail}
               />
 
-              <ThemeInput
-                type="text"
+              <Dropdown
                 label="State of Residence"
-                placeholder="Enter your state of residence"
+                placeholder="Select your state of residence"
+                options={US_STATES}
                 value={stateOfResidence}
-                onChange={(e) => setStateOfResidence(e.target.value)}
-                autoComplete="address-level1"
+                onChange={setStateOfResidence}
                 disabled={isCreatingProductEmail}
+                showSearch
+                required
+                searchPlaceholder="Search state..."
+                maxMenuHeight={260}
               />
 
               <div className="space-y-3">

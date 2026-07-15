@@ -60,8 +60,16 @@ import DownArrow from "./DownArrow";
 import SearchIcon from "./SearchIcon";
 import WaveIcon from "./WaveIcon";
 import PhoneFilledIcon from "./PhoneFilledIcon";
+import CheckedBoxIcon from "./CheckedBoxIcon";
+import ArrowDownIcon from "./ArrowDownIcon";
+import TrashIcon from "./TrashIcon";
+import UncheckedBoxIcon from "./UncheckedBoxIcon";
 
 export {
+  CheckedBoxIcon,
+  ArrowDownIcon,
+  TrashIcon,
+  UncheckedBoxIcon,
   PhoneFilledIcon,
   WaveIcon,
   NewShoppingCartIcon,

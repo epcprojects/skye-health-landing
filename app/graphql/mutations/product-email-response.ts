@@ -20,6 +20,7 @@ export type CreateProductEmailResponsesMutationResult = {
       id: string;
       email: string;
       externalUserId: string;
+      stateOfResidence: string;
     } | null;
   } | null;
 };
@@ -30,5 +31,6 @@ export type CreateProductEmailResponsesMutationVariables = {
     email: string;
     productIds: string[];
     gender?: string;
+    stateOfResidence?: string;
   };
 };
