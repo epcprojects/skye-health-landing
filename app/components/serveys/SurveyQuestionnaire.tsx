@@ -285,11 +285,25 @@ function isDeferOption(question: QuestionType, optionId: string) {
 
   const isTextMatch =
     option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
-  const isConfiguredDefer = !!question.deferOptionIds?.includes(
-    option.qualiphyRecordId,
-  );
+  const stoppingCriteria = option.stoppingCriteria?.trim().toLowerCase();
+  const isConfiguredDefer = stoppingCriteria === "hard";
 
   return isTextMatch || isConfiguredDefer;
+}
+
+function isSpecialStoppingOption(question: QuestionType, optionId: string) {
+  const option = question.questionOptions?.find((opt) => opt.id === optionId);
+  if (!option) return false;
+
+  const isTextMatch =
+    option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
+  const stoppingCriteria = option.stoppingCriteria?.trim().toLowerCase();
+
+  return (
+    isTextMatch ||
+    stoppingCriteria === "hard" ||
+    stoppingCriteria === "soft"
+  );
 }
 
 function parseInlineTextMap(question: QuestionType, raw: string) {
@@ -808,9 +822,8 @@ export function SurveyQuestionnaire({
 
       const isTextMatch =
         option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
-      const isConfiguredDefer = !!question?.deferOptionIds?.includes(
-        option.qualiphyRecordId,
-      );
+      const stoppingCriteria = option.stoppingCriteria?.trim().toLowerCase();
+      const isConfiguredDefer = stoppingCriteria === "hard";
 
       return isTextMatch || isConfiguredDefer;
     },
@@ -861,7 +874,7 @@ export function SurveyQuestionnaire({
 
                   if (
                     currentQuestion.questionType === "single_select" &&
-                    !isDeferOption(currentQuestion.id, optionId)
+                    !isSpecialStoppingOption(currentQuestion, optionId)
                   ) {
                     setTimeout(() => {
                       if (currentQuestionIndex < totalQuestions - 1) {

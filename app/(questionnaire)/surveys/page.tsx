@@ -538,6 +538,12 @@ const Page = () => {
     action: "single" | "multi";
     checked?: boolean;
   } | null>(null);
+  const [softStopConfirm, setSoftStopConfirm] = useState<{
+    questionId: string;
+    optionId: string;
+    action: "single" | "multi";
+    checked?: boolean;
+  } | null>(null);
 
   const surveyFromQuery: SurveyType | undefined = Array.isArray(fetchedSurvey)
     ? fetchedSurvey[0]
@@ -624,48 +630,94 @@ const Page = () => {
     });
   };
 
-  const isDeferOption = useCallback(
+  const getOptionStoppingBehavior = useCallback(
     (questionId: string, optionId: string) => {
       const question = survey?.questions?.find((q) => q.id === questionId);
       const option = question?.questionOptions?.find((o) => o.id === optionId);
-      if (!option) return false;
+      if (!option) return "no_stop";
 
       const isTextMatch =
         option.optionText?.trim().toLowerCase() === DEFER_OPTION_TEXT;
-      const isConfiguredDefer = !!question?.deferOptionIds?.includes(
-        option.qualiphyRecordId,
-      );
+      const stoppingCriteria = option.stoppingCriteria?.trim().toLowerCase();
+      if (isTextMatch || stoppingCriteria === "hard") {
+        return "hard";
+      }
+      if (stoppingCriteria === "soft") {
+        return "soft";
+      }
 
-      return isTextMatch || isConfiguredDefer;
+      return "no_stop";
     },
     [survey],
   );
   const handleSingleSelect = useCallback(
     (questionId: string, optionId: string) => {
-      if (isDeferOption(questionId, optionId)) {
+      const stoppingBehavior = getOptionStoppingBehavior(questionId, optionId);
+
+      if (stoppingBehavior === "hard") {
         setDeferConfirm({ questionId, optionId, action: "single" });
-      } else {
-        setSingleSelect(questionId, optionId);
+        return;
       }
+
+      if (stoppingBehavior === "soft") {
+        setSoftStopConfirm({ questionId, optionId, action: "single" });
+        return;
+      }
+
+      setSingleSelect(questionId, optionId);
     },
-    [isDeferOption],
+    [getOptionStoppingBehavior],
   );
 
   const handleMultiSelect = useCallback(
     (questionId: string, optionId: string, checked: boolean) => {
-      if (checked && isDeferOption(questionId, optionId)) {
+      if (!checked) {
+        setMultiSelect(questionId, optionId, checked);
+        return;
+      }
+
+      const stoppingBehavior = getOptionStoppingBehavior(questionId, optionId);
+
+      if (stoppingBehavior === "hard") {
         setDeferConfirm({
           questionId,
           optionId,
           action: "multi",
           checked: true,
         });
-      } else {
-        setMultiSelect(questionId, optionId, checked);
+        return;
       }
+
+      if (stoppingBehavior === "soft") {
+        setSoftStopConfirm({
+          questionId,
+          optionId,
+          action: "multi",
+          checked: true,
+        });
+        return;
+      }
+
+      setMultiSelect(questionId, optionId, checked);
     },
-    [isDeferOption],
+    [getOptionStoppingBehavior],
   );
+
+  const handleSoftStopConfirmAccept = useCallback(() => {
+    if (!softStopConfirm) return;
+
+    if (softStopConfirm.action === "single") {
+      setSingleSelect(softStopConfirm.questionId, softStopConfirm.optionId);
+    } else {
+      setMultiSelect(
+        softStopConfirm.questionId,
+        softStopConfirm.optionId,
+        !!softStopConfirm.checked,
+      );
+    }
+
+    setSoftStopConfirm(null);
+  }, [softStopConfirm]);
 
   const [createOrUpdateSurveyResponse] = useMutation(
     CREATE_OR_UPDATE_SURVEY_RESPONSE,
@@ -1485,6 +1537,46 @@ const Page = () => {
                         className="text-white font-semibold cursor-pointer w-full md:text-base border border-neutral-200 py-2 text-sm md:py-3 px-5 rounded-xl bg-red-500 hover:bg-red-600"
                       >
                         Yes, Cancel Exam
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Portal>
+          )}
+          {!!softStopConfirm && (
+            <Portal>
+              <div className=" min-h-dvh top-0 items-end md:items-center justify-center fixed inset-0 z-100 bg-black/30 backdrop-blur-xs flex">
+                <div className="sm:h-fit relative w-full sm:max-h-[90dvh] md:m-auto container md:mx-4 sm:max-w-150 shadow-xl h-full flex flex-col">
+                  {/* <button
+                  onClick={() => setSoftStopConfirm(null)}
+                  className="md:p-1 p-1 hover:bg-gray-200 rounded-md absolute cursor-pointer md:end-3 md:top-3 end-2 top-2"
+                >
+                  <CrossIcon />
+                </button> */}
+
+                  <div className="flex-1 items-center justify-center flex flex-col gap-2 bg-white  p-4 md:rounded-xl md:py-12 md:px-8">
+                    {/* <AlertIcon2 />
+                    <h2 className="font-semibold text-2xl mt-3 text-center text-neutral-900">
+                      Caution
+                    </h2> */}
+                    <p className="font-normal text-lg mb-4 text-neutral-700 text-center">
+                      This answer may require extra clinical review. Do you want
+                      to continue with this selection?
+                    </p>
+
+                    <div className="w-full flex items-center gap-4 mt-4 md:flex-row flex-col">
+                      <button
+                        onClick={() => setSoftStopConfirm(null)}
+                        className="text-neutral-900 w-full cursor-pointer font-semibold md:text-base border border-neutral-200 py-2 text-sm md:py-3 px-5 rounded-xl bg-white hover:bg-gray-100"
+                      >
+                        No, Go Back
+                      </button>
+                      <button
+                        onClick={handleSoftStopConfirmAccept}
+                        className="text-white font-semibold cursor-pointer w-full md:text-base border border-neutral-200 py-2 text-sm md:py-3 px-5 rounded-xl bg-primary hover:bg-primary/90"
+                      >
+                        Yes, Continue
                       </button>
                     </div>
                   </div>

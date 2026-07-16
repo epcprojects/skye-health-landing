@@ -15,18 +15,19 @@ export const surveyAttributes = `
     position
     qualiphyRecordId
     questionType
-    deferOptionIds
+    showOptionIds
+    gender
     questionOptions {
       id
       optionText
       position
       qualiphyRecordId
       value
+      stoppingCriteria
     }
     answer {
       questionOptionIds
       valueText
-      questionOptionIds
     }
   }
 `;
@@ -45,11 +46,21 @@ export interface QuestionOptionType {
   position: number;
   qualiphyRecordId: string;
   value: string;
+  stoppingCriteria?: string | null;
 }
 
 export interface AnswerType {
   questionOptionIds: string[];
   valueText: string;
+  hardStop?: boolean | null;
+}
+
+export interface ShowOptionType {
+  id: string;
+  optionText: string;
+  question?: {
+    id: string;
+  } | null;
 }
 
 export interface QuestionType {
@@ -59,7 +70,10 @@ export interface QuestionType {
   position: number;
   qualiphyRecordId: string;
   questionType: string;
-  deferOptionIds?: string[];
+  showOptionIds?: string[];
+  showOptions?: ShowOptionType[];
+  gender?: string | null;
+  labsScope?: string | null;
   questionOptions: QuestionOptionType[];
   answer: AnswerType | null;
 }
