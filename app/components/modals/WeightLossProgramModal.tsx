@@ -126,7 +126,7 @@ const WeightLossProgramModal = ({
             <div className="flex items-center gap-3">
               <PhoneFilledIcon />
               <span>
-                Physician Review —
+                One Time Physician Review —
                 <span className="font-bold text-primary">$30</span>
               </span>
             </div>
