@@ -42,7 +42,6 @@ export const ALL_PRODUCTS = gql`
         category
         brand
         price
-        retailPrice
         quantity
         inStock
         primaryImage
@@ -58,7 +57,6 @@ export const ALL_PRODUCTS = gql`
           strength
           unitQuantity
           cost
-          retailPrice
         }
       }
     }
@@ -72,7 +70,7 @@ export type ProductUnitPricingType = {
   strength: string;
   unitQuantity: string;
   cost: number;
-  retailPrice: number;
+  retailPrice?: number | null;
 };
 
 export type ProductType = {
@@ -83,7 +81,7 @@ export type ProductType = {
   category: string;
   brand: string;
   price: number;
-  retailPrice: number;
+  retailPrice?: number | null;
   quantity: number;
   inStock: boolean;
   primaryImage: string;
