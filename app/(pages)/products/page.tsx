@@ -421,9 +421,9 @@ const Page = () => {
               category: p.category,
               stock: p.inStock,
               price:
-                Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
-                  ? Number(p.retailPrice ? p.retailPrice : p.price)
-                  : Number(p.retailPrice ? p.retailPrice : p.price).toFixed(2),
+                Number( p.price) % 1 === 0
+                  ? Number( p.price)
+                  : Number(p.price).toFixed(2),
               image: image || "",
               size: p.strength,
               dosing: mg ? `${mg} mg` : "",

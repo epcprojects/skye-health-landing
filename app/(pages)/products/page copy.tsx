@@ -433,9 +433,9 @@ const Page = () => {
                     Boolean(tag),
                   )}
                   price={
-                    Number(p.retailPrice || p.price) % 1 === 0
-                      ? `$${Number(p.retailPrice || p.price)}`
-                      : `$${Number(p.retailPrice || p.price).toFixed(2)}`
+                    Number( p.price) % 1 === 0
+                      ? `$${Number(p.price)}`
+                      : `$${Number( p.price).toFixed(2)}`
                   }
                   onAddToCart={() => {
                     dispatch(addProductToCart({ product: p }));

@@ -88,9 +88,7 @@ const Page = () => {
     ) ?? product.productUnitPricings?.[0];
 
   const displayPrice =
-    selectedUnitPricing?.retailPrice ??
     selectedUnitPricing?.cost ??
-    product.retailPrice ??
     product.price;
   const shouldHideHormonePrice =
     product.category?.trim().toLowerCase() === "hormone program";
@@ -220,7 +218,7 @@ const Page = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {dosageOptions.map((option) => {
                     const optionPrice =
-                      option.retailPrice ?? option.cost ?? product.price;
+                       option.cost ?? product.price;
                     const isActive = option.id === selectedUnitPricing?.id;
 
                     return (
@@ -371,10 +369,10 @@ const Page = () => {
                     category: p.category,
                     stock: p.inStock,
                     price:
-                      Number(p.retailPrice ? p.retailPrice : p.price) % 1 === 0
-                        ? Number(p.retailPrice ? p.retailPrice : p.price)
+                      Number( p.price) % 1 === 0
+                        ? Number( p.price)
                         : Number(
-                            p.retailPrice ? p.retailPrice : p.price,
+                           p.price,
                           ).toFixed(2),
                     image: image || "",
                     size: p.strength,

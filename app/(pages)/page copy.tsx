@@ -400,9 +400,9 @@ export default function Home() {
                           (tag): tag is string => Boolean(tag),
                         )}
                         price={
-                          Number(product.retailPrice || product.price) % 1 === 0
-                            ? `$${Number(product.retailPrice || product.price)}`
-                            : `$${Number(product.retailPrice || product.price).toFixed(2)}`
+                          Number(product.price) % 1 === 0
+                            ? `$${Number( product.price)}`
+                            : `$${Number(product.price).toFixed(2)}`
                         }
                         onAddToCart={() => {
                           dispatch(addProductToCart({ product }));

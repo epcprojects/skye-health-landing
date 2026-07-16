@@ -89,7 +89,6 @@ const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
   category: "Weight Loss Program",
   brand: "",
   price: 199,
-  retailPrice: 199,
   quantity: 999,
   inStock: true,
   primaryImage: "",
@@ -105,7 +104,6 @@ const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
       strength: "",
       unitQuantity: "",
       cost: 199,
-      retailPrice: 199,
     },
   ],
 };
@@ -118,7 +116,6 @@ const HORMONE_PROGRAM_PRODUCT: ProductType = {
   category: "Hormone Program",
   brand: "",
   price: 0,
-  retailPrice: 0,
   quantity: 999,
   inStock: true,
   primaryImage: "",
@@ -134,7 +131,6 @@ const HORMONE_PROGRAM_PRODUCT: ProductType = {
       strength: "",
       unitQuantity: "",
       cost: 0,
-      retailPrice: 0,
     },
   ],
 };

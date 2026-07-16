@@ -43,7 +43,7 @@ const buildPricingOptions = (product: ProductType) => {
       id: pricing.id,
       label: pricing.unitQuantity || pricing.strength || "Option",
       unitPrice: parsePrice(
-        pricing.retailPrice ?? pricing.cost ?? product.price,
+       pricing.cost ?? product.price,
       ),
       strength: pricing.strength,
       unitQuantity: pricing.unitQuantity,

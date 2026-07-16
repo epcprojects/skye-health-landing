@@ -60,7 +60,7 @@ export default function ProductCard({
   );
 
   const displayPriceValue =
-    selectedPricing?.retailPrice ?? selectedPricing?.cost ?? product.price;
+    selectedPricing?.cost ?? product.price;
 
   const displayPrice =
     typeof displayPriceValue === "number"
