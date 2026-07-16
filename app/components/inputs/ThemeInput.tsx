@@ -29,6 +29,7 @@ type ThemeInputProps = {
   autoComplete?: string;
   icon?: React.ReactNode;
   maxLength?: number;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   disabled?: boolean;
 };
 
@@ -50,6 +51,7 @@ const ThemeInput = React.forwardRef<HTMLInputElement, ThemeInputProps>(
       autoComplete,
       icon,
       maxLength,
+      inputMode,
       onBlur,
       onFocus,
       disabled = false,
@@ -108,7 +110,7 @@ const ThemeInput = React.forwardRef<HTMLInputElement, ThemeInputProps>(
             value={value}
             onChange={onChange}
             autoComplete={resolvedAutoComplete}
-            inputMode={isEmail ? "email" : undefined}
+            inputMode={inputMode ?? (isEmail ? "email" : undefined)}
             maxLength={maxLength}
             disabled={disabled}
           />

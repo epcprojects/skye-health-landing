@@ -174,9 +174,9 @@ function buildHeightValue(feet: string, inches: string) {
 
 function sanitizeHeightPart(
   raw: string,
-  { min, max }: { min: number; max: number },
+  { min, max, maxDigits }: { min: number; max: number; maxDigits: number },
 ) {
-  const digitsOnly = raw.replace(/\D/g, "");
+  const digitsOnly = raw.replace(/\D/g, "").slice(0, maxDigits);
   if (!digitsOnly) return "";
 
   const numericValue = Number(digitsOnly);
@@ -187,23 +187,10 @@ function sanitizeHeightPart(
 }
 
 function sanitizeWeightValue(raw: string) {
-  const cleaned = raw.replace(/[^\d.]/g, "");
-  const segments = cleaned.split(".");
+  const digitsOnly = raw.replace(/\D/g, "").slice(0, 3);
+  if (!digitsOnly) return "";
 
-  if (segments.length <= 1) {
-    if (!cleaned) return "";
-
-    const numericValue = Number.parseFloat(cleaned);
-    if (!Number.isFinite(numericValue)) return "";
-
-    const clampedValue = Math.min(Math.max(numericValue, 1), 700);
-    return String(clampedValue);
-  }
-
-  const normalized = `${segments[0]}.${segments.slice(1).join("")}`;
-  if (!normalized) return "";
-
-  const numericValue = Number.parseFloat(normalized);
+  const numericValue = Number(digitsOnly);
   if (!Number.isFinite(numericValue)) return "";
 
   const clampedValue = Math.min(Math.max(numericValue, 1), 700);
@@ -582,12 +569,17 @@ function SurveyQuestion({
             <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
               <ThemeInput
                 label="Feet"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={heightValue.feet}
                 onChange={(e) =>
                   onTextChange(
                     buildHeightValue(
-                      sanitizeHeightPart(e.target.value, { min: 1, max: 8 }),
+                      sanitizeHeightPart(e.target.value, {
+                        min: 1,
+                        max: 8,
+                        maxDigits: 1,
+                      }),
                       heightValue.inches,
                     ),
                   )
@@ -598,13 +590,18 @@ function SurveyQuestion({
               />
               <ThemeInput
                 label="Inches"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={heightValue.inches}
                 onChange={(e) =>
                   onTextChange(
                     buildHeightValue(
                       heightValue.feet,
-                      sanitizeHeightPart(e.target.value, { min: 0, max: 11 }),
+                      sanitizeHeightPart(e.target.value, {
+                        min: 0,
+                        max: 11,
+                        maxDigits: 2,
+                      }),
                     ),
                   )
                 }
@@ -617,7 +614,8 @@ function SurveyQuestion({
             <div className="space-y-3">
               <ThemeInput
                 label=""
-                type={isWeightField ? "number" : "text"}
+                type="text"
+                inputMode={isWeightField ? "numeric" : undefined}
                 value={valueText}
                 onChange={(e) =>
                   onTextChange(
@@ -631,6 +629,7 @@ function SurveyQuestion({
                     ? "Enter your weight in pounds (lbs)"
                     : "Enter your answer"
                 }
+                maxLength={isWeightField ? 3 : undefined}
                 className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8  md:text-lg!"
               />
 
