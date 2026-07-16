@@ -81,6 +81,13 @@ type SavedProgramPayload = {
   answers?: SavedProgramAnswer[];
 };
 
+const normalizeText = (value?: string | null) => value?.trim().toLowerCase();
+
+const isWeightLossModalProduct = (product?: ProductType | null) =>
+  normalizeText(product?.category) === "weight loss program" ||
+  (normalizeText(product?.category) === "weight loss" &&
+    normalizeText(product?.subCategory) === "glp-1");
+
 const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
   id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
   sku: "WL-PROGRAM",
@@ -165,6 +172,8 @@ export default function Home() {
   const router = useRouter();
   const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
   const [isHormoneModalOpen, setIsHormoneModalOpen] = useState(false);
+  const [pendingWeightLossProduct, setPendingWeightLossProduct] =
+    useState<ProductType | null>(null);
   const cartItems = useAppSelector(selectCartItems);
 
   const cardActions: Record<TherapyCardId, () => void> = {
@@ -346,13 +355,15 @@ export default function Home() {
     <>
       <WeightLossProgramModal
         isOpen={isWeightLossModalOpen}
-        onClose={() => setIsWeightLossModalOpen(false)}
+        onClose={() => {
+          setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
+        }}
         onStartQuestionnaire={() => {
           const selectedMonths = getWeightLossProgramMonths();
-          const cartGuard = canAddProductWithCartRules(
-            cartItems,
-            WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
-          );
+          const targetProductId =
+            pendingWeightLossProduct?.id ?? WEIGHT_LOSS_PROGRAM_PRODUCT_ID;
+          const cartGuard = canAddProductWithCartRules(cartItems, targetProductId);
 
           if (!cartGuard.allowed) {
             toastAlert(
@@ -362,34 +373,57 @@ export default function Home() {
             return;
           }
 
-          const hasWeightLossProgramInCart = cartItems.some(
-            (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
-          );
-
-          if (!hasWeightLossProgramInCart) {
-            dispatch(
-              addProductToCart({
-                product: WEIGHT_LOSS_PROGRAM_PRODUCT,
-                qty: selectedMonths,
-              }),
+          if (pendingWeightLossProduct) {
+            const existingCartItem = cartItems.find(
+              (item) => item.productId === pendingWeightLossProduct.id,
             );
+
+            if (!existingCartItem) {
+              dispatch(
+                addProductToCart({
+                  product: pendingWeightLossProduct,
+                  qty: selectedMonths,
+                }),
+              );
+            } else {
+              dispatch(
+                setQty({
+                  cartItemId: existingCartItem.cartItemId,
+                  qty: selectedMonths,
+                }),
+              );
+            }
           } else {
-            dispatch(
-              setQty({
-                productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
-                qty: selectedMonths,
-              }),
+            const hasWeightLossProgramInCart = cartItems.some(
+              (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
             );
-          }
 
-          if (typeof window !== "undefined") {
-            window.localStorage.setItem(
-              WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
-              "card-flow",
-            );
+            if (!hasWeightLossProgramInCart) {
+              dispatch(
+                addProductToCart({
+                  product: WEIGHT_LOSS_PROGRAM_PRODUCT,
+                  qty: selectedMonths,
+                }),
+              );
+            } else {
+              dispatch(
+                setQty({
+                  productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+                  qty: selectedMonths,
+                }),
+              );
+            }
+
+            if (typeof window !== "undefined") {
+              window.localStorage.setItem(
+                WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
+                "card-flow",
+              );
+            }
           }
 
           setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
           router.push("/surveys?step=1");
         }}
       />
@@ -565,13 +599,19 @@ export default function Home() {
                       toastAlert(
                         cartGuard.message ?? "Unable to add product to cart.",
                         false,
-                      );
-                      return;
-                    }
+                    );
+                    return;
+                  }
 
-                    dispatch(addProductToCart({ product }));
-                    toastAlert("Added to Cart Successfully", true);
-                  }}
+                  if (isWeightLossModalProduct(product)) {
+                    setPendingWeightLossProduct(product);
+                    setIsWeightLossModalOpen(true);
+                    return;
+                  }
+
+                  dispatch(addProductToCart({ product }));
+                  toastAlert("Added to Cart Successfully", true);
+                }}
                 />
               </div>
             ))}

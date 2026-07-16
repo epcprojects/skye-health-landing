@@ -79,6 +79,7 @@ export type ProductType = {
   name: string;
   description: string;
   category: string;
+  subCategory?: string | null;
   brand: string;
   price: number;
   retailPrice?: number | null;

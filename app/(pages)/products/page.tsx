@@ -1,6 +1,7 @@
 "use client";
 import { SectionHeroCTA } from "@/app/components";
 import ProductCard from "@/app/components/ProductCard";
+import WeightLossProgramModal from "@/app/components/modals/WeightLossProgramModal";
 import { toastAlert } from "@/app/components/ToastAlert";
 import {
   ALL_PRODUCTS,
@@ -11,7 +12,7 @@ import {
 } from "@/app/graphql/queries/products";
 import { useIsMobile } from "@/app/hooks/useIsMobile";
 import { Images } from "@/app/images";
-import { addProductToCart } from "@/app/Redux/slices/cart/cartSlice";
+import { addProductToCart, setQty } from "@/app/Redux/slices/cart/cartSlice";
 import { setProducts } from "@/app/Redux/slices/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
 import { canAddProductWithCartRules } from "@/app/lib/cartRules";
@@ -39,6 +40,38 @@ import TrocheImage from "@/public/images/Troche.png";
 import VialImage from "@/public/images/Vial.png";
 
 const PER_PAGE = 12;
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+
+const normalizeText = (value?: string | null) => value?.trim().toLowerCase();
+
+const isWeightLossModalProduct = (product?: ProductType | null) =>
+  normalizeText(product?.category) === "weight loss program" ||
+  (normalizeText(product?.category) === "weight loss" &&
+    normalizeText(product?.subCategory) === "glp-1");
+
+const getWeightLossProgramMonths = () => {
+  if (typeof window === "undefined") return 1;
+
+  try {
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) return 1;
+
+    const parsedSavedProgram = JSON.parse(rawSavedProgram) as {
+      answers?: Array<{ question: string; answer: string }>;
+    };
+    const monthsAnswer = parsedSavedProgram.answers?.find(
+      (entry) => entry.question === "How many months?",
+    )?.answer;
+    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
+
+    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
+  } catch {
+    return 1;
+  }
+};
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -62,6 +95,12 @@ const Page = () => {
   const [activeProductFilter, setActiveProductFilter] = useState<
     "in_demand" | "all" | "category"
   >("in_demand");
+  const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
+  const [pendingWeightLossProduct, setPendingWeightLossProduct] =
+    useState<ProductType | null>(null);
+  const [pendingWeightLossPricingId, setPendingWeightLossPricingId] = useState<
+    string | undefined
+  >(undefined);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -277,8 +316,50 @@ const Page = () => {
     return category;
   };
 
+  const handleWeightLossProductQuestionnaireStart = () => {
+    if (!pendingWeightLossProduct) return;
+
+    const selectedMonths = getWeightLossProgramMonths();
+    const existingCartItem = cartItems.find(
+      (item) =>
+        item.productId === pendingWeightLossProduct.id &&
+        (item.selectedPricingId ?? "") === (pendingWeightLossPricingId ?? ""),
+    );
+
+    if (!existingCartItem) {
+      dispatch(
+        addProductToCart({
+          product: pendingWeightLossProduct,
+          qty: selectedMonths,
+          selectedPricingId: pendingWeightLossPricingId,
+        }),
+      );
+    } else {
+      dispatch(
+        setQty({
+          cartItemId: existingCartItem.cartItemId,
+          qty: selectedMonths,
+        }),
+      );
+    }
+
+    setIsWeightLossModalOpen(false);
+    setPendingWeightLossProduct(null);
+    setPendingWeightLossPricingId(undefined);
+    router.push("/surveys?step=1");
+  };
+
   return (
     <>
+      <WeightLossProgramModal
+        isOpen={isWeightLossModalOpen}
+        onClose={() => {
+          setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
+          setPendingWeightLossPricingId(undefined);
+        }}
+        onStartQuestionnaire={handleWeightLossProductQuestionnaireStart}
+      />
       <section className="bg-primary pb-12 lg:pb-24 pt-44 lg:pt-59">
         <div className="container max-w-7xl mx-auto px-4 lg:px-8 flex flex-col items-center gap-5">
           <h2 className="text-white text-4xl text-center lg:text-start lg:text-[68px] font-semibold">
@@ -446,6 +527,13 @@ const Page = () => {
                       cartGuard.message ?? "Unable to add product to cart.",
                       false,
                     );
+                    return;
+                  }
+
+                  if (isWeightLossModalProduct(p)) {
+                    setPendingWeightLossProduct(p);
+                    setPendingWeightLossPricingId(selectedPricingId);
+                    setIsWeightLossModalOpen(true);
                     return;
                   }
 
