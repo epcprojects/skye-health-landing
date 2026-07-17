@@ -4,7 +4,10 @@ import { ThemeButton } from "@/app/components";
 import ThemeInput, { InputType } from "@/app/components/inputs/ThemeInput";
 import AppModal from "@/app/components/modals/AppModal";
 import { CartStepContent } from "@/app/components/serveys/CartStepContent";
-import { SurveyAnswers } from "@/app/components/serveys/SurveyQuestionnaire";
+import {
+  buildVisibleQuestions,
+  SurveyAnswers,
+} from "@/app/components/serveys/SurveyQuestionnaire";
 import { CREATE_OR_UPDATE_SURVEY_RESPONSE } from "@/app/graphql/mutations/survey";
 import {
   FETCH_SURVEY_FOR_PRODUCTS,
@@ -1166,6 +1169,37 @@ const Page = () => {
           valueText: bmiValue ?? "",
         },
       };
+    });
+  }, [survey, surveyAnswers]);
+
+  useEffect(() => {
+    if (!survey) return;
+
+    const bmiQuestion = findQuestionByBody(survey, "What is your BMI?");
+    const visibleQuestionIds = new Set(
+      buildVisibleQuestions(survey, surveyAnswers).map((question) => question.id),
+    );
+    const hiddenAnsweredQuestionIds = Object.keys(surveyAnswers).filter(
+      (questionId) =>
+        !visibleQuestionIds.has(questionId) && questionId !== bmiQuestion?.id,
+    );
+
+    if (hiddenAnsweredQuestionIds.length === 0) {
+      return;
+    }
+
+    setSurveyAnswers((prev) => {
+      const next = { ...prev };
+      let hasChanged = false;
+
+      hiddenAnsweredQuestionIds.forEach((questionId) => {
+        if (questionId in next) {
+          delete next[questionId];
+          hasChanged = true;
+        }
+      });
+
+      return hasChanged ? next : prev;
     });
   }, [survey, surveyAnswers]);
 

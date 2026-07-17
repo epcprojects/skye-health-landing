@@ -15,6 +15,7 @@ export const surveyAttributes = `
     position
     qualiphyRecordId
     questionType
+    maxSelections
     showOptionIds
     gender
     questionOptions {
@@ -67,6 +68,7 @@ export interface QuestionType {
   body: string;
   category: string | null;
   id: string;
+  maxSelections?: number | null;
   position: number;
   qualiphyRecordId: string;
   questionType: string;

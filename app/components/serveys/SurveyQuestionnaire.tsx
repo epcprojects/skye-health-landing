@@ -114,7 +114,10 @@ function isHormoneSurvey(survey: SurveyType) {
 function isHormoneTherapyFollowupQuestion(question: QuestionType) {
   return (
     startsWithNormalized(question.body, "List medication, strength") ||
-    startsWithNormalized(question.body, "Are you happy with your current treatment?")
+    startsWithNormalized(
+      question.body,
+      "Are you happy with your current treatment?",
+    )
   );
 }
 
@@ -133,6 +136,97 @@ function isMaleHormoneQuestion(question: QuestionType) {
     startsWithNormalized(question.body, "Fertility intent") ||
     startsWithNormalized(question.body, "PSA")
   );
+}
+
+export function buildVisibleQuestions(
+  survey: SurveyType,
+  answers: SurveyAnswers,
+) {
+  const allQuestions =
+    survey.questions
+      ?.filter((question) => !isBmiQuestion(question))
+      .slice()
+      .sort((a, b) => a.position - b.position) ?? [];
+
+  const selectedOptionIds = new Set(
+    Object.values(answers).flatMap((answer) => answer.questionOptionIds ?? []),
+  );
+
+  let visibleQuestions = allQuestions.filter((question) => {
+    const showOptionIds = question.showOptionIds ?? [];
+
+    if (showOptionIds.length === 0) {
+      return true;
+    }
+
+    return showOptionIds.some((optionId) => selectedOptionIds.has(optionId));
+  });
+
+  if (isWeightLossSurvey(survey)) {
+    const glp1Answer = getSingleSelectAnswerValue(
+      survey,
+      answers,
+      "Are you currently taking a GLP-1 medication?",
+    );
+    const doseKnownAnswer = getSingleSelectAnswerValue(
+      survey,
+      answers,
+      "Do you know your current dose?",
+    );
+
+    visibleQuestions = visibleQuestions.filter((question) => {
+      const normalizedBody = normalizeText(question.body);
+
+      if (normalizedBody === "which glp-1 are you taking?") {
+        return glp1Answer !== "no";
+      }
+
+      if (normalizedBody === "do you know your current dose?") {
+        return glp1Answer !== "no";
+      }
+
+      if (normalizedBody === "what is your current dose?") {
+        return glp1Answer !== "no" && doseKnownAnswer !== "no";
+      }
+
+      if (normalizedBody === "which medication are you taking?") {
+        return glp1Answer !== "no";
+      }
+
+      return true;
+    });
+  }
+
+  if (isHormoneSurvey(survey)) {
+    const sexAtBirthAnswer = getSingleSelectAnswerValue(
+      survey,
+      answers,
+      "What sex were you assigned at birth?",
+    );
+    const onHormoneTherapyAnswer = getSingleSelectAnswerValue(
+      survey,
+      answers,
+      "Are you currently taking hormone therapy?",
+    );
+
+    visibleQuestions = visibleQuestions.filter((question) => {
+      if (isHormoneTherapyFollowupQuestion(question)) {
+        return onHormoneTherapyAnswer === "yes";
+      }
+
+      if (isFemaleHormoneQuestion(question)) {
+        return sexAtBirthAnswer === "female";
+      }
+
+      if (isMaleHormoneQuestion(question)) {
+        return sexAtBirthAnswer === "male";
+      }
+
+      return true;
+    });
+  }
+
+  return visibleQuestions;
 }
 
 function parseHeightValue(raw: string) {
@@ -287,9 +381,7 @@ function isSpecialStoppingOption(question: QuestionType, optionId: string) {
   const stoppingCriteria = option.stoppingCriteria?.trim().toLowerCase();
 
   return (
-    isTextMatch ||
-    stoppingCriteria === "hard" ||
-    stoppingCriteria === "soft"
+    isTextMatch || stoppingCriteria === "hard" || stoppingCriteria === "soft"
   );
 }
 
@@ -359,6 +451,15 @@ function SurveyQuestion({
     () => parseInlineTextMap(question, valueText),
     [question, valueText],
   );
+  const maxSelections =
+    question.questionType === "multi_select" ||
+    question.questionType === "multi_select_with_text"
+      ? (question.maxSelections ?? null)
+      : null;
+  const hasReachedMaxSelections =
+    typeof maxSelections === "number" &&
+    maxSelections > 0 &&
+    optionIds.length >= maxSelections;
   const colonOptions =
     question.questionOptions
       ?.slice()
@@ -425,27 +526,34 @@ function SurveyQuestion({
             {question.questionOptions
               ?.slice()
               .sort((a, b) => a.position - b.position)
-              .map((opt) => (
-                <div
-                  key={opt.id}
-                  className={[
-                    "w-full rounded-xl border transition flex items-center justify-between gap-3",
-                    optionIds.includes(opt.id)
-                      ? "border-primary/30 border-2 bg-lightblue"
-                      : "border-neutral-300 bg-white hover:bg-neutral-50",
-                  ].join(" ")}
-                >
-                  <CustomCheckbox
-                    id={`${question.id}-${opt.id}`}
-                    label={opt.optionText}
-                    direction="flex-row-reverse"
-                    checked={optionIds.includes(opt.id)}
-                    width={`w-full`}
-                    fullWidth="w-full p-3 md:p-4"
-                    onChange={(e) => onMultiSelect(opt.id, e)}
-                  />
-                </div>
-              ))}
+              .map((opt) => {
+                const isChecked = optionIds.includes(opt.id);
+                const isDisabled = !isChecked && hasReachedMaxSelections;
+
+                return (
+                  <div
+                    key={opt.id}
+                    className={[
+                      "w-full rounded-xl border transition flex items-center justify-between gap-3",
+                      isChecked
+                        ? "border-primary/30 border-2 bg-lightblue"
+                        : "border-neutral-300 bg-white hover:bg-neutral-50",
+                      isDisabled ? "opacity-60" : "",
+                    ].join(" ")}
+                  >
+                    <CustomCheckbox
+                      id={`${question.id}-${opt.id}`}
+                      label={opt.optionText}
+                      direction="flex-row-reverse"
+                      checked={isChecked}
+                      disabled={isDisabled}
+                      width={`w-full`}
+                      fullWidth="w-full p-3 md:p-4"
+                      onChange={(e) => onMultiSelect(opt.id, e)}
+                    />
+                  </div>
+                );
+              })}
           </div>
         )}
 
@@ -531,27 +639,34 @@ function SurveyQuestion({
               {question.questionOptions
                 ?.slice()
                 .sort((a, b) => a.position - b.position)
-                .map((opt) => (
-                  <div
-                    key={opt.id}
-                    className={[
-                      "w-full rounded-xl border transition flex items-center justify-between gap-3",
-                      optionIds.includes(opt.id)
-                        ? "border-primary/30 border-2 bg-lightblue"
-                        : "border-neutral-300 bg-white hover:bg-neutral-50",
-                    ].join(" ")}
-                  >
-                    <CustomCheckbox
-                      id={`${question.id}-${opt.id}`}
-                      label={opt.optionText}
-                      direction="flex-row-reverse"
-                      checked={optionIds.includes(opt.id)}
-                      width="w-full"
-                      fullWidth="w-full p-3 md:p-4"
-                      onChange={(e) => onMultiSelect(opt.id, e)}
-                    />
-                  </div>
-                ))}
+                .map((opt) => {
+                  const isChecked = optionIds.includes(opt.id);
+                  const isDisabled = !isChecked && hasReachedMaxSelections;
+
+                  return (
+                    <div
+                      key={opt.id}
+                      className={[
+                        "w-full rounded-xl border transition flex items-center justify-between gap-3",
+                        isChecked
+                          ? "border-primary/30 border-2 bg-lightblue"
+                          : "border-neutral-300 bg-white hover:bg-neutral-50",
+                        isDisabled ? "opacity-60" : "",
+                      ].join(" ")}
+                    >
+                      <CustomCheckbox
+                        id={`${question.id}-${opt.id}`}
+                        label={opt.optionText}
+                        direction="flex-row-reverse"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        width="w-full"
+                        fullWidth="w-full p-3 md:p-4"
+                        onChange={(e) => onMultiSelect(opt.id, e)}
+                      />
+                    </div>
+                  );
+                })}
             </div>
 
             <ThemeInput
@@ -661,81 +776,7 @@ export function SurveyQuestionnaire({
   onQuestionIndexChange,
 }: SurveyQuestionnaireProps) {
   const sortedQuestions = useMemo(
-    () => {
-      const allQuestions =
-        survey.questions
-          ?.filter((question) => !isBmiQuestion(question))
-          .slice()
-          .sort((a, b) => a.position - b.position) ?? [];
-
-      let visibleQuestions = allQuestions;
-
-      if (isWeightLossSurvey(survey)) {
-        const glp1Answer = getSingleSelectAnswerValue(
-          survey,
-          answers,
-          "Are you currently taking a GLP-1 medication?",
-        );
-        const doseKnownAnswer = getSingleSelectAnswerValue(
-          survey,
-          answers,
-          "Do you know your current dose?",
-        );
-
-        visibleQuestions = visibleQuestions.filter((question) => {
-          const normalizedBody = normalizeText(question.body);
-
-          if (normalizedBody === "which glp-1 are you taking?") {
-            return glp1Answer !== "no";
-          }
-
-          if (normalizedBody === "do you know your current dose?") {
-            return glp1Answer !== "no";
-          }
-
-          if (normalizedBody === "what is your current dose?") {
-            return glp1Answer !== "no" && doseKnownAnswer !== "no";
-          }
-
-          if (normalizedBody === "which medication are you taking?") {
-            return glp1Answer !== "no";
-          }
-
-          return true;
-        });
-      }
-
-      if (isHormoneSurvey(survey)) {
-        const sexAtBirthAnswer = getSingleSelectAnswerValue(
-          survey,
-          answers,
-          "What sex were you assigned at birth?",
-        );
-        const onHormoneTherapyAnswer = getSingleSelectAnswerValue(
-          survey,
-          answers,
-          "Are you currently taking hormone therapy?",
-        );
-
-        visibleQuestions = visibleQuestions.filter((question) => {
-          if (isHormoneTherapyFollowupQuestion(question)) {
-            return onHormoneTherapyAnswer === "yes";
-          }
-
-          if (isFemaleHormoneQuestion(question)) {
-            return sexAtBirthAnswer === "female";
-          }
-
-          if (isMaleHormoneQuestion(question)) {
-            return sexAtBirthAnswer === "male";
-          }
-
-          return true;
-        });
-      }
-
-      return visibleQuestions;
-    },
+    () => buildVisibleQuestions(survey, answers),
     [answers, survey],
   );
 

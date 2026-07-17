@@ -9,7 +9,7 @@ const CheckBoxCheckedIcon = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="24" height="24" rx="6" fill="#3AB5FE" />
+      <rect width="24" height="24" rx="6" fill="#04306d" />
       <path
         d="M17.5994 7.7998L9.89941 15.4998L6.39941 11.9998"
         stroke="white"
