@@ -11,6 +11,7 @@ import {
 import { CREATE_OR_UPDATE_SURVEY_RESPONSE } from "@/app/graphql/mutations/survey";
 import {
   FETCH_SURVEY_FOR_PRODUCTS,
+  FetchSurveyVariables,
   FetchSurveyType,
   QuestionType,
   SurveyType,
@@ -26,7 +27,7 @@ import {
   selectCartProductIds,
 } from "@/app/Redux/slices/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
+import { useLazyQuery, useMutation } from "@apollo/client/react";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -501,15 +502,12 @@ const buildDateOfBirthValue = (month: string, day: string, year: string) =>
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
   const dispatch = useAppDispatch();
-  const { data: surveyData, loading } = useQuery<FetchSurveyType>(
-    FETCH_SURVEY_FOR_PRODUCTS,
-    {
-      variables: {
-        productIds: productIds,
-        cartId: null,
-      },
-    },
-  );
+  const [fetchSurveyForProducts, { data: surveyData, loading }] = useLazyQuery<
+    FetchSurveyType,
+    FetchSurveyVariables
+  >(FETCH_SURVEY_FOR_PRODUCTS, {
+    fetchPolicy: "no-cache",
+  });
 
   const fetchedSurvey = surveyData?.fetchSurveyForProducts;
 
@@ -528,6 +526,7 @@ const Page = () => {
   const [stateOfResidence, setStateOfResidence] = useState("");
   const [externalUserId, setExternalUserId] = useState("");
   const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
+  const [hasRequestedSurvey, setHasRequestedSurvey] = useState(false);
   const [hasAppliedSavedProgramAnswers, setHasAppliedSavedProgramAnswers] =
     useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -560,6 +559,7 @@ const Page = () => {
   const survey = surveyFromState;
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const surveyFlowKey = productIds.slice().sort().join("|");
   const questionCount = survey?.questions?.length ?? 0;
   const stepFromUrl = searchParams.get("step");
   const trimmedEmail = email.trim();
@@ -861,11 +861,6 @@ const Page = () => {
   ]);
 
   useEffect(() => {
-    if (!surveyFromQuery) return;
-    queueMicrotask(() => setSurveyFromState(surveyFromQuery));
-  }, [surveyFromQuery]);
-
-  useEffect(() => {
     if (!survey) {
       setCurrentQuestionIndex(0);
       return;
@@ -884,6 +879,10 @@ const Page = () => {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSurveyAnswers({});
+    setSurveyFromState(undefined);
+    setShowInfoPage(false);
+    setIsRedirecting(false);
     setEmail("");
     setEmailTouched(false);
     setEmailSubmissionError("");
@@ -895,25 +894,28 @@ const Page = () => {
     setStateOfResidence("");
     setExternalUserId("");
     setHasCapturedEmail(false);
+    setHasRequestedSurvey(false);
     setHasAppliedSavedProgramAnswers(false);
     setCurrentQuestionIndex(0);
     setIsEmailModalOpen(false);
-  }, [survey?.id]);
+    setDeferConfirm(null);
+    setSoftStopConfirm(null);
+  }, [surveyFlowKey]);
 
   useEffect(() => {
     if (
       loading ||
-      !survey ||
       showInfoPage ||
       hasCapturedEmail ||
-      currentQuestionIndex !== 0
+      currentQuestionIndex !== 0 ||
+      productIds.length === 0
     ) {
       return;
     }
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsEmailModalOpen(true);
-  }, [currentQuestionIndex, hasCapturedEmail, loading, showInfoPage, survey]);
+  }, [currentQuestionIndex, hasCapturedEmail, loading, productIds.length, showInfoPage]);
 
   const router = useRouter();
 
@@ -1245,7 +1247,28 @@ const Page = () => {
       setExternalUserId(nextExternalUserId);
       setHasCapturedEmail(true);
       setIsEmailModalOpen(false);
+      setHasRequestedSurvey(true);
+
+      const surveyResponse = await fetchSurveyForProducts({
+        variables: {
+          productIds,
+          cartId: null,
+          externalUserId: nextExternalUserId,
+        },
+      });
+
+      const fetchedSurveyResult = surveyResponse.data?.fetchSurveyForProducts;
+      const nextSurvey = Array.isArray(fetchedSurveyResult)
+        ? fetchedSurveyResult[0]
+        : fetchedSurveyResult;
+
+      if (!nextSurvey) {
+        throw new Error("No survey was returned for these products.");
+      }
     } catch (error) {
+      setHasCapturedEmail(false);
+      setHasRequestedSurvey(false);
+      setIsEmailModalOpen(true);
       setEmailSubmissionError(
         error instanceof Error
           ? error.message
@@ -1255,13 +1278,12 @@ const Page = () => {
   };
 
   useEffect(() => {
-    if (loading || isRedirecting) return;
+    if (loading || isRedirecting || !hasRequestedSurvey) return;
 
     if (!surveyFromQuery) {
-      // setIsRedirecting(true);
       router.replace("/products");
     }
-  }, [loading, surveyFromQuery, isRedirecting, router]);
+  }, [hasRequestedSurvey, loading, surveyFromQuery, isRedirecting, router]);
 
   if (isRedirecting) {
     return (

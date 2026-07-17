@@ -34,8 +34,16 @@ export const surveyAttributes = `
 `;
 
 export const FETCH_SURVEY_FOR_PRODUCTS = gql`
-  query FetchSurveyForProducts($productIds: [ID!]!, $cartId: ID) {
-    fetchSurveyForProducts(productIds: $productIds, cartId: $cartId) {
+  query FetchSurveyForProducts(
+    $productIds: [ID!]!
+    $cartId: ID
+    $externalUserId: String
+  ) {
+    fetchSurveyForProducts(
+      productIds: $productIds
+      cartId: $cartId
+      externalUserId: $externalUserId
+    ) {
       ${surveyAttributes}
   }
 }
@@ -93,6 +101,12 @@ export interface SurveyType {
 
 export interface FetchSurveyType {
   fetchSurveyForProducts: SurveyType | SurveyType[];
+}
+
+export interface FetchSurveyVariables {
+  productIds: string[];
+  cartId?: string | null;
+  externalUserId?: string | null;
 }
 
 export interface CartItemType {
