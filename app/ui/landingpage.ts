@@ -33,7 +33,31 @@ import CommunityImageSix from "@/public/images/CommunityImageSix.png";
 import PerformanceImage from "@/public/images/PerformanceImage.png";
 import WeightManagementImage from "@/public/images/Recovery.png";
 import RecoveryImage from "@/public/images/WeightManagementImage.png";
+import NewSkyLogo from "@/public/images/SkyNewLogo.svg"
+import WhiteSkyLogo from "@/public/images/SkyWhiteLogoImage.svg"
+import HeroRightImage from "@/public/images/HeroRightImage.png"
+import HeroRingImage from "@/public/images/HeartRing.png"
+import HormonesProductImage from "@/public/images/HormonesProductImage.png"
+import DoctorImage from "@/public/images/DoctorImage.png"
+import SkyWhiteBg from "@/public/images/SkyWhiteBg.png"
+import StanfordImage from "@/public/images/StanfordImage.svg"
+import SkyHeartImage from "@/public/images/SkyHeartImage.svg"
+import ProductImage from "@/public/images/ProductImage.png"
+import LossWeightCardImage from "@/public/images/LossWeightCardImage.png"
+import PeptideCardImage from "@/public/images/PeptideCardImage.png"
 export const landingpageimages = {
+  PeptideCardImage,
+  LossWeightCardImage,
+  ProductImage,
+  StanfordImage,
+  SkyHeartImage,
+  DoctorImage,
+  SkyWhiteBg,
+  HormonesProductImage,
+  HeroRingImage,
+  HeroRightImage,
+  WhiteSkyLogo,
+  NewSkyLogo,
   WeightManagementImage,
   RecoveryImage,
   PerformanceImage,

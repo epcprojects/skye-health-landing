@@ -64,8 +64,13 @@ import CheckedBoxIcon from "./CheckedBoxIcon";
 import ArrowDownIcon from "./ArrowDownIcon";
 import TrashIcon from "./TrashIcon";
 import UncheckedBoxIcon from "./UncheckedBoxIcon";
-
+import OutlineShoppingIcon from "./OutlineShoppingIcon";
+import NewArrowIcon from "./NewArrowIcon";
+import NewPlusIcon from "./NewPlusIcon";
 export {
+  NewPlusIcon,
+  NewArrowIcon,
+  OutlineShoppingIcon,
   CheckedBoxIcon,
   ArrowDownIcon,
   TrashIcon,

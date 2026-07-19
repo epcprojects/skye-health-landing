@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope,Albert_Sans } from "next/font/google";
 import "./globals.css";
 import { MarqueeCard } from "./components";
 import CustomToastContainer from "./components/ToastContainer";
@@ -9,7 +9,10 @@ import Image from "next/image";
 import { Images } from "./images";
 import GraphQLProvider from "./apollo-provider";
 import ConstructionGateModal from "./components/modals/ConstructionGateModal";
-
+const AlbertSans_font = Albert_Sans({
+  variable: "--font-albert-sans",
+  subsets: ["latin"],
+});
 const Manrope_font = Manrope({
   variable: "--manrope",
   subsets: ["greek"],
@@ -67,7 +70,7 @@ Personalized. Delivered."
           content="https://www.paramounthealthrx.com"
         ></meta>
       </head>
-      <body className={`${Manrope_font.variable} antialiased flex flex-col`}>
+      <body className={`${Manrope_font.variable} ${AlbertSans_font.variable} antialiased flex flex-col`}>
         {/* <SmoothScroll> */}
         <GraphQLProvider>
           <StoreProvider>

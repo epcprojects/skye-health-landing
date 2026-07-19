@@ -32,7 +32,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--manrope) !important;
+  font-family: var(--font-albert-sans) !important;
 }
 
 html {
@@ -40,7 +40,9 @@ html {
    padding-right: 0px !important;
 }
 
-
+.font-albert-sans {
+  font-family: var(--font-albert-sans), sans-serif;
+}
 .crt-btn {
   background: transparent;
   border: 0;

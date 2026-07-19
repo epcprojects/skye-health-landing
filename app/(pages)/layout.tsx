@@ -1,6 +1,8 @@
 import React, { ReactNode } from "react";
 import Header from "../components/layouts/Header";
 import Footer from "../components/layouts/Footer";
+import HeaderLatest from "../components/layout/HeaderLatest";
+import FooterLatest from "../components/layout/FooterLatest";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -36,15 +38,17 @@ const menuItems = [
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="">
+    <div className="flex flex-col min-h-screen">
       <div className="fixed  z-50 w-full">
         {/* <HeaderNew menuItems={menuItems}/> */}
         {/* <Header menuItems={menuItems} /> */}
-        <Header />
+        {/* <Header /> */}
+        <HeaderLatest/>
       </div>
-      {children}
+     <div className="flex-1"> {children}</div>
       {/* <Footer menuItems={menuItems} /> */}
-      <Footer />
+      {/* <Footer /> */}
+      <FooterLatest/>
     </div>
   );
 }

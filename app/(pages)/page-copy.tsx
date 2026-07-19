@@ -1,0 +1,944 @@
+"use client";
+import Image, { StaticImageData } from "next/image";
+import { ArrowRightIcon } from "@/public/icons";
+import { useMemo, useState } from "react";
+
+import Link from "next/link";
+import ProcessCard from "@/app/components/cards/ProcessCard";
+import CommunitySwiper from "@/app/components/cards/CommunitySwiper";
+import NEWFAQ from "@/app/components/cards/FAQAccordion";
+import CharRollText from "../components/Animations/CharRollText";
+import TherapyCard from "../components/cards/TherapyCard";
+import {
+  featureCards,
+  processCards,
+  steps,
+  TherapyCardId,
+  therapyCards,
+} from "../constants/constants";
+import { images } from "../ui";
+import ProductCard from "../components/cards/ProductCard";
+import ThemeButton from "../components/Button/ThemeButton";
+import WellnessCarousel from "../components/cards/WelnessCarousel";
+import DoctorSwiper from "../components/cards/DoctorSlider";
+import StepCard from "../components/cards/StepCard";
+import FeatureCard from "../components/cards/FeatureCard";
+import WeightLossProgramModal from "../components/modals/WeightLossProgramModal";
+import HormoneProgramModal from "../components/modals/HormoneProgramModal";
+import { Images } from "../images";
+import { useQuery } from "@apollo/client/react";
+import {
+  ALL_PRODUCTS,
+  AllProductsType,
+  AllProductsVariables,
+  FETCH_CATEGORIES,
+  ProductStatusEnum,
+  ProductType,
+} from "../graphql/queries/products";
+import { useRouter } from "next/navigation";
+
+import CapsuleImage from "@/public/images/capsule.png";
+import CreamImage from "@/public/images/cream.png";
+import InjectableImage from "@/public/images/injectable.png";
+import InsertImage from "@/public/images/insert.png";
+import NailPolishImage from "@/public/images/Nail Polish.png";
+import NasalSprayImage from "@/public/images/Nasal Spray.png";
+import OintmentImage from "@/public/images/Ointment.png";
+import PatchImage from "@/public/images/Patch.png";
+import PrefillesSyringeImage from "@/public/images/Pre-filles Syringe.png";
+import ScalpOilImage from "@/public/images/Scalp OIl.png";
+import SolutionImage from "@/public/images/Solution.png";
+import SuppositoryImage from "@/public/images/Suppository.png";
+import TabletImage from "@/public/images/Tablet.png";
+import TrichosolSolutionImage from "@/public/images/Trichosol Solution.png";
+import TrocheImage from "@/public/images/Troche.png";
+import VialImage from "@/public/images/Vial.png";
+import {
+  addProductToCart,
+  selectCartItems,
+  setQty,
+} from "../Redux/slices/cart/cartSlice";
+import { toastAlert } from "../components/ToastAlert";
+import { useAppDispatch, useAppSelector } from "../Redux/store";
+import {
+  canAddProductWithCartRules,
+  WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+} from "../lib/cartRules";
+
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-weight-loss-program-prefill-source";
+const HORMONE_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-hormone-program-prefill-source";
+
+type SavedProgramAnswer = {
+  question: string;
+  answer: string;
+};
+
+type SavedProgramPayload = {
+  program?: string;
+  answers?: SavedProgramAnswer[];
+};
+
+const normalizeText = (value?: string | null) => value?.trim().toLowerCase();
+
+const isWeightLossModalProduct = (product?: ProductType | null) =>
+  normalizeText(product?.category) === "weight loss program" ||
+  (normalizeText(product?.category) === "weight loss" &&
+    normalizeText(product?.subCategory) === "glp-1");
+
+const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
+  id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+  sku: "WL-PROGRAM",
+  name: "Weight Loss Program",
+  description: "",
+  category: "Weight Loss Program",
+  brand: "",
+  price: 199,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Greenwich",
+  productUnitPricings: [
+    {
+      id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+      sku: "WL-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 199,
+    },
+  ],
+};
+
+const HORMONE_PROGRAM_PRODUCT: ProductType = {
+  id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
+  sku: "HRT-PROGRAM",
+  name: "Hormone Program",
+  description: "",
+  category: "Hormone Program",
+  brand: "",
+  price: 0,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Integrity",
+  productUnitPricings: [
+    {
+      id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
+      sku: "HRT-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 0,
+    },
+  ],
+};
+
+const getWeightLossProgramMonths = () => {
+  if (typeof window === "undefined") return 1;
+
+  try {
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) return 1;
+
+    const parsedSavedProgram = JSON.parse(
+      rawSavedProgram,
+    ) as SavedProgramPayload;
+    const monthsAnswer = parsedSavedProgram.answers?.find(
+      (entry) => entry.question === "How many months?",
+    )?.answer;
+
+    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
+
+    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
+  } catch (error) {
+    console.error("Failed to read saved weight-loss program months:", error);
+    return 1;
+  }
+};
+
+export default function Home() {
+  const router = useRouter();
+  const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
+  const [isHormoneModalOpen, setIsHormoneModalOpen] = useState(false);
+  const [pendingWeightLossProduct, setPendingWeightLossProduct] =
+    useState<ProductType | null>(null);
+  const cartItems = useAppSelector(selectCartItems);
+
+  const cardActions: Record<TherapyCardId, () => void> = {
+    "lose-weight": () => {
+      setIsWeightLossModalOpen(true);
+    },
+    "better-sex": () => {
+      router.push("products?category=Sexual Wellness");
+    },
+    "sleep-better": () => {
+      router.push("products?category=Hormones");
+    },
+    "regrow-hair": () => {
+      router.push("products?category=General Health");
+    },
+    "younger-skin": () => {
+      router.push("products");
+    },
+    "heal-joints": () => {
+      router.push("products?category=General Health");
+    },
+    "sharp-focus": () => {
+      router.push("products?category=Supplies");
+    },
+    "hormones-therapy": () => {
+      setIsHormoneModalOpen(true);
+    },
+  };
+
+  const processCardActions: Record<string, () => void> = {
+    "set-your-goal": () => {
+      router.push("/products");
+    },
+    "expert-review": () => {
+      router.push("/products");
+    },
+    "the-protocol": () => {
+      router.push("/products");
+    },
+    "direct-to-door": () => {
+      router.push("/products");
+    },
+  };
+
+  // my code
+
+  const PER_PAGE = 10;
+  const MAX_PRODUCTS = 10;
+
+  const dispatch = useAppDispatch();
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [activeProductFilter, setActiveProductFilter] = useState<
+    "in_demand" | "all" | "category"
+  >("in_demand");
+  const [extraProducts, setExtraProducts] = useState<ProductType[]>([]);
+
+  const getMobileCategoryLabel = (category: string) => {
+    if (category.includes(">")) return category.split(">")[0].trim();
+
+    const acronym = category.match(/^([A-Z]{2,})\s*\(/);
+    if (acronym) return acronym[1];
+
+    return category;
+  };
+
+  const normalizeForm = (form?: string | null) => form?.trim().toLowerCase();
+
+  const categoryChipImageMap = {
+    "General Health": Images.landingPage.GeneralHealthChipImage,
+    Hormones: Images.landingPage.HormonesChipImage,
+    HRT: Images.landingPage.AntiAgingImage,
+    "HRT (hormone replacement therapy)": Images.landingPage.HormonesChipImage,
+    Peptides: Images.landingPage.PeptidesChipImage,
+    "Sexual Wellness": Images.landingPage.SexualWelnessChipImage,
+    Vitamin: Images.landingPage.VitaminChipImage,
+    "Weight Loss": Images.landingPage.WeightLossChipImage,
+  } as const;
+
+  const getCategoryChipImage = (category: string) => {
+    return (
+      categoryChipImageMap[category as keyof typeof categoryChipImageMap] ||
+      Images.landingPage.GeneralHealthChipImage
+    );
+  };
+
+  const {
+    data,
+    loading,
+    error: appolloError,
+  } = useQuery<AllProductsType, AllProductsVariables>(ALL_PRODUCTS, {
+    variables: {
+      search: undefined,
+      category:
+        activeProductFilter === "category"
+          ? selectedCategory || undefined
+          : undefined,
+      in_demand: activeProductFilter === "in_demand" ? true : undefined,
+      page: 1,
+      perPage: PER_PAGE,
+    },
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: categoriesData } = useQuery<{ productCategories: string[] }>(
+    FETCH_CATEGORIES,
+    { skip: loading || !!appolloError },
+  );
+
+  const firstPageProducts = data?.allProducts?.allData ?? [];
+
+  const productCategories: string[] = categoriesData?.productCategories ?? [];
+
+  const allProducts = useMemo(() => {
+    const existingIds = new Set<string>();
+
+    return [...firstPageProducts, ...extraProducts]
+      .filter((product) => {
+        if (existingIds.has(product.id)) return false;
+        existingIds.add(product.id);
+        return true;
+      })
+      .slice(0, MAX_PRODUCTS);
+  }, [firstPageProducts, extraProducts]);
+
+  const getInDemandBgImage = (productName: string) => {
+    const name = productName.toLowerCase();
+
+    if (name.includes("tirzeptatide")) {
+      return Images.landingPage.TirzepatideImage;
+    }
+
+    if (name.includes("semaglutide")) {
+      return Images.landingPage.SemaglutideImage;
+    }
+
+    if (name.includes("nad")) {
+      return Images.landingPage.NADImage;
+    }
+
+    if (name.includes("sildenafil")) {
+      return Images.landingPage.sildenafil;
+    }
+
+    return Images.landingPage.TestosteroneImage;
+  };
+
+  const formImageMap: Record<string, StaticImageData> = {
+    capsule: CapsuleImage,
+    cream: CreamImage,
+    injectable: InjectableImage,
+    insert: InsertImage,
+    "nail polish": NailPolishImage,
+    "nasal spray": NasalSprayImage,
+    ointment: OintmentImage,
+    patch: PatchImage,
+    "pre-filled syringe": PrefillesSyringeImage,
+    "pre-filles syringe": PrefillesSyringeImage,
+    "scalp oil": ScalpOilImage,
+    solution: SolutionImage,
+    suppository: SuppositoryImage,
+    tablet: TabletImage,
+    "trichosol solution": TrichosolSolutionImage,
+    troche: TrocheImage,
+    vial: VialImage,
+  };
+
+  const getProductImage = (product: ProductType) => {
+    if (product.primaryImage) return product.primaryImage;
+
+    const form = normalizeForm(product.form);
+    if (!form) return "";
+
+    return formImageMap[form] || "";
+  };
+
+  return (
+    <>
+      <WeightLossProgramModal
+        isOpen={isWeightLossModalOpen}
+        onClose={() => {
+          setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
+        }}
+        onStartQuestionnaire={() => {
+          const selectedMonths = getWeightLossProgramMonths();
+          const targetProductId =
+            pendingWeightLossProduct?.id ?? WEIGHT_LOSS_PROGRAM_PRODUCT_ID;
+          const cartGuard = canAddProductWithCartRules(cartItems, targetProductId);
+
+          if (!cartGuard.allowed) {
+            toastAlert(
+              cartGuard.message ?? "Unable to add product to cart.",
+              false,
+            );
+            return;
+          }
+
+          if (pendingWeightLossProduct) {
+            const existingCartItem = cartItems.find(
+              (item) => item.productId === pendingWeightLossProduct.id,
+            );
+
+            if (!existingCartItem) {
+              dispatch(
+                addProductToCart({
+                  product: pendingWeightLossProduct,
+                  qty: selectedMonths,
+                }),
+              );
+            } else {
+              dispatch(
+                setQty({
+                  cartItemId: existingCartItem.cartItemId,
+                  qty: selectedMonths,
+                }),
+              );
+            }
+          } else {
+            const hasWeightLossProgramInCart = cartItems.some(
+              (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+            );
+
+            if (!hasWeightLossProgramInCart) {
+              dispatch(
+                addProductToCart({
+                  product: WEIGHT_LOSS_PROGRAM_PRODUCT,
+                  qty: selectedMonths,
+                }),
+              );
+            } else {
+              dispatch(
+                setQty({
+                  productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+                  qty: selectedMonths,
+                }),
+              );
+            }
+
+            if (typeof window !== "undefined") {
+              window.localStorage.setItem(
+                WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
+                "card-flow",
+              );
+            }
+          }
+
+          setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
+          router.push("/surveys?step=1");
+        }}
+      />
+      <HormoneProgramModal
+        isOpen={isHormoneModalOpen}
+        onClose={() => setIsHormoneModalOpen(false)}
+        onStartQuestionnaire={() => {
+          const hasHormoneProgramInCart = cartItems.some(
+            (item) => item.productId === HORMONE_PROGRAM_PRODUCT.id,
+          );
+
+          if (!hasHormoneProgramInCart) {
+            dispatch(
+              addProductToCart({
+                product: HORMONE_PROGRAM_PRODUCT,
+                qty: 1,
+              }),
+            );
+          } else {
+            dispatch(
+              setQty({
+                productId: HORMONE_PROGRAM_PRODUCT.id,
+                qty: 1,
+              }),
+            );
+          }
+
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(
+              HORMONE_PROGRAM_PREFILL_SOURCE_KEY,
+              "card-flow",
+            );
+          }
+
+          setIsHormoneModalOpen(false);
+          router.push("/surveys?step=1");
+        }}
+      />
+      <section className="bg-primary pt-44 lg:pt-59 pb-12 lg:pb-24 relative">
+        <Image
+          src={images.landingpageimages.SkyHealthBgLogoImage}
+          alt={"sky health bg logo"}
+          className="absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
+        />
+        <div className="container max-w-360 mx-auto px-4 lg:px-8  flex flex-col gap-8 lg:gap-25">
+          <div className="flex flex-col gap-4 lg:gap-7.5">
+            <p className="text-[40px] leading-12 xl:leading-26  xl:text-[90px] font-semibold text-center lg:text-start text-white">
+              Your Health.{" "}
+              <span className="text-white/40 inline-block pt-2">
+                <CharRollText as="span" text="Elevated." auto />
+              </span>
+            </p>
+            <p className="text-lg xl:text-2xl text-center lg:text-start text-white">
+              Experience a new standard of personalized care.
+              <br />
+              From longevity to daily wellness, we bring expert-led treatments.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-8">
+            {therapyCards.map((card) => (
+              <TherapyCard
+                key={card.id}
+                image={card.image}
+                label={card.label}
+                onClick={cardActions[card.id]}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="py-12 lg:py-24 flex flex-col gap-12">
+        <div className="container max-w-370 px-4 md:px-8 mx-auto flex flex-col items-center gap-12">
+          <div className="flex flex-col items-center gap-5">
+            <p className="text-4xl text-center px-4 lg:px-0 lg:text-start lg:text-[64px] font-semibold text-black tracking-[-2%]">
+              Discover Our Products
+            </p>
+            <div className="flex flex-row gap-2 lg:gap-2.5 flex-wrap">
+              <button
+                onClick={() => {
+                  setActiveProductFilter("all");
+                  setSelectedCategory("");
+                }}
+                className={`py-2 lg:py-1.5 px-3 lg:px-5.5 cursor-pointer rounded-xl hover:border-primary-light text-sm lg:text-base font-medium text-neutral-900 ${
+                  activeProductFilter === "all"
+                    ? "bg-primary-light text-white"
+                    : "bg-white border border-[#E3E3E3]"
+                }`}
+              >
+                All
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveProductFilter("in_demand");
+                  setSelectedCategory("");
+                }}
+                className={`py-2 lg:py-1.5 flex items-center gap-2 px-2 lg:pr-3 lg:ps-2 hover:border-primary-light cursor-pointer rounded-xl text-sm lg:text-base font-medium text-neutral-900 ${
+                  activeProductFilter === "in_demand"
+                    ? "bg-primary-light text-white"
+                    : "bg-white border border-[#E3E3E3]"
+                }`}
+              >
+                <Image src={Images.landingPage.indemand} alt={""} /> In Demand
+              </button>
+
+              {productCategories
+                // .filter((category) => category !== "Weight Loss Program")
+                .map((category) => {
+                  const isSelected =
+                    activeProductFilter === "category" &&
+                    selectedCategory === category;
+
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setActiveProductFilter("category");
+                        setSelectedCategory(category);
+                        setExtraProducts([]);
+                      }}
+                      className={`py-1 lg:py-1.5 px-1 lg:px-2 lg:pr-3 hover:border-primary-light cursor-pointer flex flex-row items-center gap-2.5  rounded-xl text-sm lg:text-base font-medium text-neutral-900 whitespace-nowrap ${
+                        isSelected
+                          ? "bg-primary-light text-white"
+                          : "bg-white border border-[#E3E3E3]"
+                      }`}
+                    >
+                      <Image
+                        src={getCategoryChipImage(category)}
+                        alt={category}
+                      />
+
+                      <span className="sm:hidden">
+                        {getMobileCategoryLabel(category)}
+                      </span>
+                      <span className="hidden sm:inline">{category}</span>
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
+          {loading && allProducts.length === 0 && (
+            <p className="text-neutral-600 text-center">Loading products...</p>
+          )}
+
+          {appolloError && (
+            <p className="text-red-600 text-center">Failed to load products.</p>
+          )}
+
+          {!loading && !appolloError && allProducts.length === 0 && (
+            <div className="text-neutral-600 text-center">No Product Found</div>
+          )}
+
+          <div className="container max-w-390 mx-auto  grid-cols-1 md:grid-cols-3 xl:grid-cols-5 flex-wrap items-center justify-center flex px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
+            {allProducts.map((product: ProductType) => (
+              <div
+                key={product.id}
+                className="h-full flex w-full sm:max-w-72"
+                onClick={() => router.push(`/products/${product.id}`)}
+              >
+                <ProductCard
+                  key={product.id}
+                  bgImage={getInDemandBgImage(product.name)}
+                  image={getProductImage(product)}
+                  isInDemand={activeProductFilter === "in_demand"}
+                  title={product.name}
+                  onBuyClick={() => {
+                    const cartGuard = canAddProductWithCartRules(
+                      cartItems,
+                      product.id,
+                    );
+
+                    if (!cartGuard.allowed) {
+                      toastAlert(
+                        cartGuard.message ?? "Unable to add product to cart.",
+                        false,
+                    );
+                    return;
+                  }
+
+                  if (isWeightLossModalProduct(product)) {
+                    setPendingWeightLossProduct(product);
+                    setIsWeightLossModalOpen(true);
+                    return;
+                  }
+
+                  dispatch(addProductToCart({ product }));
+                  toastAlert("Added to Cart Successfully", true);
+                }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="pb-24">
+        <div className="container max-w-360 mx-auto flex flex-col gap-8 lg:gap-12">
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex flex-col items-center px-4 lg:px-0 gap-4">
+              <p className=" text-center leading-[120%] font-semibold text-4xl lg:text-[64px] text-black tracking-[-2%]">
+                Your Body is a System
+                <br />
+                <span className="text-[#009FFF]">We Just Optimize It.</span>
+              </p>
+              <p className="text-lg lg:text-[22px] text-center text-gray-800">
+                No waiting rooms. No awkward questions. Just a simple,
+                <br /> secure digital intake to understand your unique biology.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-5.5">
+              <ThemeButton
+                variant="blackFilled"
+                size="lg"
+                onClick={() => {
+                  router.push("/products");
+                }}
+                label="Start Assessment"
+                className="w-full"
+              />
+
+              <ThemeButton
+                variant="outlined"
+                size="lg"
+                minWidth
+                onClick={() => {
+                  router.push("/products");
+                }}
+                label="Join SKYE"
+                className="w-full"
+              />
+            </div>
+          </div>
+          <div className="px-4 2xl:px-8 grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {processCards.map((card) => (
+              <ProcessCard
+                key={card.id}
+                step={card.step}
+                title={card.title}
+                description={card.description}
+                image={card.image}
+                imageAlt={card.imageAlt}
+                theme={card.theme}
+                onClick={processCardActions[card.id]}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="py-12 lg:py-32 bg-[radial-gradient(circle,#08387A_0%,#06224C_100%)]">
+        <div className="overflow-x-clip flex flex-col gap-8 lg:gap-24">
+          <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-10">
+            <div className="flex flex-col gap-2">
+              <p className="text-xl lg:text-2xl text-white/50">
+                A Different Standard
+              </p>
+              <p className="text-4xl lg:text-[64px] font-semibold text-white">
+                Pharmacy Quality, Physician Backed
+              </p>
+            </div>
+          </div>
+          <WellnessCarousel />
+        </div>
+      </section>
+      <DoctorSwiper />
+      <section className="py-8 lg:py-30 relative overflow-hidden">
+        <Image
+          src={images.landingpageimages.SkyeHealthMobile}
+          alt={"Mobile App"}
+          className="hidden sm:flex sm:absolute bottom-0 2xl:right-0 -right-40"
+        />
+        <div className="container max-w-360 mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-16 relative">
+          <div className="flex flex-col gap-4 ">
+            <p className="text-3xl lg:text-[54px] font-semibold text-black">
+              Get Started in 3 Simple Steps
+            </p>
+            <p className="text-gray-800 text-base lg:text-[22px]">
+              SKYE HEALTH provides access to therapies commonly
+              <br /> evaluated in clinical and performance settings
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-212.5">
+            {steps.map((step) => (
+              <StepCard
+                key={step.id}
+                Icon={step.Icon}
+                title={step.title}
+                description={step.description}
+              />
+            ))}
+          </div>
+
+          <div>
+            <ThemeButton
+              onClick={() => {
+                router.push("/products");
+              }}
+              label={"Get Your Products"}
+              variant="primaryFilled"
+              size="xl"
+            />
+          </div>
+        </div>
+      </section>
+      <section className="flex flex-col gap-12 py-37.5 bg-[url('/images/LookBetterImage.png')] bg-cover bg-center bg-no-repeat md:h-210.5 relative ">
+        <Image
+          src={images.landingpageimages.HeartLogo}
+          alt={"heart bg"}
+          className="absolute top-30 lg:right-30 right-0 h-70 lg:h-auto w-auto  mix-blend-overlay"
+        />
+        <div className="container max-w-360 mx-auto px-4 lg:px-8 ">
+          <div className="max-w-165.25 flex flex-col gap-12 lg:gap-32">
+            <div className="flex flex-col gap-2">
+              <p className="text-3xl lg:text-[64px] font-semibold text-white leading-[140%] tracking-[-2%]">
+                Feel better. Look better. Perform better.
+              </p>
+              <p className="text-xl lg:text-[28px] text-white">
+                Browse. Consult. Ship. ENJOY!
+              </p>
+            </div>
+            <div className="flex flex-col md:flex-row gap-5.5">
+              <ThemeButton
+                onClick={() => {
+                  router.push("/products");
+                }}
+                size="xxl"
+                className="font-semibold!"
+                label={"Pick Your Products"}
+              />
+              <ThemeButton
+                onClick={() => {
+                  router.push("/products");
+                }}
+                size="xxl"
+                variant="whiteOutlined"
+                className="font-semibold!"
+                label={"Join SKYE"}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="py-12 lg:pt-24">
+        <div className="container max-w-360 mx-auto flex flex-col gap-12">
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex flex-col items-center gap-4 px-4 lg:px-0">
+              <p className="text-center text-3xl lg:text-[64px] font-semibold leading-[120%] tracking-[-2%] text-[#009FFF]">
+                Clinical Care.
+                <br />
+                <span className="text-black">Without the Clinic.</span>
+              </p>
+              <p className="text-base lg:text-[22px] text-gray-800 text-center">
+                We’ve stripped away the inefficiencies of traditional
+                healthcare—the waiting rooms,
+                <br /> the awkward conversations, and the pharmacy lines. What
+                remains is a seamless,
+                <br /> data-driven system designed to fit into your life, not
+                disrupt it.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2  gap-3 lg:gap-5.5">
+              <ThemeButton
+                onClick={() => {
+                  router.push("/products");
+                }}
+                size="sm"
+                variant="blackFilled"
+                label={"Start Assessment"}
+              />
+              <ThemeButton
+                onClick={() => {
+                  router.push("/products");
+                }}
+                size="sm"
+                variant="outlined"
+                label={"Join SKYE"}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="pb-8 lg:pb-24 flex items-center justify-center">
+        <video autoPlay loop muted playsInline className=" z-10">
+          <source
+            src="https://res.cloudinary.com/dgbdcdqd1/video/upload/q_auto/f_auto/v1778853131/render_jicqf1.mp4"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+      </section>
+      <section className="pb-12 lg:pb-24">
+        <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-10 px-4 lg:px-8 2xl:px-0">
+          {featureCards.map((feature) => (
+            <FeatureCard
+              key={feature.id}
+              Icon={feature.Icon}
+              title={feature.title}
+              description={feature.description}
+              HoverIcon={feature.HoverIcon}
+            />
+          ))}
+        </div>
+      </section>
+      <section className="pt-12 pb-12 lg:pt-32 lg:pb-32 bg-[radial-gradient(circle,#08387A_0%,#06224C_100%)]  relative overflow-hidden">
+        <div className="container max-w-360 mx-auto flex flex-col gap-6 lg:gap-32 px-4 lg:px-8 relative z-20">
+          <div className="flex flex-col gap-3">
+            <p className="text-xl lg:text-2xl text-white/70">Get Started</p>
+            <div className="flex flex-col gap-2">
+              <p className="text-3xl lg:text-[64px] font-semibold  tracking-[-2%] text-white">
+                Invest in your
+                <br /> future self.
+              </p>
+              <p className="text-xl lg:text-2xl text-white">
+                Sign up today to receive our comprehensive guide to “The
+                <br /> Science of Longevity” and get priority access to clinical
+                <br /> consultations.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 lg:gap-6.25">
+            <div className="flex flex-col gap-3">
+              <p className="text-xl lg:text-2xl text-white/70">Email*</p>
+              <div>
+                <input
+                  type="text"
+                  placeholder="example@email.com"
+                  className="w-full lg:py-5 lg:px-7.5 px-4 py-4 placeholder:text-white/40 text-base lg:text-xl hover:border-white/40  border border-white/20 text-white hover:bg-primary-dark bg-primary-dark/70 lg:w-125 rounded-full outline-none "
+                />
+              </div>
+            </div>
+            <div>
+              <ThemeButton
+                onClick={() => {
+                  "";
+                }}
+                variant="blacktexted"
+                size="extralarge"
+                label={"Unlock Access"}
+                className="font-semibold!"
+              />
+            </div>
+          </div>
+        </div>
+        <Image
+          src={images.landingpageimages.InvestFutureImage}
+          alt={"invest in future"}
+          className="absolute z-5 -bottom-10 right-0 hidden lg:block"
+        />
+      </section>
+      <section className="py-12 lg:py-24">
+        <div className="flex flex-col gap-10 ">
+          <div className="flex flex-col items-center gap-2 px-4 lg:px-0">
+            <p className="text-black text-xl lg:text-2xl">Community Feedback</p>
+            <p className="text-3xl lg:text-[54px] text-center lg:text-start font-semibold text-neutral-900">
+              Empowering Thousands of Users.
+            </p>
+          </div>
+          <CommunitySwiper />
+          <div className="self-center flex flex-col md:flex-row gap-3">
+            <ThemeButton
+              onClick={() => {
+                router.push("/products");
+              }}
+              size="xxl"
+              variant="outlined"
+              label={"Learn More"}
+            />
+            <ThemeButton
+              onClick={() => {
+                router.push("/products");
+              }}
+              size="xxl"
+              variant="outlined"
+              label={"Get Started"}
+            />
+          </div>
+        </div>
+      </section>
+      <section className="pb-12 lg:pb-24">
+        <div className="container max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-6 lg:gap-13.5">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-3xl lg:text-[54px] text-center lg:text-start font-semibold text-neutral-900 tracking-[-2%]">
+              Frequently Asked Questions?
+            </p>
+            <p className="text-gray-800 text-lg lg:text-[22px] text-center">
+              Everything you need to know about our peptides and process.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4 lg:gap-8">
+            <div className="flex flex-col gap-4 lg:gap-9">
+              {/* <FAQAccordion /> */}
+              <NEWFAQ />
+              <p className=" text-center text-lg lg:text-xl text-black">
+                Still have questions?{" "}
+                <Link href={""} className="font-semibold ">
+                  Contact our support team
+                </Link>
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                "";
+              }}
+              className="self-center cursor-pointer group pl-6 py-4 pr-4 rounded-full bg-[#00578C] flex flex-row gap-2.5"
+            >
+              <span className="text-lg font-semibold text-white">
+                View Full FAQs
+              </span>
+              <span className="h-7.5 w-11.25 bg-white flex items-center justify-center  rounded-full">
+                <span className="transition-transform duration-300 ease-out group-hover:-rotate-45">
+                  <ArrowRightIcon fill="black" />
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
