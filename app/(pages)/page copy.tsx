@@ -279,7 +279,7 @@ export default function Home() {
         </div>
       </section>
       <section className="py-8 xl:py-24 overflow-x-hidden">
-        <div className="container max-w-7xl mx-auto flex flex-col gap-6 lg:gap-12 px-4 2xl:px-0">
+        <div className="container max-w-7xl mx-auto flex flex-col gap-6 lg:gap-12 px-4 2xl:px-8">
           <div className="flex flex-col gap-4 lg:gap-6">
             <p className="text-[28px] lg:text-[48px] font-medium text-neutral-900">
               Comprehensive Health Optimization
@@ -439,7 +439,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="px-4 2xl:px-0 pb-8 lg:pb-24">
+      <section className="px-4 2xl:px-8 pb-8 lg:pb-24">
         <div className="container max-w-7xl mx-auto flex flex-col gap-4 lg:gap-12">
           <h2 className="text-[28px] lg:text-5xl text-neutral-900 font-medium leading-[120%] tracking-[-2%] ">
             Be Your Best Self

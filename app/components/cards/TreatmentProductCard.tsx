@@ -59,7 +59,7 @@ const TreatmentProductCard = ({
   onGetStarted,
 }: TreatmentProductCardProps) => {
   return (
-    <article className="py-6 px-4 bg-white rounded-4xl flex flex-col gap-2.5">
+    <article className="py-6 px-4 bg-white rounded-2xl xl:rounded-4xl flex flex-col gap-2.5">
       <div className="min-h-6 flex flex-row flex-wrap gap-2.5">
         {inStock && !soldOut && (
           <StatusBadge

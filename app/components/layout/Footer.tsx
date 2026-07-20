@@ -23,7 +23,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ menuItems }) => {
   return (
-    <footer className="sm:px-4 xl:px-0 mt-auto mb-0 pt-16 lg:pt-8 py-4 lg:py-8">
+    <footer className="sm:px-4 xl:px-8 mt-auto mb-0 pt-16 lg:pt-8 py-4 lg:py-8">
       <div className="container mx-auto max-w-7xl px:4 xl:px-8">
         <div className="grid px-4 lg:px-0 grid-cols-1 lg:grid-cols-3 gap gap-x-0 gap-y-4 lg:gap-y-7.5 lg:gap-x-7.5">
           <div className="col-span-2 px-6  lg:order-0 order-2 sm:px-12 pt-6 bg-linear-to-b rounded-3xl from-[#FDFDFD] to-[#E9EAEB] sm:pt-12 gap-5 lg:gap-10 grid grid-cols-1 lg:grid-cols-3">

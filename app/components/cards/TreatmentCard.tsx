@@ -39,11 +39,11 @@ const TreatmentCard = ({
         backgroundImage: `url("${backgroundImage}")`,
         backgroundColor,
       }}
-      className="group min-h-88.25 overflow-hidden rounded-4xl bg-cover bg-center bg-no-repeat px-12 flex items-center cursor-pointer"
+      className="group xl:min-h-88.25 overflow-hidden rounded-2xl xl:rounded-4xl bg-cover bg-center bg-no-repeat py-4 xl:py-0 px-4 xl:px-12 flex items-center cursor-pointer"
     >
       <div className="flex flex-col gap-6">
         <div className="z-10 flex flex-col gap-4">
-          <h3 className="text-[32px] font-medium text-white">
+          <h3 className="text-xl xl:text-[32px] font-medium text-white">
             {title}
           </h3>
 
@@ -54,9 +54,9 @@ const TreatmentCard = ({
                 event.stopPropagation();
                 onButtonClick?.();
               }}
-              className="bg-white cursor-pointer py-5 px-8 rounded-full flex items-center gap-2.5"
+              className="bg-white cursor-pointer py-3 px-5 xl:py-5 xl:px-8 rounded-full flex items-center gap-2.5"
             >
-              <span className="text-base font-medium text-[#0F1D3A]">
+              <span className="text-sm xl:text-base font-medium text-[#0F1D3A]">
                 {buttonLabel}
               </span>
 

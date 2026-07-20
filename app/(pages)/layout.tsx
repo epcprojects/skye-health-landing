@@ -39,7 +39,7 @@ const menuItems = [
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="fixed  z-50 w-full">
+      <div className="sticky top-0 xl:fixed  z-50 w-full">
         {/* <HeaderNew menuItems={menuItems}/> */}
         {/* <Header menuItems={menuItems} /> */}
         {/* <Header /> */}

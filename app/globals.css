@@ -116,6 +116,13 @@ html {
     opacity: 0;
   }
 }
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
 .scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;

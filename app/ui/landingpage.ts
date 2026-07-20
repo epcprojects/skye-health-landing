@@ -45,7 +45,19 @@ import SkyHeartImage from "@/public/images/SkyHeartImage.svg"
 import ProductImage from "@/public/images/ProductImage.png"
 import LossWeightCardImage from "@/public/images/LossWeightCardImage.png"
 import PeptideCardImage from "@/public/images/PeptideCardImage.png"
+import PharmacyImage from "@/public/images/PharmacyImage.png"
+import SkyDifferenceCardImage from "@/public/images/SkyDifferenceCardImage.png"
+import FaqsImage from "@/public/images/FaqsImage.png"
+import OptimizeEverythingImage from "@/public/images/OptimizeEverythingImage.png"
+import HormonesImage from "@/public/images/HormonesImage.png"
+import SkyHeartLogo from "@/public/images/SkyHeartLogo.svg"
 export const landingpageimages = {
+  SkyHeartLogo,
+  HormonesImage,
+  OptimizeEverythingImage,
+  FaqsImage,
+  SkyDifferenceCardImage,
+  PharmacyImage,
   PeptideCardImage,
   LossWeightCardImage,
   ProductImage,

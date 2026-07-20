@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { NewArrowIcon, NewPlusIcon } from "@/public/icons";
+import { images } from "@/app/ui";
 
 const footerLinkSections = [
   {
@@ -24,21 +26,35 @@ const footerLinkSections = [
     ],
   },
 ];
+
 const FooterLatest = () => {
   return (
-    <footer className="bg-[#0F1D3A] py-10 px-20 flex flex-col gap-2.5 ">
-      <div className="py-8 px-20 flex flex-row gap-30">
-        <div className="flex flex-col gap-4 ">
-          <p className="font-medium text-base uppercase leading-[100%] tracking-[3px] text-[#CEDCF9]">
+    <footer className="relative flex flex-col gap-2.5 bg-[#0F1D3A] py-10">
+      <div className="relative z-20 -mt-19  flex h-18 w-18 shrink-0 items-center justify-center self-center rounded-full bg-[#F5F8FE]">
+        <Image
+          src={images.landingpageimages.SkyHeartLogo}
+          alt="Skye Health"
+          className="h-auto w-auto"
+        />
+      </div>
+
+      <div className="container mx-auto flex max-w-7xl flex-col flex-wrap gap-10 px-4 py-8 sm:flex-row sm:px-6 xl:flex-nowrap xl:gap-30 xl:px-8">
+        <div className="flex w-full flex-col gap-4 sm:w-[calc(50%-20px)] xl:w-auto">
+          <p className="text-base font-medium uppercase leading-[100%] tracking-[3px] text-[#CEDCF9]">
             Stay Informed
           </p>
+
           <p className="text-base text-[#E2EAFC]">
             Premium Peptides • Performance Forward. Delivering purity you can
             trust to high-performance individuals globally.
           </p>
         </div>
+
         {footerLinkSections.map((section) => (
-          <div key={section.title} className="flex flex-col gap-4 min-w-34">
+          <div
+            key={section.title}
+            className="flex w-full flex-col gap-4 sm:w-[calc(50%-20px)] md:w-auto xl:min-w-34"
+          >
             <p className="text-base font-medium uppercase leading-[100%] tracking-[3px] text-[#CEDCF9]">
               {section.title}
             </p>
@@ -56,42 +72,54 @@ const FooterLatest = () => {
             </div>
           </div>
         ))}
-        <div className="flex flex-col gap-4">
-          <p className="text-base font-medium text-[#CEDCF9] uppercase leading-[100%] tracking-[3px] ">
+
+        <div className="flex w-full flex-col gap-4 sm:w-[calc(50%-20px)] xl:w-auto">
+          <p className="text-base font-medium uppercase leading-[100%] tracking-[3px] text-[#CEDCF9]">
             Stay Informed
           </p>
-          <p className="text-base text-[#E2EAFC] ">
+
+          <p className="text-base text-[#E2EAFC]">
             Join our HEALTH newsletter for technical updates and batch release
             alerts.
           </p>
-          <div className="group cursor-pointer bg-white/25 flex flex-row justify-between border border-[#ECEDDD30] backdrop-blur-[90px] py-3 pr-3 pl-6 rounded-full">
+
+          <div className="group flex w-full cursor-pointer flex-row items-center justify-between rounded-full border border-[#ECEDDD30] bg-white/25 py-3 pr-3 pl-6 backdrop-blur-[90px]">
             <input
               type="email"
               placeholder="Your email address"
-              className="text-white text-sm placeholder:text-white bg-transparent outline-none"
+              className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white"
             />
 
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-              <span className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+            <button
+              type="button"
+              aria-label="Submit email"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white"
+            >
+              <span className="inline-flex transition-transform duration-300 ease-out group-hover:translate-x-1">
                 <NewArrowIcon />
               </span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
-      <div className="border-t border-t-white py-8 px-20 flex flex-row justify-between items-center">
-        <p className="text-base font-medium text-[#CEDCF9] ">
-          © {new Date().getFullYear()} SKYE HEALTH. All rights reserved.
-        </p>
-        <div className="flex flex-row gap-4 ">
-          <div className="w-8.75 h-8.75 bg-[#3D74E9] rounded-full flex items-center justify-center">
-            <NewPlusIcon />
-          </div>
-          <div className="w-8.75 h-8.75 bg-[#3D74E9] rounded-full flex items-center justify-center">
-            <NewPlusIcon />
-          </div>
-          <div className="w-8.75 h-8.75 bg-[#3D74E9] rounded-full flex items-center justify-center">
-            <NewPlusIcon />
+
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 xl:px-8">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-white py-8 sm:flex-row">
+          <p className="text-center text-sm font-medium text-[#CEDCF9] sm:text-left sm:text-base">
+            © {new Date().getFullYear()} SKYE HEALTH. All rights reserved.
+          </p>
+
+          <div className="flex flex-row gap-4">
+            {[1, 2, 3].map((item) => (
+              <button
+                key={item}
+                type="button"
+                aria-label={`Social media link ${item}`}
+                className="flex h-8.75 w-8.75 items-center justify-center rounded-full bg-[#3D74E9]"
+              >
+                <NewPlusIcon />
+              </button>
+            ))}
           </div>
         </div>
       </div>

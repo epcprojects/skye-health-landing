@@ -576,7 +576,7 @@ export default function Home() {
             <div className="text-neutral-600 text-center">No Product Found</div>
           )}
 
-          <div className="container max-w-390 mx-auto  grid-cols-1 md:grid-cols-3 xl:grid-cols-5 flex-wrap items-center justify-center flex px-4 2xl:px-0 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
+          <div className="container max-w-390 mx-auto  grid-cols-1 md:grid-cols-3 xl:grid-cols-5 flex-wrap items-center justify-center flex px-4 2xl:px-8 2xl:grid-cols-5 gap-x-2 gap-y-4 lg:gap-y-10">
             {allProducts.map((product: ProductType) => (
               <div
                 key={product.id}
@@ -813,7 +813,7 @@ export default function Home() {
         </video>
       </section>
       <section className="pb-12 lg:pb-24">
-        <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-10 px-4 lg:px-8 2xl:px-0">
+        <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-10 px-4 lg:px-8 2xl:px-8">
           {featureCards.map((feature) => (
             <FeatureCard
               key={feature.id}
