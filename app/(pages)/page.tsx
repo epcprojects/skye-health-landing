@@ -7,21 +7,19 @@ import { images } from "../ui";
 
 import "swiper/css";
 import { TreatmentFilterValue } from "../components/cards/TreatmentFilters";
-
 import { FAQItem } from "../components/FaqAccordion";
-
 import HeroSection from "../components/sections/HeroSection";
 import TreatmentCardsSection from "../components/sections/TreatmentCardsSection";
 import ExploreOptionsSection from "../components/sections/ExploreOptionsSection";
 import PeptideExpertsSection from "../components/sections/PeptideExpertsSection";
 import TreatmentSliderSection from "../components/sections/TreatmentSliderSection";
-import PeptideTreatmentSliderSection from "../components/sections/PeptideTreatmentSliderSection";
-import OptimizeTreatmentSliderSection from "../components/sections/OptimizeTreatmentSliderSection";
-import HormoneTreatmentSliderSection from "../components/sections/HormoneTreatmentSliderSection";
 import BetterTreatmentSection from "../components/sections/BetterTreatmentSection";
 import SkyDifferenceSection from "../components/sections/SkyDifferenceSection";
 import FAQSection from "../components/sections/FAQSection";
-import { ProductType } from "../graphql/queries/products";
+import type {
+  FeaturedTreatmentSliderCard,
+  TreatmentSliderProduct,
+} from "@/app/components/sections/TreatmentSliderSection";
 type TreatmentCardData = {
   id: number;
   productImage: StaticImageData | string;
@@ -40,12 +38,36 @@ type TreatmentCardData = {
   onHoverGetStarted: () => void;
   onHoverAction: () => void;
 };
-
-const cardColors = {
-  productImageBg: "#CEDCF9",
-  hoverCardBg: "#AFC6E5",
-  hoverBadgeBg: "#87A3CA",
+const createStaticFeaturedCard = (
+  card: TreatmentCardData,
+): FeaturedTreatmentSliderCard => {
+  return {
+    image: card.hoverImage,
+    badge: card.hoverBadge,
+    title: card.hoverTitle,
+    actionLabel: card.hoverActionLabel,
+    backgroundColor: card.hoverCardBg,
+    badgeBackgroundColor: card.hoverBadgeBg,
+    onGetStarted: card.onHoverGetStarted,
+    onAction: card.onHoverAction,
+  };
 };
+
+const createStaticSliderProducts = (
+  cards: TreatmentCardData[],
+): TreatmentSliderProduct[] => {
+  return cards.map((card) => ({
+    id: card.id,
+    productImage: card.productImage,
+    productTitle: card.productTitle,
+    productDescription: card.productDescription,
+    productPrice: card.productPrice,
+    productImageBg: card.productImageBg,
+    onGetStarted: card.onGetStarted,
+    onShopNow: card.onShopNow,
+  }));
+};
+
 const optimizeEverythingConfig = {
   productImageBg: "#0F1D3A",
   hoverCardBg: "#0F1D3A",
@@ -58,6 +80,75 @@ const hormoneCardColors = {
   hoverCardBg: "radial-gradient(circle at center, #93CBCF 0%, #CCE8EA 100%)",
   hoverBadgeBg: "#8FC0C2",
 };
+const featuredWeightLossCard: FeaturedTreatmentSliderCard = {
+  image: images.landingpageimages.LossWeightCardImage,
+  badge: "Weight Loss",
+  title: "Lose Weight with Skye",
+  actionLabel: "Lose weight with Skye",
+  backgroundColor: "#AFC6E5",
+  badgeBackgroundColor: "#87A3CA",
+
+  onGetStarted: () => {
+    console.log("Weight Loss get started");
+  },
+
+  onAction: () => {
+    console.log("Weight Loss action");
+  },
+};
+const staticWeightLossProducts: TreatmentSliderProduct[] = [
+  {
+    id: 1,
+    productImage: images.landingpageimages.ProductImage,
+    productTitle: "GLP-1s Vial",
+    productDescription:
+      "Can help relax blood vessels, supporting sexual function, and vascular health.",
+    productPrice: "$199.00/month",
+    productImageBg: "#CEDCF9",
+
+    onGetStarted: () => {
+      console.log("GLP-1s Vial get started");
+    },
+
+    onShopNow: () => {
+      console.log("GLP-1s Vial shop now");
+    },
+  },
+  {
+    id: 2,
+    productImage: images.landingpageimages.ProductImage,
+    productTitle: "Weight Loss Therapy",
+    productDescription:
+      "Personalized physician-guided support for sustainable weight management.",
+    productPrice: "$249.00/month",
+    productImageBg: "#CEDCF9",
+
+    onGetStarted: () => {
+      console.log("Weight Loss Therapy get started");
+    },
+
+    onShopNow: () => {
+      console.log("Weight Loss Therapy shop now");
+    },
+  },
+  {
+    id: 3,
+    productImage: images.landingpageimages.ProductImage,
+    productTitle: "GLP-1 Program",
+    productDescription:
+      "A personalized GLP-1 treatment plan designed around your health goals.",
+    productPrice: "$299.00/month",
+    productImageBg: "#CEDCF9",
+
+    onGetStarted: () => {
+      console.log("GLP-1 Program get started");
+    },
+
+    onShopNow: () => {
+      console.log("GLP-1 Program shop now");
+    },
+  },
+];
 const heroSlides = [
   {
     id: 1,
@@ -229,288 +320,6 @@ const products = [
     },
     onLearnMore: () => {
       console.log("Peptide Therapy learn more");
-    },
-  },
-];
-const hoverTreatmentCards: TreatmentCardData[] = [
-  {
-    id: 1,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "GLP-1s Vial",
-    productDescription:
-      "Can help relax blood vessels, supporting sexual function, and vascular health.",
-    productPrice: "$199.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Weight Loss",
-    hoverTitle: "Lose Weight with Skye",
-    hoverActionLabel: "Lose weight with Skye",
-
-    onGetStarted: () => {
-      console.log("Card 1 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 1 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 1 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 1 hover action");
-    },
-  },
-  {
-    id: 2,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Peptide Therapy",
-    productDescription:
-      "Premium peptide support for recovery, energy, and overall performance.",
-    productPrice: "$249.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Peptides",
-    hoverTitle: "Feel Better with Skye",
-    hoverActionLabel: "Explore peptides",
-
-    onGetStarted: () => {
-      console.log("Card 2 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 2 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 2 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 2 hover action");
-    },
-  },
-  {
-    id: 3,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Hormone Support",
-    productDescription:
-      "Personalized hormone support designed around your health and goals.",
-    productPrice: "$299.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Hormones",
-    hoverTitle: "Optimize with Skye",
-    hoverActionLabel: "Explore hormones",
-
-    onGetStarted: () => {
-      console.log("Card 3 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 3 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 3 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 3 hover action");
-    },
-  },
-  {
-    id: 4,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Recovery Support",
-    productDescription:
-      "Designed to support recovery, mobility, and everyday physical performance.",
-    productPrice: "$189.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Recovery",
-    hoverTitle: "Recover Faster with Skye",
-    hoverActionLabel: "Explore recovery",
-
-    onGetStarted: () => {
-      console.log("Card 4 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 4 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 4 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 4 hover action");
-    },
-  },
-  {
-    id: 5,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Energy Support",
-    productDescription:
-      "Personalized support for consistent energy, focus, and daily performance.",
-    productPrice: "$159.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Energy",
-    hoverTitle: "Boost Energy with Skye",
-    hoverActionLabel: "Explore energy",
-
-    onGetStarted: () => {
-      console.log("Card 5 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 5 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 5 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 5 hover action");
-    },
-  },
-  {
-    id: 6,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Sleep Support",
-    productDescription:
-      "Supports better sleep quality, relaxation, and overnight recovery.",
-    productPrice: "$149.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Sleep",
-    hoverTitle: "Sleep Better with Skye",
-    hoverActionLabel: "Explore sleep support",
-
-    onGetStarted: () => {
-      console.log("Card 6 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 6 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 6 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 6 hover action");
-    },
-  },
-  {
-    id: 7,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Skin Health",
-    productDescription:
-      "Advanced support for healthier-looking skin and healthy aging.",
-    productPrice: "$179.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Skin Health",
-    hoverTitle: "Look Better with Skye",
-    hoverActionLabel: "Explore skin health",
-
-    onGetStarted: () => {
-      console.log("Card 7 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 7 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 7 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 7 hover action");
-    },
-  },
-  {
-    id: 8,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Focus Support",
-    productDescription:
-      "Designed to support mental clarity, concentration, and productivity.",
-    productPrice: "$169.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Focus",
-    hoverTitle: "Think Sharper with Skye",
-    hoverActionLabel: "Explore focus support",
-
-    onGetStarted: () => {
-      console.log("Card 8 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 8 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 8 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 8 hover action");
-    },
-  },
-  {
-    id: 9,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Longevity Support",
-    productDescription:
-      "Personalized care designed to support long-term health and performance.",
-    productPrice: "$329.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Longevity",
-    hoverTitle: "Live Longer with Skye",
-    hoverActionLabel: "Explore longevity",
-
-    onGetStarted: () => {
-      console.log("Card 9 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 9 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 9 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 9 hover action");
-    },
-  },
-  {
-    id: 10,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Complete Optimization",
-    productDescription:
-      "A complete physician-guided plan built around your personal health goals.",
-    productPrice: "$399.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Optimization",
-    hoverTitle: "Optimize Everything with Skye",
-    hoverActionLabel: "Explore optimization",
-
-    onGetStarted: () => {
-      console.log("Card 10 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 10 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 10 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 10 hover action");
     },
   },
 ];
@@ -736,6 +545,11 @@ const peptideTreatmentCards = [
     onHoverAction: () => console.log("Card 10 hover action"),
   },
 ];
+const featuredPeptideCard = createStaticFeaturedCard(peptideTreatmentCards[0]);
+
+const staticPeptideProducts = createStaticSliderProducts(
+  peptideTreatmentCards.slice(1),
+);
 const OptimizeeverythingCards: TreatmentCardData[] = [
   {
     id: 1,
@@ -918,6 +732,13 @@ const OptimizeeverythingCards: TreatmentCardData[] = [
     onHoverAction: () => console.log("Card 10 hover action"),
   },
 ];
+const featuredOptimizeCard = createStaticFeaturedCard(
+  OptimizeeverythingCards[0],
+);
+
+const staticOptimizeProducts = createStaticSliderProducts(
+  OptimizeeverythingCards.slice(1),
+);
 const Hormonescards: TreatmentCardData[] = [
   {
     id: 1,
@@ -1200,6 +1021,11 @@ const Hormonescards: TreatmentCardData[] = [
     },
   },
 ];
+const featuredHormoneCard = createStaticFeaturedCard(Hormonescards[0]);
+
+const staticHormoneProducts = createStaticSliderProducts(
+  Hormonescards.slice(1),
+);
 const differenceCards = [
   {
     id: 1,
@@ -1384,14 +1210,25 @@ export default function Home() {
         products={products}
       />
       <PeptideExpertsSection />
-      <TreatmentSliderSection hoverTreatmentCards={hoverTreatmentCards} />
-      <PeptideTreatmentSliderSection
-        peptideTreatmentCards={peptideTreatmentCards}
+      <TreatmentSliderSection
+        featuredCard={featuredWeightLossCard}
+        products={staticWeightLossProducts}
       />
-      <OptimizeTreatmentSliderSection
-        OptimizeeverythingCards={OptimizeeverythingCards}
+
+      <TreatmentSliderSection
+        featuredCard={featuredPeptideCard}
+        products={staticPeptideProducts}
       />
-      <HormoneTreatmentSliderSection Hormonescards={Hormonescards} />
+
+      <TreatmentSliderSection
+        featuredCard={featuredOptimizeCard}
+        products={staticOptimizeProducts}
+      />
+
+      <TreatmentSliderSection
+        featuredCard={featuredHormoneCard}
+        products={staticHormoneProducts}
+      />
       <BetterTreatmentSection
         onGetStarted={() => {
           console.log("Get started");

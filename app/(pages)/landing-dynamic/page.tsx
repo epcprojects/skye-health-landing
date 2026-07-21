@@ -1,6 +1,5 @@
 "use client";
 
-import { StaticImageData } from "next/image";
 import { useState } from "react";
 import { images } from "@/app/ui";
 import "swiper/css";
@@ -12,17 +11,15 @@ import ExploreOptionsSection, {
   ExploreOptionProduct,
 } from "@/app/components/sections/ExploreOptionsSection";
 import PeptideExpertsSection from "@/app/components/sections/PeptideExpertsSection";
-import TreatmentSliderSection from "@/app/components/sections/TreatmentSliderSection";
-import PeptideTreatmentSliderSection from "@/app/components/sections/PeptideTreatmentSliderSection";
-import OptimizeTreatmentSliderSection from "@/app/components/sections/OptimizeTreatmentSliderSection";
-import HormoneTreatmentSliderSection from "@/app/components/sections/HormoneTreatmentSliderSection";
+import TreatmentSliderSection, {
+  TreatmentSliderItem,
+} from "@/app/components/sections/TreatmentSliderSection";
 import BetterTreatmentSection from "@/app/components/sections/BetterTreatmentSection";
 import SkyDifferenceSection from "@/app/components/sections/SkyDifferenceSection";
 import FAQSection from "@/app/components/sections/FAQSection";
 import { useRouter } from "next/navigation";
 import WeightLossProgramModal from "@/app/components/modals/WeightLossProgramModal";
 import HormoneProgramModal from "@/app/components/modals/HormoneProgramModal";
-
 import {
   addProductToCart,
   selectCartItems,
@@ -45,24 +42,11 @@ import {
   ProductType,
 } from "@/app/graphql/queries/products";
 import { useQuery } from "@apollo/client/react";
-type TreatmentCardData = {
-  id: number;
-  productImage: StaticImageData | string;
-  productTitle: string;
-  productDescription: string;
-  productPrice: string;
-  productImageBg: string;
-  hoverImage: StaticImageData | string;
-  hoverBadge: string;
-  hoverTitle: string;
-  hoverActionLabel: string;
-  hoverCardBg: string;
-  hoverBadgeBg: string;
-  onGetStarted: () => void;
-  onShopNow: () => void;
-  onHoverGetStarted: () => void;
-  onHoverAction: () => void;
-};
+
+import {
+  type FeaturedTreatmentSliderCard,
+  type TreatmentSliderProduct,
+} from "@/app/components/sections/TreatmentSliderSection";
 
 const cardColors = {
   productImageBg: "#CEDCF9",
@@ -124,77 +108,7 @@ const heroSlides = [
   },
 ];
 
-const products = [
-  {
-    id: 1,
-    title: "GLP-1s Vial",
-    image: images.landingpageimages.HormonesProductImage,
-    description:
-      "Can help relax blood vessels, supporting sexual function, and vascular health.",
-    price: "$199.00/month",
-    inStock: true,
-    newIn: true,
-    soldOut: false,
-    onGetStarted: () => {
-      console.log("GLP-1s Vial get started");
-    },
-    onLearnMore: () => {
-      console.log("GLP-1s Vial learn more");
-    },
-  },
-  {
-    id: 2,
-    title: "GLP-1s Pen",
-    image: images.landingpageimages.HormonesProductImage,
-    description:
-      "Supports healthy weight management through personalized physician care.",
-    price: "$249.00/month",
-    inStock: true,
-    newIn: false,
-    soldOut: false,
-    onGetStarted: () => {
-      console.log("GLP-1s Pen get started");
-    },
-    onLearnMore: () => {
-      console.log("GLP-1s Pen learn more");
-    },
-  },
-  {
-    id: 3,
-    title: "Hormone Support",
-    image: images.landingpageimages.HormonesProductImage,
-    description:
-      "Personalized hormone support designed around your individual health needs.",
-    price: "$179.00/month",
-    inStock: false,
-    newIn: true,
-    soldOut: false,
-    onGetStarted: () => {
-      console.log("Hormone Support get started");
-    },
-    onLearnMore: () => {
-      console.log("Hormone Support learn more");
-    },
-  },
-  {
-    id: 4,
-    title: "Peptide Therapy",
-    image: images.landingpageimages.HormonesProductImage,
-    description:
-      "Premium peptide therapy supporting recovery, energy, and performance.",
-    price: "$299.00/month",
-    inStock: false,
-    newIn: false,
-    soldOut: true,
-    onGetStarted: () => {
-      console.log("Peptide Therapy get started");
-    },
-    onLearnMore: () => {
-      console.log("Peptide Therapy learn more");
-    },
-  },
-];
-const hoverTreatmentCards: TreatmentCardData[] = [
+const hoverTreatmentCards: TreatmentSliderItem[] = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -476,7 +390,7 @@ const hoverTreatmentCards: TreatmentCardData[] = [
     },
   },
 ];
-const peptideTreatmentCards = [
+const peptideTreatmentCards: TreatmentSliderItem[] = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -698,7 +612,7 @@ const peptideTreatmentCards = [
     onHoverAction: () => console.log("Card 10 hover action"),
   },
 ];
-const OptimizeeverythingCards: TreatmentCardData[] = [
+const OptimizeeverythingCards: TreatmentSliderItem[] = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -880,7 +794,7 @@ const OptimizeeverythingCards: TreatmentCardData[] = [
     onHoverAction: () => console.log("Card 10 hover action"),
   },
 ];
-const Hormonescards: TreatmentCardData[] = [
+const Hormonescards: TreatmentSliderItem[] = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -1416,7 +1330,78 @@ const getWeightLossProgramMonths = () => {
   }
 };
 
+const formatProductPrice = (price: number) => {
+  return `${new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(price)}/month`;
+};
+
+const createFeaturedCard = (
+  card: TreatmentSliderItem,
+  onGetStarted: () => void,
+  onAction: () => void,
+): FeaturedTreatmentSliderCard => {
+  return {
+    image: card.hoverImage,
+    badge: card.hoverBadge,
+    title: card.hoverTitle,
+    actionLabel: card.hoverActionLabel,
+    backgroundColor: card.hoverCardBg,
+    badgeBackgroundColor: card.hoverBadgeBg,
+    onGetStarted,
+    onAction,
+  };
+};
+
+const createStaticSliderProducts = (
+  cards: TreatmentSliderItem[],
+  onProductClick: () => void,
+): TreatmentSliderProduct[] => {
+  return cards.map((card) => ({
+    id: card.id,
+    productImage: card.productImage,
+    productTitle: card.productTitle,
+    productDescription: card.productDescription,
+    productPrice: card.productPrice,
+    productImageBg: card.productImageBg,
+
+    onGetStarted: onProductClick,
+    onShopNow: onProductClick,
+  }));
+};
+
+const categoryMatches = (product: ProductType, categories: string[]) => {
+  const productCategory = product.category?.trim().toLowerCase();
+
+  return categories.some(
+    (category) => productCategory === category.trim().toLowerCase(),
+  );
+};
+
+const createBackendSliderProducts = (
+  products: ProductType[],
+  productImageBg: string,
+  onProductClick: () => void,
+): TreatmentSliderProduct[] => {
+  return products.map((product) => ({
+    id: product.id,
+
+    productImage: product.primaryImage || images.landingpageimages.ProductImage,
+
+    productTitle: product.name,
+    productDescription: product.description,
+    productPrice: formatProductPrice(product.price),
+    productImageBg,
+
+    onGetStarted: onProductClick,
+    onShopNow: onProductClick,
+  }));
+};
 export default function Home() {
+  const goToProducts = () => {
+    router.push("/products");
+  };
   const [selectedFilter, setSelectedFilter] =
     useState<TreatmentFilterValue>("all");
   const hero = heroSlides[0];
@@ -1450,6 +1435,20 @@ export default function Home() {
     fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
   });
+  const { data: sliderProductsData, loading: sliderProductsLoading } = useQuery<
+    AllProductsType,
+    AllProductsVariables
+  >(ALL_PRODUCTS, {
+    variables: {
+      page: 1,
+      perPage: 100,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  const allSliderBackendProducts =
+    sliderProductsData?.allProducts?.allData ?? [];
+
   const handleProductAction = (product: ProductType) => {
     const cartGuard = canAddProductWithCartRules(cartItems, product.id);
 
@@ -1567,6 +1566,111 @@ export default function Home() {
       },
     },
   ];
+  const featuredWeightLossCard = createFeaturedCard(
+    hoverTreatmentCards[0],
+    goToProducts,
+    () => {
+      setPendingWeightLossProduct(null);
+      setIsWeightLossModalOpen(true);
+    },
+  );
+
+  const featuredPeptideCard = createFeaturedCard(
+    peptideTreatmentCards[0],
+    goToProducts,
+    () => {},
+  );
+
+  const featuredOptimizeCard = createFeaturedCard(
+    OptimizeeverythingCards[0],
+    goToProducts,
+    () => {},
+  );
+
+  const featuredHormoneCard = createFeaturedCard(
+    Hormonescards[0],
+    goToProducts,
+    () => {
+      setIsHormoneModalOpen(true);
+    },
+  );
+  const staticWeightLossProducts = createStaticSliderProducts(
+    hoverTreatmentCards.slice(1),
+    goToProducts,
+  );
+
+  const staticPeptideProducts = createStaticSliderProducts(
+    peptideTreatmentCards.slice(1),
+    goToProducts,
+  );
+
+  const staticOptimizeProducts = createStaticSliderProducts(
+    OptimizeeverythingCards.slice(1),
+    goToProducts,
+  );
+
+  const staticHormoneProducts = createStaticSliderProducts(
+    Hormonescards.slice(1),
+    goToProducts,
+  );
+  const weightLossBackendProducts = allSliderBackendProducts.filter((product) =>
+    categoryMatches(product, ["Weight Loss", "Weight Loss Program"]),
+  );
+
+  const peptideBackendProducts = allSliderBackendProducts.filter((product) =>
+    categoryMatches(product, ["Peptide", "Peptides"]),
+  );
+
+  const optimizeBackendProducts = allSliderBackendProducts.filter((product) =>
+    categoryMatches(product, ["Optimize Everything", "Optimization"]),
+  );
+
+  const hormoneBackendProducts = allSliderBackendProducts.filter((product) =>
+    categoryMatches(product, ["Hormone", "Hormones", "Hormone Program"]),
+  );
+  const mappedWeightLossProducts = createBackendSliderProducts(
+    weightLossBackendProducts,
+    "#CEDCF9",
+    goToProducts,
+  );
+
+  const mappedPeptideProducts = createBackendSliderProducts(
+    peptideBackendProducts,
+    "#FFD6C9",
+    goToProducts,
+  );
+
+  const mappedOptimizeProducts = createBackendSliderProducts(
+    optimizeBackendProducts,
+    "#0F1D3A",
+    goToProducts,
+  );
+
+  const mappedHormoneProducts = createBackendSliderProducts(
+    hormoneBackendProducts,
+    "#BDE0E3",
+    goToProducts,
+  );
+  const weightLossProductsToRender =
+    !sliderProductsLoading && mappedWeightLossProducts.length > 0
+      ? mappedWeightLossProducts
+      : staticWeightLossProducts;
+
+  const peptideProductsToRender =
+    !sliderProductsLoading && mappedPeptideProducts.length > 0
+      ? mappedPeptideProducts
+      : staticPeptideProducts;
+
+  const optimizeProductsToRender =
+    !sliderProductsLoading && mappedOptimizeProducts.length > 0
+      ? mappedOptimizeProducts
+      : staticOptimizeProducts;
+
+  const hormoneProductsToRender =
+    !sliderProductsLoading && mappedHormoneProducts.length > 0
+      ? mappedHormoneProducts
+      : staticHormoneProducts;
+
   return (
     <>
       <WeightLossProgramModal
@@ -1701,14 +1805,25 @@ export default function Home() {
         }}
       />
       <PeptideExpertsSection />
-      <TreatmentSliderSection hoverTreatmentCards={hoverTreatmentCards} />
-      <PeptideTreatmentSliderSection
-        peptideTreatmentCards={peptideTreatmentCards}
+      <TreatmentSliderSection
+        featuredCard={featuredWeightLossCard}
+        products={weightLossProductsToRender}
       />
-      <OptimizeTreatmentSliderSection
-        OptimizeeverythingCards={OptimizeeverythingCards}
+
+      <TreatmentSliderSection
+        featuredCard={featuredPeptideCard}
+        products={peptideProductsToRender}
       />
-      <HormoneTreatmentSliderSection Hormonescards={Hormonescards} />
+
+      <TreatmentSliderSection
+        featuredCard={featuredOptimizeCard}
+        products={optimizeProductsToRender}
+      />
+
+      <TreatmentSliderSection
+        featuredCard={featuredHormoneCard}
+        products={hormoneProductsToRender}
+      />
       <BetterTreatmentSection
         onGetStarted={() => {
           console.log("Get started");
