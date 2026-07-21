@@ -1824,7 +1824,7 @@ export default function Home() {
       />
       <HeroSection
         hero={hero}
-        onGetStarted={() => router.push("/products")}
+        onGetStarted={openWeightLossProgramModal}
         onViewTreatments={() => router.push("/products")}
       />
       <TreatmentCardsSection cards={treatmentCards} />
