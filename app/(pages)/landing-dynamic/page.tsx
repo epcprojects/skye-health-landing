@@ -8,7 +8,9 @@ import { TreatmentFilterValue } from "@/app/components/cards/TreatmentFilters";
 import { FAQItem } from "@/app/components/FaqAccordion";
 import HeroSection from "@/app/components/sections/HeroSection";
 import TreatmentCardsSection from "@/app/components/sections/TreatmentCardsSection";
-import ExploreOptionsSection from "@/app/components/sections/ExploreOptionsSection";
+import ExploreOptionsSection, {
+  ExploreOptionProduct,
+} from "@/app/components/sections/ExploreOptionsSection";
 import PeptideExpertsSection from "@/app/components/sections/PeptideExpertsSection";
 import TreatmentSliderSection from "@/app/components/sections/TreatmentSliderSection";
 import PeptideTreatmentSliderSection from "@/app/components/sections/PeptideTreatmentSliderSection";
@@ -35,7 +37,14 @@ import {
   WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
 } from "@/app/lib/cartRules";
 
-import { ProductStatusEnum, ProductType } from "@/app/graphql/queries/products";
+import {
+  ALL_PRODUCTS,
+  AllProductsType,
+  AllProductsVariables,
+  ProductStatusEnum,
+  ProductType,
+} from "@/app/graphql/queries/products";
+import { useQuery } from "@apollo/client/react";
 type TreatmentCardData = {
   id: number;
   productImage: StaticImageData | string;
@@ -1425,6 +1434,76 @@ export default function Home() {
     normalizeText(product?.category) === "weight loss program" ||
     (normalizeText(product?.category) === "weight loss" &&
       normalizeText(product?.subCategory) === "glp-1");
+  const selectedCategory =
+    selectedFilter === "all" ? undefined : selectedFilter;
+
+  const {
+    data: exploreProductsData,
+    loading: exploreProductsLoading,
+    error: exploreProductsError,
+  } = useQuery<AllProductsType, AllProductsVariables>(ALL_PRODUCTS, {
+    variables: {
+      category: selectedCategory,
+      page: 1,
+      perPage: 4,
+    },
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
+  });
+  const handleProductAction = (product: ProductType) => {
+    const cartGuard = canAddProductWithCartRules(cartItems, product.id);
+
+    if (!cartGuard.allowed) {
+      toastAlert(cartGuard.message ?? "Unable to add product to cart.", false);
+      return;
+    }
+
+    if (isWeightLossModalProduct(product)) {
+      setPendingWeightLossProduct(product);
+      setIsWeightLossModalOpen(true);
+      return;
+    }
+
+    dispatch(
+      addProductToCart({
+        product,
+      }),
+    );
+
+    toastAlert("Added to Cart Successfully", true);
+  };
+  const backendProducts = exploreProductsData?.allProducts?.allData ?? [];
+
+  const exploreProducts: ExploreOptionProduct[] = backendProducts.map(
+    (product) => {
+      const soldOut =
+        !product.inStock || product.status === ProductStatusEnum.OUT_OF_STOCK;
+
+      const formattedPrice = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(product.price);
+
+      return {
+        id: product.id,
+        title: product.name,
+        image: product.primaryImage || images.landingpageimages.ProductImage,
+        description: product.description,
+        price: `${formattedPrice}/month`,
+        inStock: product.inStock && !soldOut,
+        newIn: false,
+        soldOut,
+
+        onGetStarted: () => {
+          handleProductAction(product);
+        },
+
+        onLearnMore: () => {
+          handleProductAction(product);
+        },
+      };
+    },
+  );
   const treatmentCards = [
     {
       id: 1,
@@ -1609,6 +1688,9 @@ export default function Home() {
       />
       <TreatmentCardsSection cards={treatmentCards} />
       <ExploreOptionsSection
+        products={exploreProducts}
+        loading={exploreProductsLoading}
+        error={Boolean(exploreProductsError)}
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onGetStarted={() => {
@@ -1616,56 +1698,6 @@ export default function Home() {
         }}
         onViewTreatments={() => {
           router.push("/products");
-        }}
-        onProductGetStarted={(product) => {
-          const cartGuard = canAddProductWithCartRules(cartItems, product.id);
-
-          if (!cartGuard.allowed) {
-            toastAlert(
-              cartGuard.message ?? "Unable to add product to cart.",
-              false,
-            );
-            return;
-          }
-
-          if (isWeightLossModalProduct(product)) {
-            setPendingWeightLossProduct(product);
-            setIsWeightLossModalOpen(true);
-            return;
-          }
-
-          dispatch(
-            addProductToCart({
-              product,
-            }),
-          );
-
-          toastAlert("Added to Cart Successfully", true);
-        }}
-        onProductLearnMore={(product) => {
-          const cartGuard = canAddProductWithCartRules(cartItems, product.id);
-
-          if (!cartGuard.allowed) {
-            toastAlert(
-              cartGuard.message ?? "Unable to add product to cart.",
-              false,
-            );
-            return;
-          }
-
-          if (isWeightLossModalProduct(product)) {
-            setPendingWeightLossProduct(product);
-            setIsWeightLossModalOpen(true);
-            return;
-          }
-
-          dispatch(
-            addProductToCart({
-              product,
-            }),
-          );
-
-          toastAlert("Added to Cart Successfully", true);
         }}
       />
       <PeptideExpertsSection />

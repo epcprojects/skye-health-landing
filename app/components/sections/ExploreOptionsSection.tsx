@@ -1,7 +1,6 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
-import { useRouter } from "next/navigation";
+import type { StaticImageData } from "next/image";
 import { NewArrowIcon } from "@/public/icons";
 
 import TreatmentFilters, {
@@ -10,59 +9,38 @@ import TreatmentFilters, {
 
 import TreatmentProductCard from "../cards/TreatmentProductCard";
 
-import {
-  ALL_PRODUCTS,
-  type AllProductsType,
-  type AllProductsVariables,
-  type ProductType,
-  ProductStatusEnum,
-} from "@/app/graphql/queries/products";
-import { images } from "@/app/ui";
+export interface ExploreOptionProduct {
+  id: string | number;
+  title: string;
+  image: StaticImageData | string;
+  description: string;
+  price: string;
+  inStock?: boolean;
+  newIn?: boolean;
+  soldOut?: boolean;
+  onGetStarted: () => void;
+  onLearnMore: () => void;
+}
 
 interface ExploreOptionsSectionProps {
+  products: ExploreOptionProduct[];
+  loading?: boolean;
+  error?: boolean;
   selectedFilter: TreatmentFilterValue;
   onFilterChange: (filter: TreatmentFilterValue) => void;
   onGetStarted?: () => void;
   onViewTreatments?: () => void;
-  onProductGetStarted?: (product: ProductType) => void;
-  onProductLearnMore?: (product: ProductType) => void;
 }
 
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(price);
-};
-
 const ExploreOptionsSection = ({
+  products,
+  loading = false,
+  error = false,
   selectedFilter,
   onFilterChange,
   onGetStarted,
   onViewTreatments,
-  onProductGetStarted,
-  onProductLearnMore,
 }: ExploreOptionsSectionProps) => {
-  const router = useRouter();
-
-  const selectedCategory =
-    selectedFilter === "all" ? undefined : selectedFilter;
-
-  const { data, loading, error } = useQuery<
-    AllProductsType,
-    AllProductsVariables
-  >(ALL_PRODUCTS, {
-    variables: {
-      category: selectedCategory,
-      page: 1,
-      perPage: 4,
-    },
-    fetchPolicy: "network-only",
-    notifyOnNetworkStatusChange: true,
-  });
-
-  const products = data?.allProducts?.allData ?? [];
-
   return (
     <section className="bg-[#F5F8FE] pb-6 xl:pb-27">
       <div className="container mx-auto flex max-w-7xl flex-col gap-5 px-4 xl:gap-14.5 xl:px-8">
@@ -97,43 +75,20 @@ const ExploreOptionsSection = ({
 
         {!loading && !error && products.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {products.map((product) => {
-              const soldOut =
-                !product.inStock ||
-                product.status === ProductStatusEnum.OUT_OF_STOCK;
-
-              return (
-                <TreatmentProductCard
-                  key={product.id}
-                  title={product.name}
-                  image={
-                    product.primaryImage ||
-                    images.landingpageimages.ProductImage
-                  }
-                  description={product.description}
-                  price={`${formatPrice(product.price)}/month`}
-                  inStock={product.inStock && !soldOut}
-                  newIn={false}
-                  soldOut={soldOut}
-                  onGetStarted={() => {
-                    if (onProductGetStarted) {
-                      onProductGetStarted(product);
-                      return;
-                    }
-
-                    router.push(`/products/${product.id}`);
-                  }}
-                  onLearnMore={() => {
-                    if (onProductLearnMore) {
-                      onProductLearnMore(product);
-                      return;
-                    }
-
-                    router.push(`/products/${product.id}`);
-                  }}
-                />
-              );
-            })}
+            {products.map((product) => (
+              <TreatmentProductCard
+                key={product.id}
+                title={product.title}
+                image={product.image}
+                description={product.description}
+                price={product.price}
+                inStock={product.inStock}
+                newIn={product.newIn}
+                soldOut={product.soldOut}
+                onGetStarted={product.onGetStarted}
+                onLearnMore={product.onLearnMore}
+              />
+            ))}
           </div>
         )}
 

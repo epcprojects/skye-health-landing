@@ -1,14 +1,12 @@
 "use client";
 
 import { StaticImageData } from "next/image";
-import {  useState } from "react";
+import { useState } from "react";
 
 import { images } from "../ui";
 
 import "swiper/css";
-import  {
-  TreatmentFilterValue,
-} from "../components/cards/TreatmentFilters";
+import { TreatmentFilterValue } from "../components/cards/TreatmentFilters";
 
 import { FAQItem } from "../components/FaqAccordion";
 
@@ -23,6 +21,7 @@ import HormoneTreatmentSliderSection from "../components/sections/HormoneTreatme
 import BetterTreatmentSection from "../components/sections/BetterTreatmentSection";
 import SkyDifferenceSection from "../components/sections/SkyDifferenceSection";
 import FAQSection from "../components/sections/FAQSection";
+import { ProductType } from "../graphql/queries/products";
 type TreatmentCardData = {
   id: number;
   productImage: StaticImageData | string;
@@ -1382,6 +1381,7 @@ export default function Home() {
         onViewTreatments={() => {
           console.log("View all treatments");
         }}
+        products={products}
       />
       <PeptideExpertsSection />
       <TreatmentSliderSection hoverTreatmentCards={hoverTreatmentCards} />
