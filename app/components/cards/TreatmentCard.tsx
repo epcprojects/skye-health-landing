@@ -65,10 +65,10 @@ const TreatmentCard = ({
           </div>
         </div>
 
-        <div className="self-start overflow-hidden transition-all duration-300   xl:block hidden">
+        <div className="self-start overflow-hidden transition-all duration-300 ">
           <div
             style={{ backgroundColor: hoverBackgroundColor }}
-            className="rounded-full p-4 flex items-center justify-center text-sm font-medium text-white"
+            className="rounded-full px-4 p-2 md:p-4 flex items-center justify-center text-sm font-medium text-white"
           >
             {hoverText}
           </div>
