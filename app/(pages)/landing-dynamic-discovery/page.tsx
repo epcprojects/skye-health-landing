@@ -437,7 +437,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 3,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "Ipamorelin",
     productDescription:
       "Supports restful sleep, physical recovery, and healthy body composition.",
@@ -459,7 +459,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 4,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "TB-500",
     productDescription:
       "Designed to support mobility, flexibility, recovery, and tissue health.",
@@ -481,7 +481,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 5,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "Sermorelin",
     productDescription:
       "Supports natural hormone signaling, recovery, energy, and healthy aging.",
@@ -503,7 +503,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 6,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "GHK-Cu",
     productDescription:
       "Supports healthier-looking skin, hair, tissue repair, and healthy aging.",
@@ -525,7 +525,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 7,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "PT-141",
     productDescription:
       "Designed to support intimacy, sexual wellness, and personal confidence.",
@@ -547,7 +547,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 8,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "NAD+",
     productDescription:
       "Supports cellular energy, mental clarity, recovery, and healthy longevity.",
@@ -569,7 +569,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 9,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "Tesamorelin",
     productDescription:
       "Designed to support body composition, metabolic health, and recovery.",
@@ -591,7 +591,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 10,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "Peptide Optimization",
     productDescription:
       "A personalized peptide plan designed around your individual health goals.",
