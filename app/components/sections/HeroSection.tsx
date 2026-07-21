@@ -2,6 +2,7 @@
 
 import Image, { type StaticImageData } from "next/image";
 import { NewArrowIcon } from "@/public/icons";
+import { images } from "@/app/ui";
 
 export interface HeroSectionData {
   backgroundImage: string;
@@ -28,9 +29,9 @@ const HeroSection = ({
       style={{
         backgroundImage: `url("${hero.backgroundImage}")`,
       }}
-      className="relative overflow-hidden bg-cover bg-center bg-no-repeat pt-10.5 pb-14 xl:pt-73.5"
+      className="relative overflow-hidden bg-cover bg-center bg-no-repeat pt-10.5 pb-14 xl:pb-36 xl:pt-73.5"
     >
-      <div className="container relative z-20 mx-auto grid max-w-7xl grid-cols-1 items-center px-4 xl:grid-cols-2 xl:px-8">
+      <div className="container relative z-20 mx-auto grid max-w-7xl grid-cols-1 items-start px-4 xl:grid-cols-2 xl:px-8">
         <div className="flex flex-col gap-5 xl:gap-10">
           <Image
             src={hero.logo}
@@ -71,8 +72,10 @@ const HeroSection = ({
           </div>
         </div>
       </div>
-
-      <div className="hidden w-full xl:block">
+        <div className="hidden w-full xl:block ">
+             <Image src={images.landingpageimages.heroImage} alt={"hero"} className="absolute right-0 top-[18%] bottom-0"/>
+        </div>
+      {/* <div className="hidden w-full xl:block">
         <Image
           src={hero.ringImage}
           alt=""
@@ -85,7 +88,7 @@ const HeroSection = ({
           alt={hero.title}
           className="absolute -right-6 bottom-0 z-10"
         />
-      </div>
+      </div> */}
     </section>
   );
 };

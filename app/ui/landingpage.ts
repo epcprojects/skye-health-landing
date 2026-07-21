@@ -52,7 +52,9 @@ import OptimizeEverythingImage from "@/public/images/OptimizeEverythingImage.png
 import HormonesImage from "@/public/images/HormonesImage.png"
 import SkyHeartLogo from "@/public/images/SkyHeartLogo.svg"
 import SkyWhiteDesktopBg from "@/public/images/SkyWhiteDesktopBg.png"
+import heroImage from "@/public/images/HeroImage.png"
 export const landingpageimages = {
+  heroImage,
   SkyWhiteDesktopBg,
   SkyHeartLogo,
   HormonesImage,
