@@ -20,9 +20,9 @@ const WellnessCarousel = () => {
   const router = useRouter();
 
   const cardActions: Record<WellnessCardId, () => void> = {
-    "healthy-aging": () => {
-      router.push("/products");
-    },
+    // "healthy-aging": () => {
+    //   router.push("/products");
+    // },
     "immune-support": () => {
       router.push("/products");
     },
