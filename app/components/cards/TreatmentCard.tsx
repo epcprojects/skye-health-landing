@@ -65,7 +65,7 @@ const TreatmentCard = ({
           </div>
         </div>
 
-        <div className="self-start overflow-hidden max-h-0 opacity-0 transition-all duration-300 group-hover:max-h-20 group-hover:opacity-100 xl:block hidden">
+        <div className="self-start overflow-hidden transition-all duration-300   xl:block hidden">
           <div
             style={{ backgroundColor: hoverBackgroundColor }}
             className="rounded-full p-4 flex items-center justify-center text-sm font-medium text-white"

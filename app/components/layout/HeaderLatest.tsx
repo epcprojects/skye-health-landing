@@ -68,25 +68,24 @@ const HeaderLatest = () => {
     setIsMobileMenuOpen(false);
   };
   const { data: categoriesData } = useQuery<{
-  productCategories: string[];
-}>(FETCH_CATEGORIES);
+    productCategories: string[];
+  }>(FETCH_CATEGORIES);
 
-const backendCategories = categoriesData?.productCategories ?? [];
+  const backendCategories = categoriesData?.productCategories ?? [];
 
-const navItems: MobileNavItem[] = navItemsConfig.map((item) => {
-  const matchingCategory = backendCategories.find(
-    (category) =>
-      category.trim().toLowerCase() ===
-      item.category.trim().toLowerCase(),
-  );
+  const navItems: MobileNavItem[] = navItemsConfig.map((item) => {
+    const matchingCategory = backendCategories.find(
+      (category) =>
+        category.trim().toLowerCase() === item.category.trim().toLowerCase(),
+    );
 
-  return {
-    label: item.label,
-    href: matchingCategory
-      ? `/products?category=${encodeURIComponent(matchingCategory)}`
-      : "/products",
-  };
-});
+    return {
+      label: item.label,
+      href: matchingCategory
+        ? `/products?category=${encodeURIComponent(matchingCategory)}`
+        : "/products",
+    };
+  });
 
   const openWeightLossFlow = () => {
     if (pathname === "/") {
@@ -120,7 +119,12 @@ const navItems: MobileNavItem[] = navItemsConfig.map((item) => {
           </button>
 
           <div className="container max-w-7xl mx-auto flex flex-row items-center w-full justify-between pl-2 pr-4 xl:px-8">
-            <Image src={images.landingpageimages.NewSkyLogo} alt="Sky Health" />
+            <Link href={"/"}>
+              <Image
+                src={images.landingpageimages.NewSkyLogo}
+                alt="Sky Health"
+              />
+            </Link>
 
             <div className="hidden xl:flex flex-row gap-10">
               {navItems.map((item) => (
