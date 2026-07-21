@@ -64,7 +64,6 @@ export const menuItems: MenuItem[] = [
   },
 ];
 
-
 export const US_STATES = [
   { value: "Alabama", label: "Alabama" },
   { value: "Alaska", label: "Alaska" },
@@ -353,20 +352,21 @@ export const processCards = [
         unbranded packaging. Your privacy is our priority.
       </>
     ),
-    image: images.landingpageimages.DirectDoorImage,
+    // image: images.landingpageimages.DirectDoorImage,
+    image: images.landingpageimages.ProtocolImage,
     imageAlt: "direct to door",
     theme: "primary",
   },
 ] as const;
 
 export const wellnessCards = [
-  {
-    id: "healthy-aging",
-    title: "Healthy Aging",
-    description:
-      "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
-    image: images.landingpageimages.DirectDoorImage,
-  },
+  // {
+  //   id: "healthy-aging",
+  //   title: "Healthy Aging",
+  //   description:
+  //     "Begin with a structured intake designed to capture relevant health data, goals, and baseline indicators.",
+  //   image: images.landingpageimages.DirectDoorImage,
+  // },
   {
     id: "immune-support",
     title: "Immune Support",

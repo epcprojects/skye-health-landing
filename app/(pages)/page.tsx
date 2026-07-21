@@ -363,7 +363,10 @@ export default function Home() {
           const selectedMonths = getWeightLossProgramMonths();
           const targetProductId =
             pendingWeightLossProduct?.id ?? WEIGHT_LOSS_PROGRAM_PRODUCT_ID;
-          const cartGuard = canAddProductWithCartRules(cartItems, targetProductId);
+          const cartGuard = canAddProductWithCartRules(
+            cartItems,
+            targetProductId,
+          );
 
           if (!cartGuard.allowed) {
             toastAlert(
@@ -599,19 +602,19 @@ export default function Home() {
                       toastAlert(
                         cartGuard.message ?? "Unable to add product to cart.",
                         false,
-                    );
-                    return;
-                  }
+                      );
+                      return;
+                    }
 
-                  if (isWeightLossModalProduct(product)) {
-                    setPendingWeightLossProduct(product);
-                    setIsWeightLossModalOpen(true);
-                    return;
-                  }
+                    if (isWeightLossModalProduct(product)) {
+                      setPendingWeightLossProduct(product);
+                      setIsWeightLossModalOpen(true);
+                      return;
+                    }
 
-                  dispatch(addProductToCart({ product }));
-                  toastAlert("Added to Cart Successfully", true);
-                }}
+                    dispatch(addProductToCart({ product }));
+                    toastAlert("Added to Cart Successfully", true);
+                  }}
                 />
               </div>
             ))}
@@ -803,7 +806,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="pb-8 lg:pb-24 flex items-center justify-center">
+      {/* <section className="pb-8 lg:pb-24 flex items-center justify-center">
         <video autoPlay loop muted playsInline className=" z-10">
           <source
             src="https://res.cloudinary.com/dgbdcdqd1/video/upload/q_auto/f_auto/v1778853131/render_jicqf1.mp4"
@@ -811,7 +814,7 @@ export default function Home() {
           />
           Your browser does not support the video tag.
         </video>
-      </section>
+      </section> */}
       <section className="pb-12 lg:pb-24">
         <div className="container max-w-341.5 mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-10 px-4 lg:px-8 2xl:px-0">
           {featureCards.map((feature) => (

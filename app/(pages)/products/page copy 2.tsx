@@ -39,7 +39,7 @@ const Page = () => {
                 type="text"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search (name or SKU)  e.g. Tesamorelin, PP-2XB..."
+                placeholder="Search (name or SKU)"
                 className="w-full text-base text-black outline-none placeholder:text-neutral-600"
               />
 
