@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { images } from "@/app/ui";
 import "swiper/css";
 import { TreatmentFilterValue } from "@/app/components/cards/TreatmentFilters";
@@ -1234,6 +1234,8 @@ const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
 
 const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
   "skye-weight-loss-program-prefill-source";
+const OPEN_WEIGHT_LOSS_FLOW_EVENT = "skye-open-weight-loss-flow";
+const OPEN_WEIGHT_LOSS_FLOW_PENDING_KEY = "skye-open-weight-loss-flow-pending";
 
 const HORMONE_PROGRAM_PREFILL_SOURCE_KEY =
   "skye-hormone-program-prefill-source";
@@ -1428,6 +1430,31 @@ export default function Home() {
     normalizeText(product?.category) === "weight loss program" ||
     (normalizeText(product?.category) === "weight loss" &&
       normalizeText(product?.subCategory) === "glp-1");
+
+  useEffect(() => {
+    const openWeightLossFlow = () => {
+      setPendingWeightLossProduct(null);
+      setIsWeightLossModalOpen(true);
+    };
+
+    window.addEventListener(OPEN_WEIGHT_LOSS_FLOW_EVENT, openWeightLossFlow);
+
+    if (
+      window.sessionStorage.getItem(OPEN_WEIGHT_LOSS_FLOW_PENDING_KEY) ===
+      "true"
+    ) {
+      window.sessionStorage.removeItem(OPEN_WEIGHT_LOSS_FLOW_PENDING_KEY);
+      openWeightLossFlow();
+    }
+
+    return () => {
+      window.removeEventListener(
+        OPEN_WEIGHT_LOSS_FLOW_EVENT,
+        openWeightLossFlow,
+      );
+    };
+  }, []);
+
   const selectedCategory =
     selectedFilter === "all" ? undefined : selectedFilter;
 

@@ -21,7 +21,10 @@ import { FETCH_CATEGORIES } from "@/app/graphql/queries/products";
 
 import AppModal from "../modals/AppModal";
 import { QuantityStepper } from "../QuantityStepper";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
+const OPEN_WEIGHT_LOSS_FLOW_EVENT = "skye-open-weight-loss-flow";
+const OPEN_WEIGHT_LOSS_FLOW_PENDING_KEY = "skye-open-weight-loss-flow-pending";
 
 const navItemsConfig = [
   {
@@ -56,6 +59,7 @@ const HeaderLatest = () => {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const openMobileMenu = () => {
     setIsMobileMenuOpen(true);
   };
@@ -83,6 +87,16 @@ const navItems: MobileNavItem[] = navItemsConfig.map((item) => {
       : "/products",
   };
 });
+
+  const openWeightLossFlow = () => {
+    if (pathname === "/") {
+      window.dispatchEvent(new CustomEvent(OPEN_WEIGHT_LOSS_FLOW_EVENT));
+      return;
+    }
+
+    window.sessionStorage.setItem(OPEN_WEIGHT_LOSS_FLOW_PENDING_KEY, "true");
+    router.push("/");
+  };
 
   return (
     <>
@@ -121,12 +135,13 @@ const navItems: MobileNavItem[] = navItemsConfig.map((item) => {
             </div>
 
             <div className="hidden xl:flex flex-row gap-2">
-              <Link
-                href="/?start=weight-loss"
+              <button
+                type="button"
+                onClick={openWeightLossFlow}
                 className="rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white"
               >
                 Get started
-              </Link>
+              </button>
 
               <CartPopover
                 triggerClassName="relative w-12.25 h-12.25 bg-[#0F1D3A] rounded-full flex items-center justify-center cursor-pointer outline-none"
