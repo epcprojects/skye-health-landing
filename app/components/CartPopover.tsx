@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, ReactNode } from "react";
 import Image from "next/image";
 import {
   Menu,
@@ -36,8 +36,15 @@ export function formatMoney(n: number) {
 function shouldHideCartItemPrice(name?: string) {
   return name?.trim().toLowerCase() === "hormone program";
 }
+interface CartPopoverProps {
+  triggerClassName?: string;
+  triggerIcon?: ReactNode;
+}
 
-export default function CartPopover() {
+export default function CartPopover({
+  triggerClassName,
+  triggerIcon,
+}: CartPopoverProps) {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -53,15 +60,21 @@ export default function CartPopover() {
         <>
           {/* Button */}
           <PopoverButton
-            aria-label="Open cart"
-            className="relative flex items-center rounded-[5px] border hover:bg-primary-light hover:border-primary-light hover:text-white border-neutral-200 cursor-pointer outline-0 order-2 xl:order-0 justify-center bg-white  h-9 w-9 "
+            aria-label="Open shopping cart"
+            className={
+              triggerClassName ??
+              "relative flex items-center rounded-[5px] border hover:bg-primary-light hover:border-primary-light hover:text-white border-neutral-200 cursor-pointer outline-0 order-2 xl:order-0 justify-center bg-white h-9 w-9"
+            }
           >
-            <ShoppingCartIcon
-              classname="w-4.5 h-4.5 sm:w-6 sm:h-6"
-              fill="currentColor"
-            />
+            {triggerIcon ?? (
+              <ShoppingCartIcon
+                classname="w-4.5 h-4.5 sm:w-6 sm:h-6"
+                fill="currentColor"
+              />
+            )}
+
             {count > 0 ? (
-              <span className="absolute md:-right-3 md:-top-4 inline-flex lg:h-6 h-4 w-4 lg:min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] lg:text-xs font-semibold text-white">
+              <span className="absolute -right-1.5 -top-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white lg:h-6 lg:min-w-6 lg:text-xs">
                 {count}
               </span>
             ) : null}

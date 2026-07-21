@@ -14,12 +14,16 @@ interface MobileMenuProps {
   navItems: MobileNavItem[];
   isOpen: boolean;
   onClose: () => void;
+  onOpenCart: () => void;
+  cartCount: number;
 }
 
 const MobileMenu = ({
   navItems,
   isOpen,
   onClose,
+  onOpenCart,
+  cartCount,
 }: MobileMenuProps) => {
   return (
     <div className="xl:hidden">
@@ -41,11 +45,7 @@ const MobileMenu = ({
         }`}
       >
         <div className="flex items-center justify-between border-b border-[#CEDCF9] pb-5">
-          <Link
-            href="/"
-            onClick={onClose}
-            aria-label="Skye Health home"
-          >
+          <Link href="/" onClick={onClose} aria-label="Skye Health home">
             <Image
               src={images.landingpageimages.NewSkyLogo}
               alt="Skye Health"
@@ -66,7 +66,7 @@ const MobileMenu = ({
         <nav className="flex flex-1 flex-col gap-1 py-6">
           {navItems.map((item) => (
             <Link
-              key={item.href}
+               key={item.label}
               href={item.href}
               onClick={onClose}
               className="rounded-xl px-4 py-4 text-lg font-medium text-[#0F1D3A] transition-colors hover:bg-[#F5F8FE]"
@@ -77,21 +77,29 @@ const MobileMenu = ({
         </nav>
 
         <div className="flex flex-col gap-3 border-t border-[#CEDCF9] pt-5">
-          <button
-            type="button"
+          <Link
+            href="/products"
             onClick={onClose}
-            className="w-full rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white"
+            className="w-full rounded-full bg-[#3D74E9] px-6 py-4 text-center text-sm font-medium text-white"
           >
             Get started
-          </button>
+          </Link>
 
           <button
             type="button"
-            onClick={onClose}
-            className="flex w-full items-center justify-center gap-3 rounded-full bg-[#0F1D3A] px-6 py-4 text-sm font-medium text-white"
+            onClick={() => {
+              onClose();
+              onOpenCart();
+            }}
+            className="relative flex w-full items-center justify-center gap-3 rounded-full bg-[#0F1D3A] px-6 py-4 text-sm font-medium text-white"
           >
             <OutlineShoppingIcon />
             View cart
+            {cartCount > 0 ? (
+              <span className="absolute right-4 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
+                {cartCount}
+              </span>
+            ) : null}
           </button>
         </div>
       </aside>

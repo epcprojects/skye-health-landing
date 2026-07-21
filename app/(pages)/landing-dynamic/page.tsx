@@ -1,28 +1,41 @@
 "use client";
 
 import { StaticImageData } from "next/image";
-import {  useState } from "react";
-
-import { images } from "../ui";
-
+import { useState } from "react";
+import { images } from "@/app/ui";
 import "swiper/css";
-import  {
-  TreatmentFilterValue,
-} from "../components/cards/TreatmentFilters";
+import { TreatmentFilterValue } from "@/app/components/cards/TreatmentFilters";
+import { FAQItem } from "@/app/components/FaqAccordion";
+import HeroSection from "@/app/components/sections/HeroSection";
+import TreatmentCardsSection from "@/app/components/sections/TreatmentCardsSection";
+import ExploreOptionsSection from "@/app/components/sections/ExploreOptionsSection";
+import PeptideExpertsSection from "@/app/components/sections/PeptideExpertsSection";
+import TreatmentSliderSection from "@/app/components/sections/TreatmentSliderSection";
+import PeptideTreatmentSliderSection from "@/app/components/sections/PeptideTreatmentSliderSection";
+import OptimizeTreatmentSliderSection from "@/app/components/sections/OptimizeTreatmentSliderSection";
+import HormoneTreatmentSliderSection from "@/app/components/sections/HormoneTreatmentSliderSection";
+import BetterTreatmentSection from "@/app/components/sections/BetterTreatmentSection";
+import SkyDifferenceSection from "@/app/components/sections/SkyDifferenceSection";
+import FAQSection from "@/app/components/sections/FAQSection";
+import { useRouter } from "next/navigation";
+import WeightLossProgramModal from "@/app/components/modals/WeightLossProgramModal";
+import HormoneProgramModal from "@/app/components/modals/HormoneProgramModal";
 
-import { FAQItem } from "../components/FaqAccordion";
+import {
+  addProductToCart,
+  selectCartItems,
+  setQty,
+} from "@/app/Redux/slices/cart/cartSlice";
 
-import HeroSection from "../components/sections/HeroSection";
-import TreatmentCardsSection from "../components/sections/TreatmentCardsSection";
-import ExploreOptionsSection from "../components/sections/ExploreOptionsSection";
-import PeptideExpertsSection from "../components/sections/PeptideExpertsSection";
-import TreatmentSliderSection from "../components/sections/TreatmentSliderSection";
-import PeptideTreatmentSliderSection from "../components/sections/PeptideTreatmentSliderSection";
-import OptimizeTreatmentSliderSection from "../components/sections/OptimizeTreatmentSliderSection";
-import HormoneTreatmentSliderSection from "../components/sections/HormoneTreatmentSliderSection";
-import BetterTreatmentSection from "../components/sections/BetterTreatmentSection";
-import SkyDifferenceSection from "../components/sections/SkyDifferenceSection";
-import FAQSection from "../components/sections/FAQSection";
+import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
+import { toastAlert } from "@/app/components/ToastAlert";
+
+import {
+  canAddProductWithCartRules,
+  WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+} from "@/app/lib/cartRules";
+
+import { ProductStatusEnum, ProductType } from "@/app/graphql/queries/products";
 type TreatmentCardData = {
   id: number;
   productImage: StaticImageData | string;
@@ -101,68 +114,7 @@ const heroSlides = [
     heroImage: images.landingpageimages.HeroRightImage,
   },
 ];
-const treatmentCards = [
-  {
-    id: 1,
-    title: "Weight loss",
-    buttonLabel: "Start losing weight",
-    backgroundImage: "/images/WeightLossCardImage.png",
-    backgroundColor: "#AFC6E5",
-    hoverText: "$199 per month",
-    hoverBackgroundColor: "#1F3A75",
-    onClick: () => {
-      console.log("Weight loss card clicked");
-    },
-    onButtonClick: () => {
-      console.log("Start losing weight clicked");
-    },
-  },
-  {
-    id: 2,
-    title: "Peptides",
-    buttonLabel: "Shop peptides",
-    backgroundImage: "/images/PeptidesCardBgImage.png",
-    backgroundColor: "#AFC6E5",
-    hoverText: "$199 per month",
-    hoverBackgroundColor: "#1F3A75",
-    onClick: () => {
-      console.log("Peptides card clicked");
-    },
-    onButtonClick: () => {
-      console.log("Shop peptides clicked");
-    },
-  },
-  {
-    id: 3,
-    title: "Hormones",
-    buttonLabel: "Reserve your spot",
-    backgroundImage: "/images/HormonesCardImage.png",
-    backgroundColor: "#AFC6E5",
-    hoverText: "Coming soon",
-    hoverBackgroundColor: "#8FC0C2",
-    onClick: () => {
-      console.log("Hormones card clicked");
-    },
-    onButtonClick: () => {
-      console.log("Reserve your spot clicked");
-    },
-  },
-  {
-    id: 4,
-    title: "Optimize everything",
-    buttonLabel: "Start your journey",
-    backgroundImage: "/images/OptimizeCardImage.png",
-    backgroundColor: "#AFC6E5",
-    hoverText: "Coming soon",
-    hoverBackgroundColor: "#8FC0C2",
-    onClick: () => {
-      console.log("Optimize card clicked");
-    },
-    onButtonClick: () => {
-      console.log("Start your journey clicked");
-    },
-  },
-];
+
 const products = [
   {
     id: 1,
@@ -1355,32 +1307,365 @@ const faqItems: FAQItem[] = [
       "Yes. You can cancel your membership at any time. Contact our support team before your next billing or prescription processing date to avoid additional charges.",
   },
 ];
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+
+const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-weight-loss-program-prefill-source";
+
+const HORMONE_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-hormone-program-prefill-source";
+
+type SavedProgramAnswer = {
+  question: string;
+  answer: string;
+};
+
+type SavedProgramPayload = {
+  program?: string;
+  answers?: SavedProgramAnswer[];
+};
+
+const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
+  id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+  sku: "WL-PROGRAM",
+  name: "Weight Loss Program",
+  description: "",
+  category: "Weight Loss Program",
+  brand: "",
+  price: 199,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Greenwich",
+  productUnitPricings: [
+    {
+      id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+      sku: "WL-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 199,
+    },
+  ],
+};
+
+const HORMONE_PROGRAM_PRODUCT: ProductType = {
+  id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
+  sku: "HRT-PROGRAM",
+  name: "Hormone Program",
+  description: "",
+  category: "Hormone Program",
+  brand: "",
+  price: 0,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Integrity",
+  productUnitPricings: [
+    {
+      id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
+      sku: "HRT-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 0,
+    },
+  ],
+};
+
+const getWeightLossProgramMonths = () => {
+  if (typeof window === "undefined") return 1;
+
+  try {
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) return 1;
+
+    const parsedSavedProgram = JSON.parse(
+      rawSavedProgram,
+    ) as SavedProgramPayload;
+
+    const monthsAnswer = parsedSavedProgram.answers?.find(
+      (entry) => entry.question === "How many months?",
+    )?.answer;
+
+    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
+
+    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
+  } catch (error) {
+    console.error("Failed to read saved weight-loss program months:", error);
+
+    return 1;
+  }
+};
 
 export default function Home() {
   const [selectedFilter, setSelectedFilter] =
     useState<TreatmentFilterValue>("all");
   const hero = heroSlides[0];
+  const router = useRouter();
+  const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
+  const [isHormoneModalOpen, setIsHormoneModalOpen] = useState(false);
 
+  const [pendingWeightLossProduct, setPendingWeightLossProduct] =
+    useState<ProductType | null>(null);
+
+  const cartItems = useAppSelector(selectCartItems);
+  const dispatch = useAppDispatch();
+  const normalizeText = (value?: string | null) => value?.trim().toLowerCase();
+  const isWeightLossModalProduct = (product?: ProductType | null) =>
+    normalizeText(product?.category) === "weight loss program" ||
+    (normalizeText(product?.category) === "weight loss" &&
+      normalizeText(product?.subCategory) === "glp-1");
+  const treatmentCards = [
+    {
+      id: 1,
+      title: "Weight loss",
+      buttonLabel: "Start losing weight",
+      backgroundImage: "/images/WeightLossCardImage.png",
+      backgroundColor: "#AFC6E5",
+      hoverText: "$199 per month",
+      hoverBackgroundColor: "#1F3A75",
+      onClick: () => {
+        console.log("Weight loss card clicked");
+      },
+      onButtonClick: () => {
+        setPendingWeightLossProduct(null);
+        setIsWeightLossModalOpen(true);
+      },
+    },
+    {
+      id: 2,
+      title: "Peptides",
+      buttonLabel: "Shop peptides",
+      backgroundImage: "/images/PeptidesCardBgImage.png",
+      backgroundColor: "#AFC6E5",
+      hoverText: "$199 per month",
+      hoverBackgroundColor: "#1F3A75",
+      onClick: () => {
+        console.log("Peptides card clicked");
+      },
+      onButtonClick: () => {
+        //   router.push("/products?category=Peptides");
+      },
+    },
+    {
+      id: 3,
+      title: "Hormones",
+      buttonLabel: "Reserve your spot",
+      backgroundImage: "/images/HormonesCardImage.png",
+      backgroundColor: "#AFC6E5",
+      hoverText: "Coming soon",
+      hoverBackgroundColor: "#8FC0C2",
+      onClick: () => {
+        console.log("Hormones card clicked");
+      },
+      onButtonClick: () => {
+        setIsHormoneModalOpen(true);
+      },
+    },
+    {
+      id: 4,
+      title: "Optimize everything",
+      buttonLabel: "Start your journey",
+      backgroundImage: "/images/OptimizeCardImage.png",
+      backgroundColor: "#AFC6E5",
+      hoverText: "Coming soon",
+      hoverBackgroundColor: "#8FC0C2",
+      onClick: () => {
+        console.log("Optimize card clicked");
+      },
+      onButtonClick: () => {
+        //   router.push("/products?category=Optimize%20Everything");
+      },
+    },
+  ];
   return (
     <>
+      <WeightLossProgramModal
+        isOpen={isWeightLossModalOpen}
+        onClose={() => {
+          setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
+        }}
+        onStartQuestionnaire={() => {
+          const selectedMonths = getWeightLossProgramMonths();
+          const targetProductId =
+            pendingWeightLossProduct?.id ?? WEIGHT_LOSS_PROGRAM_PRODUCT_ID;
+          const cartGuard = canAddProductWithCartRules(
+            cartItems,
+            targetProductId,
+          );
+
+          if (!cartGuard.allowed) {
+            toastAlert(
+              cartGuard.message ?? "Unable to add product to cart.",
+              false,
+            );
+            return;
+          }
+
+          if (pendingWeightLossProduct) {
+            const existingCartItem = cartItems.find(
+              (item) => item.productId === pendingWeightLossProduct.id,
+            );
+
+            if (!existingCartItem) {
+              dispatch(
+                addProductToCart({
+                  product: pendingWeightLossProduct,
+                  qty: selectedMonths,
+                }),
+              );
+            } else {
+              dispatch(
+                setQty({
+                  cartItemId: existingCartItem.cartItemId,
+                  qty: selectedMonths,
+                }),
+              );
+            }
+          } else {
+            const hasWeightLossProgramInCart = cartItems.some(
+              (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+            );
+
+            if (!hasWeightLossProgramInCart) {
+              dispatch(
+                addProductToCart({
+                  product: WEIGHT_LOSS_PROGRAM_PRODUCT,
+                  qty: selectedMonths,
+                }),
+              );
+            } else {
+              dispatch(
+                setQty({
+                  productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+                  qty: selectedMonths,
+                }),
+              );
+            }
+
+            if (typeof window !== "undefined") {
+              window.localStorage.setItem(
+                WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
+                "card-flow",
+              );
+            }
+          }
+
+          setIsWeightLossModalOpen(false);
+          setPendingWeightLossProduct(null);
+          router.push("/surveys?step=1");
+        }}
+      />
+      <HormoneProgramModal
+        isOpen={isHormoneModalOpen}
+        onClose={() => setIsHormoneModalOpen(false)}
+        onStartQuestionnaire={() => {
+          const hasHormoneProgramInCart = cartItems.some(
+            (item) => item.productId === HORMONE_PROGRAM_PRODUCT.id,
+          );
+
+          if (!hasHormoneProgramInCart) {
+            dispatch(
+              addProductToCart({
+                product: HORMONE_PROGRAM_PRODUCT,
+                qty: 1,
+              }),
+            );
+          } else {
+            dispatch(
+              setQty({
+                productId: HORMONE_PROGRAM_PRODUCT.id,
+                qty: 1,
+              }),
+            );
+          }
+
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(
+              HORMONE_PROGRAM_PREFILL_SOURCE_KEY,
+              "card-flow",
+            );
+          }
+
+          setIsHormoneModalOpen(false);
+          router.push("/surveys?step=1");
+        }}
+      />
       <HeroSection
         hero={hero}
-        onGetStarted={() => {
-          console.log("Get started");
-        }}
-        onViewTreatments={() => {
-          console.log("View all treatments");
-        }}
+        onGetStarted={() => router.push("/products")}
+        onViewTreatments={() => router.push("/products")}
       />
       <TreatmentCardsSection cards={treatmentCards} />
       <ExploreOptionsSection
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onGetStarted={() => {
-          console.log("Get started");
+          router.push("/products");
         }}
         onViewTreatments={() => {
-          console.log("View all treatments");
+          router.push("/products");
+        }}
+        onProductGetStarted={(product) => {
+          const cartGuard = canAddProductWithCartRules(cartItems, product.id);
+
+          if (!cartGuard.allowed) {
+            toastAlert(
+              cartGuard.message ?? "Unable to add product to cart.",
+              false,
+            );
+            return;
+          }
+
+          if (isWeightLossModalProduct(product)) {
+            setPendingWeightLossProduct(product);
+            setIsWeightLossModalOpen(true);
+            return;
+          }
+
+          dispatch(
+            addProductToCart({
+              product,
+            }),
+          );
+
+          toastAlert("Added to Cart Successfully", true);
+        }}
+        onProductLearnMore={(product) => {
+          const cartGuard = canAddProductWithCartRules(cartItems, product.id);
+
+          if (!cartGuard.allowed) {
+            toastAlert(
+              cartGuard.message ?? "Unable to add product to cart.",
+              false,
+            );
+            return;
+          }
+
+          if (isWeightLossModalProduct(product)) {
+            setPendingWeightLossProduct(product);
+            setIsWeightLossModalOpen(true);
+            return;
+          }
+
+          dispatch(
+            addProductToCart({
+              product,
+            }),
+          );
+
+          toastAlert("Added to Cart Successfully", true);
         }}
       />
       <PeptideExpertsSection />

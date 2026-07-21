@@ -33,7 +33,7 @@ export default function FAQAccordion({ faqs }: FAQAccordionProps) {
             className="overflow-hidden rounded-xl  bg-[#F5F8FE] data-[state=open]:bg-[#0F1D3A]"
           >
             <Accordion.Header>
-              <Accordion.Trigger className="group flex w-full cursor-pointer items-center gap-1 justify-between text-start rounded-xl data-[state=open]:rounded-b-none bg-[#F5F8FE] xl:pt-6 xl:pb-6 pt-4 pb-4 data-[state=open]:pb-3 px-3 xl:px-10 text-[#0F1D3A] outline-none data-[state=open]:bg-[#0F1D3A] data-[state=open]:text-white">
+              <Accordion.Trigger className="group flex w-full cursor-pointer items-center gap-1 justify-between text-start rounded-xl data-[state=open]:rounded-b-none bg-[#F5F8FE] xl:pt-6 xl:pb-6 pt-4 pb-4 xl:data-[state=open]:pb-3 data-[state=open]:pb-2 px-3 xl:px-10 text-[#0F1D3A] outline-none data-[state=open]:bg-[#0F1D3A] data-[state=open]:text-white">
                 <span className="text-base font-medium">{faq.question}</span>
 
                 <span className="inline-flex text-[#3D74E9] transition-all duration-300 group-data-[state=open]:rotate-45 group-data-[state=open]:text-white">

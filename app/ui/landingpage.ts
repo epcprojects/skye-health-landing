@@ -39,7 +39,7 @@ import HeroRightImage from "@/public/images/HeroRightImage.png"
 import HeroRingImage from "@/public/images/HeartRing.png"
 import HormonesProductImage from "@/public/images/HormonesProductImage.png"
 import DoctorImage from "@/public/images/DoctorImage.png"
-import SkyWhiteBg from "@/public/images/SkyWhiteBg.png"
+import SkyWhiteBg from "@/public/images/SkyWhiteBgNew.svg"
 import StanfordImage from "@/public/images/StanfordImage.svg"
 import SkyHeartImage from "@/public/images/SkyHeartImage.svg"
 import ProductImage from "@/public/images/ProductImage.png"
@@ -51,7 +51,9 @@ import FaqsImage from "@/public/images/FaqsImage.png"
 import OptimizeEverythingImage from "@/public/images/OptimizeEverythingImage.png"
 import HormonesImage from "@/public/images/HormonesImage.png"
 import SkyHeartLogo from "@/public/images/SkyHeartLogo.svg"
+import SkyWhiteDesktopBg from "@/public/images/SkyWhiteDesktopBg.png"
 export const landingpageimages = {
+  SkyWhiteDesktopBg,
   SkyHeartLogo,
   HormonesImage,
   OptimizeEverythingImage,

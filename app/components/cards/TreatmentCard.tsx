@@ -39,10 +39,10 @@ const TreatmentCard = ({
         backgroundImage: `url("${backgroundImage}")`,
         backgroundColor,
       }}
-      className="group xl:min-h-88.25 overflow-hidden rounded-2xl xl:rounded-4xl bg-cover bg-center bg-no-repeat py-4 xl:py-0 px-4 xl:px-12 flex items-center cursor-pointer"
+      className="group xl:min-h-88.25 overflow-hidden rounded-2xl xl:rounded-4xl bg-cover bg-center bg-no-repeat py-8 xl:py-0 px-6 xl:px-12 flex items-center cursor-pointer"
     >
-      <div className="flex flex-col gap-6">
-        <div className="z-10 flex flex-col gap-4">
+      <div className="flex flex-col justify-center   gap-6">
+        <div className="z-10 flex flex-col   gap-4">
           <h3 className="text-xl xl:text-[32px] font-medium text-white">
             {title}
           </h3>
@@ -65,7 +65,7 @@ const TreatmentCard = ({
           </div>
         </div>
 
-        <div className="self-start overflow-hidden max-h-0 opacity-0 transition-all duration-300 group-hover:max-h-20 group-hover:opacity-100">
+        <div className="self-start overflow-hidden max-h-0 opacity-0 transition-all duration-300 group-hover:max-h-20 group-hover:opacity-100 xl:block hidden">
           <div
             style={{ backgroundColor: hoverBackgroundColor }}
             className="rounded-full p-4 flex items-center justify-center text-sm font-medium text-white"

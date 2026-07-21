@@ -36,24 +36,24 @@ const FeaturedTreatmentCard = ({
         className="h-full w-full  absolute z-5"
       />
 
-      <div className="xl:absolute xl:inset-0 z-10 relative flex flex-col items-start justify-between p-4 xl:p-10">
+      <div className="xl:absolute xl:inset-0 z-10 relative flex flex-col items-start gap-1 xl:gap-0 justify-between px-6 py-7 xl:p-10">
         <div
           style={{ backgroundColor: badgeBackgroundColor }}
-          className="rounded-full xl:px-8 xl:py-5 py-3 px-5 text-sm xl:text-base font-medium text-white"
+          className="rounded-full xl:px-8 xl:py-5 py-1.5 px-3.5 text-sm xl:text-base font-medium text-white"
         >
           {badge}
         </div>
 
-        <div className="flex flex-col gap-10">
-          <h3 className="xl:max-w-lg whitespace-pre-line text-2xl xl:text-5xl font-semibold text-white">
+        <div className="flex flex-col xl:gap-10 gap-12">
+          <h3 className="xl:max-w-lg whitespace-pre-line text-[22px] xl:text-5xl font-semibold text-white">
             {title}
           </h3>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-2.5 xl:gap-4">
             <button
               type="button"
               onClick={onGetStarted}
-              className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] px-5 py-3 xl:px-8 xl:py-5 text-sm xl:text-base font-medium leading-[100%] text-white"
+              className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] px-5 py-3 xl:px-8 xl:py-5 text-sm xl:text-base font-medium  text-white"
             >
               Get started now
             </button>
@@ -61,9 +61,9 @@ const FeaturedTreatmentCard = ({
             <button
               type="button"
               onClick={onAction}
-              className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full border border-white px-5 xl:px-8 py-3 xl:py-5 "
+              className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full ring ring-inset ring-white px-5 xl:px-8 py-3 xl:py-5 "
             >
-              <span className="text-sm xl:text-base font-medium leading-[100%] text-white">
+              <span className="text-sm xl:text-base font-medium  text-white">
                 {actionLabel}
               </span>
 

@@ -37,10 +37,7 @@ const StatusBadge = ({
         className="w-1 h-1 shrink-0 rounded-full"
       />
 
-      <span
-        style={{ color: textColor }}
-        className="text-[10px] font-medium"
-      >
+      <span style={{ color: textColor }} className="text-[10px] font-medium">
         {label}
       </span>
     </div>
@@ -59,7 +56,7 @@ const TreatmentProductCard = ({
   onGetStarted,
 }: TreatmentProductCardProps) => {
   return (
-    <article className="py-6 px-4 bg-white rounded-2xl xl:rounded-4xl flex flex-col gap-2.5">
+    <article className="py-5 xl:py-6 px-3.5 xl:px-4 bg-white rounded-[14px] xl:rounded-4xl flex flex-col gap-2  xl:gap-2.5">
       <div className="min-h-6 flex flex-row flex-wrap gap-2.5">
         {inStock && !soldOut && (
           <StatusBadge
@@ -89,53 +86,56 @@ const TreatmentProductCard = ({
         )}
       </div>
 
-      <div className="relative w-full aspect-square">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-contain"
-        />
+      <div className="flex justify-center">
+        <div className="relative xl:w-full ">
+          <Image
+            src={image}
+            alt={title}
+            // fill
+            // sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-contain xl:w-full xl:h-full h-[240px] w-[240px] "
+          />
+        </div>
       </div>
+      <div className="flex flex-col gap-3.5 xl:gap-2.5">
+        <div className="flex flex-col gap-2.5 xl:gap-0 items-center">
+          <h3 className="text-base font-medium xl:leading-7 text-[#0F1D3A]">
+            {title}
+          </h3>
 
-      <div className="flex flex-col items-center">
-        <h3 className="text-base font-medium leading-7 text-[#0F1D3A]">
-          {title}
-        </h3>
+          <p className="text-sm font-light xl:leading-7 text-[#0F1D3A] text-center">
+            {description}
+          </p>
 
-        <p className="text-sm font-light leading-7 text-[#0F1D3A] text-center">
-          {description}
-        </p>
+          <p className="text-sm font-medium xl:leading-7 text-[#0F1D3A]">
+            {price}
+          </p>
+        </div>
 
-        <p className="text-sm font-medium leading-7 text-[#0F1D3A]">
-          {price}
-        </p>
-      </div>
+        <div className="flex flex-col gap-1 items-center">
+          <button
+            type="button"
+            disabled={soldOut}
+            onClick={onGetStarted}
+            className={`xl:py-4 xl:px-6 py-2.5 px-6 rounded-full text-sm font-medium text-white transition-colors ${
+              soldOut
+                ? "bg-[#9CA3AF] cursor-not-allowed"
+                : "bg-[#0F1D3A] cursor-pointer hover:bg-[#1B315D]"
+            }`}
+          >
+            {soldOut ? "Sold out" : "Get started"}
+          </button>
 
-      <div className="flex flex-col gap-1 items-center">
-        <button
-          type="button"
-          disabled={soldOut}
-          onClick={onGetStarted}
-          className={`py-4 px-6 rounded-full text-sm font-medium text-white transition-colors ${
-            soldOut
-              ? "bg-[#9CA3AF] cursor-not-allowed"
-              : "bg-[#0F1D3A] cursor-pointer hover:bg-[#1B315D]"
-          }`}
-        >
-          {soldOut ? "Sold out" : "Get started"}
-        </button>
-
-        <button
-          type="button"
-          onClick={onLearnMore}
-          className="py-4 px-6 bg-white cursor-pointer"
-        >
-          <span className="text-sm font-medium underline underline-offset-2 text-[#0F1D3A]">
-            Learn more
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={onLearnMore}
+            className="xl:py-4 xl:px-6 py-2.5 px-6 bg-white cursor-pointer"
+          >
+            <span className="text-sm font-medium underline underline-offset-2 text-[#0F1D3A]">
+              Learn more
+            </span>
+          </button>
+        </div>
       </div>
     </article>
   );

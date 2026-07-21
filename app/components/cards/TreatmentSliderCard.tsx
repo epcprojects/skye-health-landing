@@ -23,39 +23,41 @@ const TreatmentSliderCard = ({
   onShopNow,
 }: TreatmentSliderCardProps) => {
   return (
-    <article className="flex h-full  xl:max-w-110 shrink-0 flex-col justify-between gap-4 xl:gap-18 overflow-hidden rounded-[18px] xl:rounded-[36px] bg-white p-1 xl:p-6">
+    <article className="flex h-full  xl:max-w-110 shrink-0 flex-col justify-between gap-4 xl:gap-18 overflow-hidden rounded-[18px] xl:rounded-[36px] bg-white p-2 xl:p-6">
       <div
         style={{ backgroundColor: productImageBg }}
-        className="relative min-h-87.25 overflow-hidden rounded-[18px] xl:rounded-[36px]"
+        className="relative min-h-60 xl:min-h-87.25 overflow-hidden rounded-[10px] flex items-center justify-center xl:rounded-[36px]"
       >
         <Image
           src={productImage}
           alt={productTitle}
-          fill 
-          className="object-contain"
+          
+          className="object-contain w-53 h-53  xl:w-80 xl:h-80"
         />
       </div>
 
-      <div className="flex flex-col gap-6 px-3 pb-3 xl:pb-0">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-2xl font-medium leading-7 text-[#0F1D3A]">
+      <div className="flex flex-col gap-5 xl:gap-6 px-1 pb-3 xl:pb-0">
+        <div className="flex flex-col xl:gap-2 gap-3">
+         <div className="flex flex-col gap-0.5 xl:gap-2">
+           <h3 className="text-xl xl:text-2xl font-medium xl:leading-7 text-[#0F1D3A]">
             {productTitle}
           </h3>
 
-          <p className="text-sm font-light leading-[100%] text-[#0F1D3A]">
+          <p className="text-sm font-light xl:leading-[100%] text-[#0F1D3A]">
             {productDescription}
           </p>
+         </div>
 
-          <p className="text-sm font-medium leading-7 text-[#0F1D3A]">
+          <p className="text-sm font-medium xl:leading-7 text-[#0F1D3A]">
             {productPrice}
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap xl:gap-3 gap-2">
           <button
             type="button"
             onClick={onGetStarted}
-            className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] px-5 xl:px-8 py-3 xl:py-5 text-sm xl:text-base font-medium leading-[100%] text-white"
+            className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] px-5 xl:px-8 py-3 xl:py-5 text-sm xl:text-base font-medium xl:leading-[100%] text-white"
           >
             Lets get started
           </button>
@@ -63,9 +65,9 @@ const TreatmentSliderCard = ({
           <button
             type="button"
             onClick={onShopNow}
-            className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full border border-[#0F1D3A] px-5 xl:px-8 py-3 xl:py-5"
+            className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full ring ring-inset ring-[#0F1D3A] px-5 xl:px-8 py-3 xl:py-5"
           >
-            <span className="text-sm xl:text-base font-medium leading-[100%] text-[#0F1D3A]">
+            <span className="text-sm xl:text-base font-medium xl:leading-[100%] text-[#0F1D3A]">
               Shop now
             </span>
 

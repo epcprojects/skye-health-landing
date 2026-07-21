@@ -27,14 +27,15 @@ const SkyDifferenceCard = ({
   onClick,
 }: SkyDifferenceCardProps) => {
   return (
-   <article className="group grid h-full w-full max-w-89.25 overflow-hidden rounded-[28px]">
-      <div className="relative col-start-1 row-start-1 flex   h-full flex-col bg-white opacity-100 transition-all duration-500 group-hover:pointer-events-none group-hover:scale-95 group-hover:opacity-0">
-        <div className="flex flex-col gap-4 p-10">
-          <h3 className="text-[32px] font-semibold leading-[100%] text-[#0F1D3A]">
+    <article className="group relative h-auto w-full max-w-89.25 overflow-hidden rounded-[18px] xl:h-full xl:rounded-[28px]">
+      {/* Normal card */}
+      <div className="relative flex h-auto flex-col justify-betwen  gap-10 bg-white opacity-100 transition-all duration-500 group-hover:pointer-events-none group-hover:scale-95 group-hover:opacity-0 xl:h-full">
+        <div className="flex flex-col gap-3 px-4 pt-5 xl:gap-4 xl:p-10">
+          <h3 className="text-xl font-semibold leading-[100%] text-[#0F1D3A] xl:text-[32px]">
             {title}
           </h3>
 
-          <p className="text-base text-[#1F3A75]">
+          <p className="text-sm text-[#1F3A75] xl:text-base">
             {description}
           </p>
         </div>
@@ -42,31 +43,32 @@ const SkyDifferenceCard = ({
         <Image
           src={image}
           alt={title}
-          className="mt-auto h-auto w-full rounded-b-[28px] object-cover"
+          className="mt-4 h-auto w-full rounded-b-[18px] object-cover xl:mt-auto xl:rounded-b-[28px]"
         />
 
         <button
           type="button"
           onClick={onClick}
           aria-label={`Learn more about ${title}`}
-          className="absolute bottom-6 right-6 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A]"
+          className="absolute right-4 bottom-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] xl:right-6 xl:bottom-6 xl:h-12 xl:w-12"
         >
           <NewPlusIcon fill="white" />
         </button>
       </div>
 
+      {/* Hover card */}
       <div
         style={{
           backgroundImage: `url("${hoverBackgroundImage}")`,
         }}
-        className="pointer-events-none relative col-start-1 row-start-1 flex flex-col bg-fill bg-center bg-no-repeat opacity-0 transition-all duration-500 group-hover:pointer-events-auto group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 z-10 flex flex-col bg-cover bg-center bg-no-repeat opacity-0 transition-all duration-500 group-hover:pointer-events-auto group-hover:opacity-100"
       >
-        <div className="flex flex-col gap-4 p-12">
-          <h3 className="text-[32px] font-semibold leading-[100%] text-white">
+        <div className="flex flex-col gap-3 p-6 xl:gap-4 xl:p-12">
+          <h3 className="text-xl font-semibold leading-[100%] text-white xl:text-[32px]">
             {hoverTitle}
           </h3>
 
-          <p className="text-base text-[#F5F8FE]">
+          <p className="text-sm text-[#F5F8FE] xl:text-base">
             {hoverDescription}
           </p>
         </div>
@@ -81,7 +83,7 @@ const SkyDifferenceCard = ({
           type="button"
           onClick={onClick}
           aria-label={`Learn more about ${hoverTitle}`}
-          className="absolute bottom-6 right-6 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A]"
+          className="absolute right-4 bottom-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] xl:right-6 xl:bottom-6 xl:h-12 xl:w-12"
         >
           <NewPlusIcon fill="white" />
         </button>
