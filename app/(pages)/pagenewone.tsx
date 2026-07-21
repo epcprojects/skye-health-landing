@@ -1,58 +1,150 @@
 "use client";
 
-import { useState } from "react";
-import { images } from "@/app/ui";
+import { StaticImageData } from "next/image";
+import { useEffect, useRef, useState } from "react";
+
+import { images } from "../ui";
+
 import "swiper/css";
-import { TreatmentFilterValue } from "@/app/components/cards/TreatmentFilters";
-import { FAQItem } from "@/app/components/FaqAccordion";
-import HeroSection from "@/app/components/sections/HeroSection";
-import TreatmentCardsSection from "@/app/components/sections/TreatmentCardsSection";
-import ExploreOptionsSection, {
-  ExploreOptionProduct,
-} from "@/app/components/sections/ExploreOptionsSection";
-import PeptideExpertsSection from "@/app/components/sections/PeptideExpertsSection";
-import TreatmentSliderSection, {
-  TreatmentSliderItem,
-} from "@/app/components/sections/TreatmentSliderSection";
-import BetterTreatmentSection from "@/app/components/sections/BetterTreatmentSection";
-import SkyDifferenceSection from "@/app/components/sections/SkyDifferenceSection";
-import FAQSection from "@/app/components/sections/FAQSection";
-import { useRouter } from "next/navigation";
+import { TreatmentFilterValue } from "../components/cards/TreatmentFilters";
+import { FAQItem } from "../components/FaqAccordion";
+import HeroSection from "../components/sections/HeroSection";
+import TreatmentCardsSection from "../components/sections/TreatmentCardsSection";
+import ExploreOptionsSection from "../components/sections/ExploreOptionsSection";
+import PeptideExpertsSection from "../components/sections/PeptideExpertsSection";
+import TreatmentSliderSection from "../components/sections/TreatmentSliderSection";
+import BetterTreatmentSection from "../components/sections/BetterTreatmentSection";
+import SkyDifferenceSection from "../components/sections/SkyDifferenceSection";
+import FAQSection from "../components/sections/FAQSection";
 import WeightLossProgramModal from "@/app/components/modals/WeightLossProgramModal";
-import HormoneProgramModal from "@/app/components/modals/HormoneProgramModal";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   addProductToCart,
   selectCartItems,
   setQty,
 } from "@/app/Redux/slices/cart/cartSlice";
-
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
 import { toastAlert } from "@/app/components/ToastAlert";
-
 import {
   canAddProductWithCartRules,
   WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
 } from "@/app/lib/cartRules";
-
 import {
-  ALL_PRODUCTS,
-  AllProductsType,
-  AllProductsVariables,
   ProductStatusEnum,
   ProductType,
 } from "@/app/graphql/queries/products";
-import { useQuery } from "@apollo/client/react";
-
-import {
-  type FeaturedTreatmentSliderCard,
-  type TreatmentSliderProduct,
+import type {
+  FeaturedTreatmentSliderCard,
+  TreatmentSliderProduct,
 } from "@/app/components/sections/TreatmentSliderSection";
 
-const cardColors = {
-  productImageBg: "#CEDCF9",
-  hoverCardBg: "#AFC6E5",
-  hoverBadgeBg: "#87A3CA",
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-weight-loss-program-prefill-source";
+
+type SavedProgramPayload = {
+  answers?: Array<{ question: string; answer: string }>;
 };
+
+const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
+  id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+  sku: "WL-PROGRAM",
+  name: "Weight Loss Program",
+  description: "",
+  category: "Weight Loss Program",
+  brand: "",
+  price: 199,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Greenwich",
+  productUnitPricings: [
+    {
+      id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+      sku: "WL-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 199,
+    },
+  ],
+};
+
+const getWeightLossProgramMonths = () => {
+  if (typeof window === "undefined") return 1;
+
+  try {
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) return 1;
+
+    const parsedSavedProgram = JSON.parse(
+      rawSavedProgram,
+    ) as SavedProgramPayload;
+
+    const monthsAnswer = parsedSavedProgram.answers?.find(
+      (entry) => entry.question === "How many months?",
+    )?.answer;
+    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
+
+    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
+  } catch {
+    return 1;
+  }
+};
+type TreatmentCardData = {
+  id: number;
+  productImage: StaticImageData | string;
+  productTitle: string;
+  productDescription: string;
+  productPrice: string;
+  productImageBg: string;
+  hoverImage: StaticImageData | string;
+  hoverBadge: string;
+  hoverTitle: string;
+  hoverActionLabel: string;
+  hoverCardBg: string;
+  hoverBadgeBg: string;
+  onGetStarted: () => void;
+  onShopNow: () => void;
+  onHoverGetStarted: () => void;
+  onHoverAction: () => void;
+};
+const createStaticFeaturedCard = (
+  card: TreatmentCardData,
+): FeaturedTreatmentSliderCard => {
+  return {
+    image: card.hoverImage,
+    badge: card.hoverBadge,
+    title: card.hoverTitle,
+    actionLabel: card.hoverActionLabel,
+    backgroundColor: card.hoverCardBg,
+    badgeBackgroundColor: card.hoverBadgeBg,
+    onGetStarted: card.onHoverGetStarted,
+    onAction: card.onHoverAction,
+  };
+};
+
+const createStaticSliderProducts = (
+  cards: TreatmentCardData[],
+): TreatmentSliderProduct[] => {
+  return cards.map((card) => ({
+    id: card.id,
+    productImage: card.productImage,
+    productTitle: card.productTitle,
+    productDescription: card.productDescription,
+    productPrice: card.productPrice,
+    productImageBg: card.productImageBg,
+    onGetStarted: card.onGetStarted,
+    onShopNow: card.onShopNow,
+  }));
+};
+
 const optimizeEverythingConfig = {
   productImageBg: "#0F1D3A",
   hoverCardBg: "#0F1D3A",
@@ -65,6 +157,75 @@ const hormoneCardColors = {
   hoverCardBg: "radial-gradient(circle at center, #93CBCF 0%, #CCE8EA 100%)",
   hoverBadgeBg: "#8FC0C2",
 };
+const featuredWeightLossCard: FeaturedTreatmentSliderCard = {
+  image: images.landingpageimages.LossWeightCardImage,
+  badge: "Weight Loss",
+  title: "Lose Weight with Skye",
+  actionLabel: "Lose weight with Skye",
+  backgroundColor: "#AFC6E5",
+  badgeBackgroundColor: "#87A3CA",
+
+  onGetStarted: () => {
+    console.log("Weight Loss get started");
+  },
+
+  onAction: () => {
+    console.log("Weight Loss action");
+  },
+};
+const staticWeightLossProducts: TreatmentSliderProduct[] = [
+  {
+    id: 1,
+    productImage: images.landingpageimages.ProductImage,
+    productTitle: "GLP-1s Vial",
+    productDescription:
+      "Can help relax blood vessels, supporting sexual function, and vascular health.",
+    productPrice: "$199.00/month",
+    productImageBg: "#CEDCF9",
+
+    onGetStarted: () => {
+      console.log("GLP-1s Vial get started");
+    },
+
+    onShopNow: () => {
+      console.log("GLP-1s Vial shop now");
+    },
+  },
+  {
+    id: 2,
+    productImage: images.landingpageimages.ProductImage,
+    productTitle: "Weight Loss Therapy",
+    productDescription:
+      "Personalized physician-guided support for sustainable weight management.",
+    productPrice: "$249.00/month",
+    productImageBg: "#CEDCF9",
+
+    onGetStarted: () => {
+      console.log("Weight Loss Therapy get started");
+    },
+
+    onShopNow: () => {
+      console.log("Weight Loss Therapy shop now");
+    },
+  },
+  {
+    id: 3,
+    productImage: images.landingpageimages.ProductImage,
+    productTitle: "GLP-1 Program",
+    productDescription:
+      "A personalized GLP-1 treatment plan designed around your health goals.",
+    productPrice: "$299.00/month",
+    productImageBg: "#CEDCF9",
+
+    onGetStarted: () => {
+      console.log("GLP-1 Program get started");
+    },
+
+    onShopNow: () => {
+      console.log("GLP-1 Program shop now");
+    },
+  },
+];
 const heroSlides = [
   {
     id: 1,
@@ -107,290 +268,139 @@ const heroSlides = [
     heroImage: images.landingpageimages.HeroRightImage,
   },
 ];
-
-const hoverTreatmentCards: TreatmentSliderItem[] = [
+const treatmentCards = [
   {
     id: 1,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "GLP-1s Vial",
-    productDescription:
-      "Can help relax blood vessels, supporting sexual function, and vascular health.",
-    productPrice: "$199.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Weight Loss",
-    hoverTitle: "Lose Weight with Skye",
-    hoverActionLabel: "Lose weight with Skye",
-
-    onGetStarted: () => {
-      console.log("Card 1 get started");
+    title: "Weight loss",
+    buttonLabel: "Start losing weight",
+    backgroundImage: "/images/WeightLossCardImage.png",
+    backgroundColor: "#AFC6E5",
+    hoverText: "$199 per month",
+    hoverBackgroundColor: "#1F3A75",
+    onClick: () => {
+      console.log("Weight loss card clicked");
     },
-    onShopNow: () => {
-      console.log("Card 1 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 1 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 1 hover action");
+    onButtonClick: () => {
+      console.log("Start losing weight clicked");
     },
   },
   {
     id: 2,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Peptide Therapy",
-    productDescription:
-      "Premium peptide support for recovery, energy, and overall performance.",
-    productPrice: "$249.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Peptides",
-    hoverTitle: "Feel Better with Skye",
-    hoverActionLabel: "Explore peptides",
-
-    onGetStarted: () => {
-      console.log("Card 2 get started");
+    title: "Peptides",
+    buttonLabel: "Shop peptides",
+    backgroundImage: "/images/PeptidesCardBgImage.png",
+    backgroundColor: "#AFC6E5",
+    hoverText: "$199 per month",
+    hoverBackgroundColor: "#1F3A75",
+    onClick: () => {
+      console.log("Peptides card clicked");
     },
-    onShopNow: () => {
-      console.log("Card 2 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 2 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 2 hover action");
+    onButtonClick: () => {
+      console.log("Shop peptides clicked");
     },
   },
   {
     id: 3,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Hormone Support",
-    productDescription:
-      "Personalized hormone support designed around your health and goals.",
-    productPrice: "$299.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Hormones",
-    hoverTitle: "Optimize with Skye",
-    hoverActionLabel: "Explore hormones",
-
-    onGetStarted: () => {
-      console.log("Card 3 get started");
+    title: "Hormones",
+    buttonLabel: "Reserve your spot",
+    backgroundImage: "/images/HormonesCardImage.png",
+    backgroundColor: "#AFC6E5",
+    hoverText: "Coming soon",
+    hoverBackgroundColor: "#8FC0C2",
+    onClick: () => {
+      console.log("Hormones card clicked");
     },
-    onShopNow: () => {
-      console.log("Card 3 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 3 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 3 hover action");
+    onButtonClick: () => {
+      console.log("Reserve your spot clicked");
     },
   },
   {
     id: 4,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Recovery Support",
-    productDescription:
-      "Designed to support recovery, mobility, and everyday physical performance.",
-    productPrice: "$189.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Recovery",
-    hoverTitle: "Recover Faster with Skye",
-    hoverActionLabel: "Explore recovery",
-
-    onGetStarted: () => {
-      console.log("Card 4 get started");
+    title: "Optimize everything",
+    buttonLabel: "Start your journey",
+    backgroundImage: "/images/OptimizeCardImage.png",
+    backgroundColor: "#AFC6E5",
+    hoverText: "Coming soon",
+    hoverBackgroundColor: "#8FC0C2",
+    onClick: () => {
+      console.log("Optimize card clicked");
     },
-    onShopNow: () => {
-      console.log("Card 4 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 4 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 4 hover action");
-    },
-  },
-  {
-    id: 5,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Energy Support",
-    productDescription:
-      "Personalized support for consistent energy, focus, and daily performance.",
-    productPrice: "$159.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Energy",
-    hoverTitle: "Boost Energy with Skye",
-    hoverActionLabel: "Explore energy",
-
-    onGetStarted: () => {
-      console.log("Card 5 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 5 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 5 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 5 hover action");
-    },
-  },
-  {
-    id: 6,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Sleep Support",
-    productDescription:
-      "Supports better sleep quality, relaxation, and overnight recovery.",
-    productPrice: "$149.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Sleep",
-    hoverTitle: "Sleep Better with Skye",
-    hoverActionLabel: "Explore sleep support",
-
-    onGetStarted: () => {
-      console.log("Card 6 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 6 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 6 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 6 hover action");
-    },
-  },
-  {
-    id: 7,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Skin Health",
-    productDescription:
-      "Advanced support for healthier-looking skin and healthy aging.",
-    productPrice: "$179.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Skin Health",
-    hoverTitle: "Look Better with Skye",
-    hoverActionLabel: "Explore skin health",
-
-    onGetStarted: () => {
-      console.log("Card 7 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 7 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 7 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 7 hover action");
-    },
-  },
-  {
-    id: 8,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Focus Support",
-    productDescription:
-      "Designed to support mental clarity, concentration, and productivity.",
-    productPrice: "$169.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Focus",
-    hoverTitle: "Think Sharper with Skye",
-    hoverActionLabel: "Explore focus support",
-
-    onGetStarted: () => {
-      console.log("Card 8 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 8 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 8 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 8 hover action");
-    },
-  },
-  {
-    id: 9,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Longevity Support",
-    productDescription:
-      "Personalized care designed to support long-term health and performance.",
-    productPrice: "$329.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.BetterSkinImage,
-    hoverBadge: "Longevity",
-    hoverTitle: "Live Longer with Skye",
-    hoverActionLabel: "Explore longevity",
-
-    onGetStarted: () => {
-      console.log("Card 9 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 9 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 9 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 9 hover action");
-    },
-  },
-  {
-    id: 10,
-    productImage: images.landingpageimages.ProductImage,
-    productTitle: "Complete Optimization",
-    productDescription:
-      "A complete physician-guided plan built around your personal health goals.",
-    productPrice: "$399.00/month",
-
-    ...cardColors,
-
-    hoverImage: images.landingpageimages.LossWeightCardImage,
-    hoverBadge: "Optimization",
-    hoverTitle: "Optimize Everything with Skye",
-    hoverActionLabel: "Explore optimization",
-
-    onGetStarted: () => {
-      console.log("Card 10 get started");
-    },
-    onShopNow: () => {
-      console.log("Card 10 shop now");
-    },
-    onHoverGetStarted: () => {
-      console.log("Card 10 hover get started");
-    },
-    onHoverAction: () => {
-      console.log("Card 10 hover action");
+    onButtonClick: () => {
+      console.log("Start your journey clicked");
     },
   },
 ];
-const peptideTreatmentCards: TreatmentSliderItem[] = [
+const products = [
+  {
+    id: 1,
+    title: "GLP-1s Vial",
+    image: images.landingpageimages.HormonesProductImage,
+    description:
+      "Can help relax blood vessels, supporting sexual function, and vascular health.",
+    price: "$199.00/month",
+    inStock: true,
+    newIn: true,
+    soldOut: false,
+    onGetStarted: () => {
+      console.log("GLP-1s Vial get started");
+    },
+    onLearnMore: () => {
+      console.log("GLP-1s Vial learn more");
+    },
+  },
+  {
+    id: 2,
+    title: "GLP-1s Pen",
+    image: images.landingpageimages.HormonesProductImage,
+    description:
+      "Supports healthy weight management through personalized physician care.",
+    price: "$249.00/month",
+    inStock: true,
+    newIn: false,
+    soldOut: false,
+    onGetStarted: () => {
+      console.log("GLP-1s Pen get started");
+    },
+    onLearnMore: () => {
+      console.log("GLP-1s Pen learn more");
+    },
+  },
+  {
+    id: 3,
+    title: "Hormone Support",
+    image: images.landingpageimages.HormonesProductImage,
+    description:
+      "Personalized hormone support designed around your individual health needs.",
+    price: "$179.00/month",
+    inStock: false,
+    newIn: true,
+    soldOut: false,
+    onGetStarted: () => {
+      console.log("Hormone Support get started");
+    },
+    onLearnMore: () => {
+      console.log("Hormone Support learn more");
+    },
+  },
+  {
+    id: 4,
+    title: "Peptide Therapy",
+    image: images.landingpageimages.HormonesProductImage,
+    description:
+      "Premium peptide therapy supporting recovery, energy, and performance.",
+    price: "$299.00/month",
+    inStock: false,
+    newIn: false,
+    soldOut: true,
+    onGetStarted: () => {
+      console.log("Peptide Therapy get started");
+    },
+    onLearnMore: () => {
+      console.log("Peptide Therapy learn more");
+    },
+  },
+];
+const peptideTreatmentCards = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -415,7 +425,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 2,
-    productImage: images.landingpageimages.peptideProductImage,
+    productImage: images.landingpageimages.ProductImage,
     productTitle: "CJC-1295",
     productDescription:
       "Designed to support recovery, sleep quality, energy, and body composition.",
@@ -612,7 +622,12 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
     onHoverAction: () => console.log("Card 10 hover action"),
   },
 ];
-const OptimizeeverythingCards: TreatmentSliderItem[] = [
+const featuredPeptideCard = createStaticFeaturedCard(peptideTreatmentCards[0]);
+
+const staticPeptideProducts = createStaticSliderProducts(
+  peptideTreatmentCards.slice(1),
+);
+const OptimizeeverythingCards: TreatmentCardData[] = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -633,7 +648,7 @@ const OptimizeeverythingCards: TreatmentSliderItem[] = [
   },
   {
     id: 2,
-    productImage: images.landingpageimages.gplProductImage,
+    productImage: images.landingpageimages.ProductImage,
     productTitle: "CJC-1295",
     productDescription:
       "Designed to support recovery, sleep quality, energy, and body composition.",
@@ -794,7 +809,14 @@ const OptimizeeverythingCards: TreatmentSliderItem[] = [
     onHoverAction: () => console.log("Card 10 hover action"),
   },
 ];
-const Hormonescards: TreatmentSliderItem[] = [
+const featuredOptimizeCard = createStaticFeaturedCard(
+  OptimizeeverythingCards[0],
+);
+
+const staticOptimizeProducts = createStaticSliderProducts(
+  OptimizeeverythingCards.slice(1),
+);
+const Hormonescards: TreatmentCardData[] = [
   {
     id: 1,
     productImage: images.landingpageimages.ProductImage,
@@ -1076,6 +1098,11 @@ const Hormonescards: TreatmentSliderItem[] = [
     },
   },
 ];
+const featuredHormoneCard = createStaticFeaturedCard(Hormonescards[0]);
+
+const staticHormoneProducts = createStaticSliderProducts(
+  Hormonescards.slice(1),
+);
 const differenceCards = [
   {
     id: 1,
@@ -1200,486 +1227,59 @@ const differenceCards = [
 ];
 const faqItems: FAQItem[] = [
   {
-    question: "Where is Skye Health available?",
+    question: "What does the $199/month include?",
     answer:
-      "Skye Health currently provides care to patients in all 50 states, although some treatments may not be available everywhere.Because healthcare regulations vary by state, certain therapies may require a live physician visit or may not yet be offered where you live. If that's the case, we'll let you know before you begin treatment. Our goal is simple: provide the same personalized, physician-guided care—wherever you call home.",
+      "Your monthly plan includes physician-guided care, a personalized treatment plan, ongoing support, and regular progress reviews. Medication costs may vary depending on your prescription.",
   },
   {
-    question: "Is lab testing available in my state?",
+    question: "Do I need insurance?",
     answer:
-      "For most patients, yes. Skye Health currently offers at-home blood collection kits for eligible lab testing. If your physician orders labs that can be completed at home, we'll ship everything you need directly to your door, along with simple collection instructions.",
+      "No. Skye works entirely without insurance, so there are no claims, no prior authorizations, and no coverage surprises. You pay one flat monthly price.",
   },
   {
-    question: "What if my labs can't be collected at home?",
+    question: "How do I know if I'm eligible?",
     answer:
-      "Some laboratory tests require a traditional blood draw. As we continue expanding our services, Skye Health will be adding nationwide laboratory collection options for these tests. If your treatment requires a lab that isn't currently available through our at-home collection program, our Care Team will let you know before your order is placed and discuss the next steps with you.",
+      "You will complete a brief medical questionnaire and consult with a licensed provider. Your provider will review your health history and determine whether treatment is appropriate for you.",
   },
   {
-    question: "Is every state supported?",
+    question: "How fast will I get my treatment?",
     answer:
-      "Availability depends on your state's regulations, and the specific laboratory tests your physician orders. While most patients can use our at-home collection kits, there may be a few exceptions based on where you live or the type of testing required. If we aren't able to offer your required labs in your state, we'll let you know before you begin care.",
+      "Once your provider approves the prescription, it is sent to an accredited pharmacy for fulfillment. Delivery times may vary, but most treatments are shipped shortly after approval.",
   },
   {
-    question: "How will I know if I need labs?",
+    question: "I'm already on a GLP-1. Can I switch to Skye?",
     answer:
-      "Not every treatment requires laboratory testing. If labs are recommended, your physician will explain which tests are needed and whether they can be completed with an at-home collection kit. If you have questions about lab availability, our Support Team is happy to help through your secure patient portal.",
+      "Yes, you may be able to switch to Skye. Your provider will review your current medication, dosage, treatment history, and health goals before recommending the next step.",
   },
   {
-    question: "Can I request a specific medication?",
+    question: "Can I cancel anytime?",
     answer:
-      "You're welcome to share your goals and preferences with your physician. However, treatment decisions are based on your medical history, current health, and clinical judgment. If a medication isn't appropriate for you, your physician will discuss alternative options. At Skye Health, every prescription is issued only after an independent medical evaluation by a licensed physician. Our goal is to recommend the treatment that's right for you—not a one-size-fits-all solution.",
+      "Yes. You can cancel your membership at any time. Contact our support team before your next billing or prescription processing date to avoid additional charges.",
   },
 ];
-const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
 
-const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
-  "skye-weight-loss-program-prefill-source";
-
-const HORMONE_PROGRAM_PREFILL_SOURCE_KEY =
-  "skye-hormone-program-prefill-source";
-
-type SavedProgramAnswer = {
-  question: string;
-  answer: string;
-};
-
-type SavedProgramPayload = {
-  program?: string;
-  answers?: SavedProgramAnswer[];
-};
-
-const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
-  id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
-  sku: "WL-PROGRAM",
-  name: "Weight Loss Program",
-  description: "",
-  category: "Weight Loss Program",
-  brand: "",
-  price: 199,
-  quantity: 999,
-  inStock: true,
-  primaryImage: "",
-  status: ProductStatusEnum.IN_STOCK,
-  form: "",
-  strength: "",
-  vendor: "Greenwich",
-  productUnitPricings: [
-    {
-      id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
-      sku: "WL-PROGRAM",
-      quantity: 999,
-      strength: "",
-      unitQuantity: "",
-      cost: 199,
-    },
-  ],
-};
-
-const HORMONE_PROGRAM_PRODUCT: ProductType = {
-  id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
-  sku: "HRT-PROGRAM",
-  name: "Hormone Program",
-  description: "",
-  category: "Hormone Program",
-  brand: "",
-  price: 0,
-  quantity: 999,
-  inStock: true,
-  primaryImage: "",
-  status: ProductStatusEnum.IN_STOCK,
-  form: "",
-  strength: "",
-  vendor: "Integrity",
-  productUnitPricings: [
-    {
-      id: "bf59d40c-6813-402d-ac73-49a0e2f3565a",
-      sku: "HRT-PROGRAM",
-      quantity: 999,
-      strength: "",
-      unitQuantity: "",
-      cost: 0,
-    },
-  ],
-};
-
-const getWeightLossProgramMonths = () => {
-  if (typeof window === "undefined") return 1;
-
-  try {
-    const rawSavedProgram = window.localStorage.getItem(
-      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
-    );
-
-    if (!rawSavedProgram) return 1;
-
-    const parsedSavedProgram = JSON.parse(
-      rawSavedProgram,
-    ) as SavedProgramPayload;
-
-    const monthsAnswer = parsedSavedProgram.answers?.find(
-      (entry) => entry.question === "How many months?",
-    )?.answer;
-
-    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
-
-    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
-  } catch (error) {
-    console.error("Failed to read saved weight-loss program months:", error);
-
-    return 1;
-  }
-};
-
-const formatProductPrice = (price: number) => {
-  return `${new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(price)}/month`;
-};
-
-const createFeaturedCard = (
-  card: TreatmentSliderItem,
-  onGetStarted: () => void,
-  onAction: () => void,
-): FeaturedTreatmentSliderCard => {
-  return {
-    image: card.hoverImage,
-    badge: card.hoverBadge,
-    title: card.hoverTitle,
-    actionLabel: card.hoverActionLabel,
-    backgroundColor: card.hoverCardBg,
-    badgeBackgroundColor: card.hoverBadgeBg,
-    onGetStarted,
-    onAction,
-  };
-};
-
-const createStaticSliderProducts = (
-  cards: TreatmentSliderItem[],
-  onProductClick: () => void,
-): TreatmentSliderProduct[] => {
-  return cards.map((card) => ({
-    id: card.id,
-    productImage: card.productImage,
-    productTitle: card.productTitle,
-    productDescription: card.productDescription,
-    productPrice: card.productPrice,
-    productImageBg: card.productImageBg,
-
-    onGetStarted: onProductClick,
-    onShopNow: onProductClick,
-  }));
-};
-
-const categoryMatches = (product: ProductType, categories: string[]) => {
-  const productCategory = product.category?.trim().toLowerCase();
-
-  return categories.some(
-    (category) => productCategory === category.trim().toLowerCase(),
-  );
-};
-
-const createBackendSliderProducts = (
-  products: ProductType[],
-  productImageBg: string,
-  onProductClick: () => void,
-): TreatmentSliderProduct[] => {
-  return products.map((product) => ({
-    id: product.id,
-
-    productImage:
-      product.primaryImage || product.category.toLowerCase() === "weight loss"
-        ? images.landingpageimages.weightLossProductImage
-        : product.category.toLowerCase() === "weight loss program"
-          ? images.landingpageimages.weightLossProductImage
-          : product.category.toLowerCase() === "hormone program"
-            ? images.landingpageimages.hormonsProductImage
-            : product.category.toLowerCase() === "hormones"
-              ? images.landingpageimages.hormonsProductImage
-              : images.landingpageimages.ProductImage,
-
-    productTitle: product.name,
-    productDescription: product.description,
-    productPrice: formatProductPrice(product.price),
-    productImageBg,
-
-    onGetStarted: onProductClick,
-    onShopNow: onProductClick,
-  }));
-};
 export default function Home() {
-  const goToProducts = () => {
-    router.push("/products");
-  };
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector(selectCartItems);
   const [selectedFilter, setSelectedFilter] =
     useState<TreatmentFilterValue>("all");
-  const hero = heroSlides[0];
-  const router = useRouter();
   const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
-  const [isHormoneModalOpen, setIsHormoneModalOpen] = useState(false);
+  const hasAutoOpenedWeightLossFlow = useRef(false);
+  const hero = heroSlides[0];
 
-  const [pendingWeightLossProduct, setPendingWeightLossProduct] =
-    useState<ProductType | null>(null);
-
-  const cartItems = useAppSelector(selectCartItems);
-  const dispatch = useAppDispatch();
-  const normalizeText = (value?: string | null) => value?.trim().toLowerCase();
-  const isWeightLossModalProduct = (product?: ProductType | null) =>
-    normalizeText(product?.category) === "weight loss program" ||
-    (normalizeText(product?.category) === "weight loss" &&
-      normalizeText(product?.subCategory) === "glp-1");
-  const selectedCategory =
-    selectedFilter === "all" ? undefined : selectedFilter;
-
-  const {
-    data: exploreProductsData,
-    loading: exploreProductsLoading,
-    error: exploreProductsError,
-  } = useQuery<AllProductsType, AllProductsVariables>(ALL_PRODUCTS, {
-    variables: {
-      category: selectedCategory,
-      page: 1,
-      perPage: 4,
-    },
-    fetchPolicy: "network-only",
-    notifyOnNetworkStatusChange: true,
-  });
-  const { data: sliderProductsData, loading: sliderProductsLoading } = useQuery<
-    AllProductsType,
-    AllProductsVariables
-  >(ALL_PRODUCTS, {
-    variables: {
-      page: 1,
-      perPage: 100,
-    },
-    fetchPolicy: "network-only",
-  });
-
-  const allSliderBackendProducts =
-    sliderProductsData?.allProducts?.allData ?? [];
-
-  const handleProductAction = (product: ProductType) => {
-    const cartGuard = canAddProductWithCartRules(cartItems, product.id);
-
-    if (!cartGuard.allowed) {
-      toastAlert(cartGuard.message ?? "Unable to add product to cart.", false);
+  useEffect(() => {
+    if (
+      searchParams.get("start") !== "weight-loss" ||
+      hasAutoOpenedWeightLossFlow.current
+    ) {
       return;
     }
 
-    if (isWeightLossModalProduct(product)) {
-      setPendingWeightLossProduct(product);
-      setIsWeightLossModalOpen(true);
-      return;
-    }
-
-    dispatch(
-      addProductToCart({
-        product,
-      }),
-    );
-
-    toastAlert("Added to Cart Successfully", true);
-  };
-  const backendProducts = exploreProductsData?.allProducts?.allData ?? [];
-
-  const exploreProducts: ExploreOptionProduct[] = backendProducts.map(
-    (product) => {
-      const soldOut =
-        !product.inStock || product.status === ProductStatusEnum.OUT_OF_STOCK;
-
-      const formattedPrice = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(product.price);
-
-      return {
-        id: product.id,
-        title: product.name,
-        image:
-          product.primaryImage || images.landingpageimages.HormonesProductImage,
-        description: product.description,
-        price: `${formattedPrice}/month`,
-        inStock: product.inStock && !soldOut,
-        newIn: false,
-        soldOut,
-
-        onGetStarted: () => {
-          handleProductAction(product);
-        },
-
-        onLearnMore: () => {
-          handleProductAction(product);
-        },
-      };
-    },
-  );
-  const treatmentCards = [
-    {
-      id: 1,
-      title: "Weight loss",
-      buttonLabel: "Start losing weight",
-      backgroundImage: "/images/WeightLossCardImage.png",
-      backgroundColor: "#AFC6E5",
-      hoverText: "$199 per month",
-      hoverBackgroundColor: "#1F3A75",
-      onClick: () => {
-        console.log("Weight loss card clicked");
-      },
-      onButtonClick: () => {
-        setPendingWeightLossProduct(null);
-        setIsWeightLossModalOpen(true);
-      },
-    },
-    {
-      id: 2,
-      title: "Peptides",
-      buttonLabel: "Shop peptides",
-      backgroundImage: "/images/PeptidesCardBgImage.png",
-      backgroundColor: "#AFC6E5",
-      hoverText: "Coming soon",
-      hoverBackgroundColor: "#1F3A75",
-      onClick: () => {
-        console.log("Peptides card clicked");
-      },
-      onButtonClick: () => {
-        //   router.push("/products?category=Peptides");
-      },
-    },
-    {
-      id: 3,
-      title: "Hormones",
-      buttonLabel: "Reserve your spot",
-      backgroundImage: "/images/HormonesCardImage.png",
-      backgroundColor: "#AFC6E5",
-      hoverText: "Coming soon",
-      hoverBackgroundColor: "#8FC0C2",
-      onClick: () => {
-        console.log("Hormones card clicked");
-      },
-      onButtonClick: () => {
-        setIsHormoneModalOpen(true);
-      },
-    },
-    {
-      id: 4,
-      title: "Optimize everything",
-      buttonLabel: "Start your journey",
-      backgroundImage: "/images/OptimizeCardImage.png",
-      backgroundColor: "#AFC6E5",
-      hoverText: "Coming soon",
-      hoverBackgroundColor: "#8FC0C2",
-      onClick: () => {
-        console.log("Optimize card clicked");
-      },
-      onButtonClick: () => {
-        //   router.push("/products?category=Optimize%20Everything");
-      },
-    },
-  ];
-  const featuredWeightLossCard = createFeaturedCard(
-    hoverTreatmentCards[0],
-    goToProducts,
-    () => {
-      setPendingWeightLossProduct(null);
-      setIsWeightLossModalOpen(true);
-    },
-  );
-
-  const featuredPeptideCard = createFeaturedCard(
-    peptideTreatmentCards[0],
-    goToProducts,
-    () => {},
-  );
-
-  const featuredOptimizeCard = createFeaturedCard(
-    OptimizeeverythingCards[0],
-    goToProducts,
-    () => {},
-  );
-
-  const featuredHormoneCard = createFeaturedCard(
-    Hormonescards[0],
-    goToProducts,
-    () => {
-      setIsHormoneModalOpen(true);
-    },
-  );
-  const staticWeightLossProducts = createStaticSliderProducts(
-    hoverTreatmentCards.slice(1),
-    goToProducts,
-  );
-
-  const staticPeptideProducts = createStaticSliderProducts(
-    peptideTreatmentCards.slice(1),
-    goToProducts,
-  );
-
-  const staticOptimizeProducts = createStaticSliderProducts(
-    OptimizeeverythingCards.slice(1),
-    goToProducts,
-  );
-
-  const staticHormoneProducts = createStaticSliderProducts(
-    Hormonescards.slice(1),
-    goToProducts,
-  );
-  const weightLossBackendProducts = allSliderBackendProducts.filter((product) =>
-    categoryMatches(product, ["Weight Loss", "Weight Loss Program"]),
-  );
-
-  const peptideBackendProducts = allSliderBackendProducts.filter((product) =>
-    categoryMatches(product, ["Peptide", "Peptides"]),
-  );
-
-  const optimizeBackendProducts = allSliderBackendProducts.filter((product) =>
-    categoryMatches(product, ["Optimize Everything", "Optimization"]),
-  );
-
-  const hormoneBackendProducts = allSliderBackendProducts.filter((product) =>
-    categoryMatches(product, ["Hormone", "Hormones", "Hormone Program"]),
-  );
-  const mappedWeightLossProducts = createBackendSliderProducts(
-    weightLossBackendProducts,
-    "#CEDCF9",
-    goToProducts,
-  );
-
-  const mappedPeptideProducts = createBackendSliderProducts(
-    peptideBackendProducts,
-    "#FFD6C9",
-    goToProducts,
-  );
-
-  const mappedOptimizeProducts = createBackendSliderProducts(
-    optimizeBackendProducts,
-    "#0F1D3A",
-    goToProducts,
-  );
-
-  const mappedHormoneProducts = createBackendSliderProducts(
-    hormoneBackendProducts,
-    "#BDE0E3",
-    goToProducts,
-  );
-  const weightLossProductsToRender =
-    !sliderProductsLoading && mappedWeightLossProducts.length > 0
-      ? mappedWeightLossProducts
-      : staticWeightLossProducts;
-
-  const peptideProductsToRender =
-    !sliderProductsLoading && mappedPeptideProducts.length > 0
-      ? mappedPeptideProducts
-      : staticPeptideProducts;
-
-  const optimizeProductsToRender =
-    !sliderProductsLoading && mappedOptimizeProducts.length > 0
-      ? mappedOptimizeProducts
-      : staticOptimizeProducts;
-
-  const hormoneProductsToRender =
-    !sliderProductsLoading && mappedHormoneProducts.length > 0
-      ? mappedHormoneProducts
-      : staticHormoneProducts;
+    hasAutoOpenedWeightLossFlow.current = true;
+    setIsWeightLossModalOpen(true);
+  }, [searchParams]);
 
   return (
     <>
@@ -1687,15 +1287,12 @@ export default function Home() {
         isOpen={isWeightLossModalOpen}
         onClose={() => {
           setIsWeightLossModalOpen(false);
-          setPendingWeightLossProduct(null);
         }}
         onStartQuestionnaire={() => {
           const selectedMonths = getWeightLossProgramMonths();
-          const targetProductId =
-            pendingWeightLossProduct?.id ?? WEIGHT_LOSS_PROGRAM_PRODUCT_ID;
           const cartGuard = canAddProductWithCartRules(
             cartItems,
-            targetProductId,
+            WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
           );
 
           if (!cartGuard.allowed) {
@@ -1706,137 +1303,81 @@ export default function Home() {
             return;
           }
 
-          if (pendingWeightLossProduct) {
-            const existingCartItem = cartItems.find(
-              (item) => item.productId === pendingWeightLossProduct.id,
-            );
-
-            if (!existingCartItem) {
-              dispatch(
-                addProductToCart({
-                  product: pendingWeightLossProduct,
-                  qty: selectedMonths,
-                }),
-              );
-            } else {
-              dispatch(
-                setQty({
-                  cartItemId: existingCartItem.cartItemId,
-                  qty: selectedMonths,
-                }),
-              );
-            }
-          } else {
-            const hasWeightLossProgramInCart = cartItems.some(
-              (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
-            );
-
-            if (!hasWeightLossProgramInCart) {
-              dispatch(
-                addProductToCart({
-                  product: WEIGHT_LOSS_PROGRAM_PRODUCT,
-                  qty: selectedMonths,
-                }),
-              );
-            } else {
-              dispatch(
-                setQty({
-                  productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
-                  qty: selectedMonths,
-                }),
-              );
-            }
-
-            if (typeof window !== "undefined") {
-              window.localStorage.setItem(
-                WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
-                "card-flow",
-              );
-            }
-          }
-
-          setIsWeightLossModalOpen(false);
-          setPendingWeightLossProduct(null);
-          router.push("/surveys?step=1");
-        }}
-      />
-      <HormoneProgramModal
-        isOpen={isHormoneModalOpen}
-        onClose={() => setIsHormoneModalOpen(false)}
-        onStartQuestionnaire={() => {
-          const hasHormoneProgramInCart = cartItems.some(
-            (item) => item.productId === HORMONE_PROGRAM_PRODUCT.id,
+          const existingCartItem = cartItems.find(
+            (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
           );
 
-          if (!hasHormoneProgramInCart) {
+          if (!existingCartItem) {
             dispatch(
               addProductToCart({
-                product: HORMONE_PROGRAM_PRODUCT,
-                qty: 1,
+                product: WEIGHT_LOSS_PROGRAM_PRODUCT,
+                qty: selectedMonths,
               }),
             );
           } else {
             dispatch(
               setQty({
-                productId: HORMONE_PROGRAM_PRODUCT.id,
-                qty: 1,
+                productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+                qty: selectedMonths,
               }),
             );
           }
 
           if (typeof window !== "undefined") {
             window.localStorage.setItem(
-              HORMONE_PROGRAM_PREFILL_SOURCE_KEY,
+              WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
               "card-flow",
             );
           }
 
-          setIsHormoneModalOpen(false);
+          setIsWeightLossModalOpen(false);
           router.push("/surveys?step=1");
         }}
       />
       <HeroSection
         hero={hero}
-        onGetStarted={() => router.push("/products")}
-        onViewTreatments={() => router.push("/products")}
+        onGetStarted={() => {
+          console.log("Get started");
+        }}
+        onViewTreatments={() => {
+          console.log("View all treatments");
+        }}
       />
       <TreatmentCardsSection cards={treatmentCards} />
       <ExploreOptionsSection
-        products={exploreProducts}
-        loading={exploreProductsLoading}
-        error={Boolean(exploreProductsError)}
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onGetStarted={() => {
-          router.push("/products");
+          console.log("Get started");
         }}
         onViewTreatments={() => {
-          router.push("/products");
+          console.log("View all treatments");
         }}
+        products={products}
       />
       <PeptideExpertsSection />
       <TreatmentSliderSection
         featuredCard={featuredWeightLossCard}
-        products={weightLossProductsToRender}
+        products={staticWeightLossProducts}
       />
 
       <TreatmentSliderSection
         featuredCard={featuredPeptideCard}
-        products={peptideProductsToRender}
+        products={staticPeptideProducts}
       />
 
       <TreatmentSliderSection
         featuredCard={featuredOptimizeCard}
-        products={optimizeProductsToRender}
+        products={staticOptimizeProducts}
       />
 
       <TreatmentSliderSection
         featuredCard={featuredHormoneCard}
-        products={hormoneProductsToRender}
+        products={staticHormoneProducts}
       />
       <BetterTreatmentSection
         onGetStarted={() => {
-          goToProducts();
+          console.log("Get started");
         }}
         onExploreOptions={() => {
           console.log("Explore options");
