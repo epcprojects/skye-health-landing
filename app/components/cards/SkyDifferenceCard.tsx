@@ -27,9 +27,9 @@ const SkyDifferenceCard = ({
   onClick,
 }: SkyDifferenceCardProps) => {
   return (
-    <article className="group relative h-auto w-full max-w-89.25 overflow-hidden rounded-[18px] xl:h-full xl:rounded-[28px]">
+    <article className="group relative  w-full max-w-89.25 overflow-hidden rounded-[18px] h-full xl:rounded-[28px]">
       {/* Normal card */}
-      <div className="relative flex h-auto flex-col justify-betwen  gap-10 bg-white opacity-100 transition-all duration-500 group-hover:pointer-events-none group-hover:scale-95 group-hover:opacity-0 xl:h-full">
+      <div className="relative flex h-full flex-col justify-between  gap-10 bg-white opacity-100 transition-all duration-500 group-hover:pointer-events-none group-hover:scale-95 group-hover:opacity-0">
         <div className="flex flex-col gap-3 px-4 pt-5 xl:gap-4 xl:p-10">
           <h3 className="text-xl font-semibold leading-[100%] text-[#0F1D3A] xl:text-[32px]">
             {title}
@@ -43,7 +43,7 @@ const SkyDifferenceCard = ({
         <Image
           src={image}
           alt={title}
-          className="mt-4 h-auto w-full rounded-b-[18px] object-cover xl:mt-auto xl:rounded-b-[28px]"
+          className=" h-auto w-full rounded-b-[18px] object-cover mt-auto xl:rounded-b-[28px]"
         />
 
         <button

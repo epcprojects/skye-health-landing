@@ -96,12 +96,12 @@ const SkyDifferenceSection = ({
               onReachBeginning={updateDifferenceSwiperState}
               onReachEnd={updateDifferenceSwiperState}
               onFromEdge={updateDifferenceSwiperState}
-              className="w-full overflow-visible! [&_.swiper-wrapper]:items-stretch"
+              className="w-full overflow-visible! [&_.swiper-wrapper]:items-stretch!"
             >
               {differenceCards.map((card) => (
                 <SwiperSlide
                   key={card.id}
-                  className="h-auto! w-[calc(100vw-32px)]! sm:w-89.25!"
+                  className="h-auto!  w-[calc(100vw-32px)]! max-w-89.25!"
                 >
                   <div className="h-full">
                     <SkyDifferenceCard
