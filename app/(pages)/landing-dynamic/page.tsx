@@ -1826,7 +1826,7 @@ export default function Home() {
       />
       <BetterTreatmentSection
         onGetStarted={() => {
-          console.log("Get started");
+          goToProducts();
         }}
         onExploreOptions={() => {
           console.log("Explore options");
