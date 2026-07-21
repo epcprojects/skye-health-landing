@@ -33,28 +33,35 @@ import CommunityImageSix from "@/public/images/CommunityImageSix.png";
 import PerformanceImage from "@/public/images/PerformanceImage.png";
 import WeightManagementImage from "@/public/images/Recovery.png";
 import RecoveryImage from "@/public/images/WeightManagementImage.png";
-import NewSkyLogo from "@/public/images/SkyNewLogo.svg"
-import WhiteSkyLogo from "@/public/images/SkyWhiteLogoImage.svg"
-import HeroRightImage from "@/public/images/HeroRightImage.png"
-import HeroRingImage from "@/public/images/HeartRing.png"
-import HormonesProductImage from "@/public/images/HormonesProductImage.png"
-import DoctorImage from "@/public/images/DoctorImage.png"
-import SkyWhiteBg from "@/public/images/SkyWhiteBgNew.svg"
-import StanfordImage from "@/public/images/StanfordImage.svg"
-import SkyHeartImage from "@/public/images/SkyHeartImage.svg"
-import ProductImage from "@/public/images/ProductImage.png"
-import LossWeightCardImage from "@/public/images/LossWeightCardImage.png"
-import PeptideCardImage from "@/public/images/PeptideCardImage.png"
-import PharmacyImage from "@/public/images/PharmacyImage.png"
-import SkyDifferenceCardImage from "@/public/images/SkyDifferenceCardImage.png"
-import FaqsImage from "@/public/images/FaqsImage.png"
-import OptimizeEverythingImage from "@/public/images/OptimizeEverythingImage.png"
-import HormonesImage from "@/public/images/HormonesImage.png"
-import SkyHeartLogo from "@/public/images/SkyHeartLogo.svg"
-import SkyWhiteDesktopBg from "@/public/images/SkyWhiteDesktopBg.png"
-import heroImage from "@/public/images/HeroImage.png"
+import NewSkyLogo from "@/public/images/SkyNewLogo.svg";
+import WhiteSkyLogo from "@/public/images/SkyWhiteLogoImage.svg";
+import HeroRightImage from "@/public/images/HeroRightImage.png";
+import HeroRingImage from "@/public/images/HeartRing.png";
+import HormonesProductImage from "@/public/images/HormonesProductImage.png";
+import DoctorImage from "@/public/images/DoctorImage.png";
+import SkyWhiteBg from "@/public/images/SkyWhiteBgNew.svg";
+import StanfordImage from "@/public/images/StanfordImage.svg";
+import SkyHeartImage from "@/public/images/SkyHeartImage.svg";
+import ProductImage from "@/public/images/ProductImage.png";
+import weightLossProductImage from "@/public/images/weightLossProductImage.png";
+import peptideProductImage from "@/public/images/peptideProductImage.png";
+import LossWeightCardImage from "@/public/images/LossWeightCardImage.png";
+import PeptideCardImage from "@/public/images/PeptideCardImage.png";
+import PharmacyImage from "@/public/images/PharmacyImage.png";
+import SkyDifferenceCardImage from "@/public/images/SkyDifferenceCardImage.png";
+import FaqsImage from "@/public/images/FaqsImage.png";
+import OptimizeEverythingImage from "@/public/images/OptimizeEverythingImage.png";
+import HormonesImage from "@/public/images/HormonesImage.png";
+import SkyHeartLogo from "@/public/images/SkyHeartLogo.svg";
+import SkyWhiteDesktopBg from "@/public/images/SkyWhiteDesktopBg.png";
+import heroImage from "@/public/images/HeroImage.png";
+import hormonsProductImage from "@/public/images/hormonsProductImage.png";
+import gplProductImage from "@/public/images/gplProductImage.png";
+
 export const landingpageimages = {
   heroImage,
+  gplProductImage,
+  hormonsProductImage,
   SkyWhiteDesktopBg,
   SkyHeartLogo,
   HormonesImage,
@@ -65,6 +72,7 @@ export const landingpageimages = {
   PeptideCardImage,
   LossWeightCardImage,
   ProductImage,
+  peptideProductImage,
   StanfordImage,
   SkyHeartImage,
   DoctorImage,
@@ -74,6 +82,7 @@ export const landingpageimages = {
   HeroRightImage,
   WhiteSkyLogo,
   NewSkyLogo,
+  weightLossProductImage,
   WeightManagementImage,
   RecoveryImage,
   PerformanceImage,

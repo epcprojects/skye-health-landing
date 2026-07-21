@@ -1,7 +1,7 @@
 "use client";
 
 import { StaticImageData } from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { images } from "../ui";
 
@@ -16,10 +16,87 @@ import TreatmentSliderSection from "../components/sections/TreatmentSliderSectio
 import BetterTreatmentSection from "../components/sections/BetterTreatmentSection";
 import SkyDifferenceSection from "../components/sections/SkyDifferenceSection";
 import FAQSection from "../components/sections/FAQSection";
+import WeightLossProgramModal from "@/app/components/modals/WeightLossProgramModal";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  addProductToCart,
+  selectCartItems,
+  setQty,
+} from "@/app/Redux/slices/cart/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
+import { toastAlert } from "@/app/components/ToastAlert";
+import {
+  canAddProductWithCartRules,
+  WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+} from "@/app/lib/cartRules";
+import {
+  ProductStatusEnum,
+  ProductType,
+} from "@/app/graphql/queries/products";
 import type {
   FeaturedTreatmentSliderCard,
   TreatmentSliderProduct,
 } from "@/app/components/sections/TreatmentSliderSection";
+
+const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
+const WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY =
+  "skye-weight-loss-program-prefill-source";
+
+type SavedProgramPayload = {
+  answers?: Array<{ question: string; answer: string }>;
+};
+
+const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
+  id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+  sku: "WL-PROGRAM",
+  name: "Weight Loss Program",
+  description: "",
+  category: "Weight Loss Program",
+  brand: "",
+  price: 199,
+  quantity: 999,
+  inStock: true,
+  primaryImage: "",
+  status: ProductStatusEnum.IN_STOCK,
+  form: "",
+  strength: "",
+  vendor: "Greenwich",
+  productUnitPricings: [
+    {
+      id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+      sku: "WL-PROGRAM",
+      quantity: 999,
+      strength: "",
+      unitQuantity: "",
+      cost: 199,
+    },
+  ],
+};
+
+const getWeightLossProgramMonths = () => {
+  if (typeof window === "undefined") return 1;
+
+  try {
+    const rawSavedProgram = window.localStorage.getItem(
+      WEIGHT_LOSS_PROGRAM_STORAGE_KEY,
+    );
+
+    if (!rawSavedProgram) return 1;
+
+    const parsedSavedProgram = JSON.parse(
+      rawSavedProgram,
+    ) as SavedProgramPayload;
+
+    const monthsAnswer = parsedSavedProgram.answers?.find(
+      (entry) => entry.question === "How many months?",
+    )?.answer;
+    const parsedMonths = Number.parseInt(monthsAnswer ?? "1", 10);
+
+    return Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : 1;
+  } catch {
+    return 1;
+  }
+};
 type TreatmentCardData = {
   id: number;
   productImage: StaticImageData | string;
@@ -1182,12 +1259,81 @@ const faqItems: FAQItem[] = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector(selectCartItems);
   const [selectedFilter, setSelectedFilter] =
     useState<TreatmentFilterValue>("all");
+  const [isWeightLossModalOpen, setIsWeightLossModalOpen] = useState(false);
+  const hasAutoOpenedWeightLossFlow = useRef(false);
   const hero = heroSlides[0];
+
+  useEffect(() => {
+    if (
+      searchParams.get("start") !== "weight-loss" ||
+      hasAutoOpenedWeightLossFlow.current
+    ) {
+      return;
+    }
+
+    hasAutoOpenedWeightLossFlow.current = true;
+    setIsWeightLossModalOpen(true);
+  }, [searchParams]);
 
   return (
     <>
+      <WeightLossProgramModal
+        isOpen={isWeightLossModalOpen}
+        onClose={() => {
+          setIsWeightLossModalOpen(false);
+        }}
+        onStartQuestionnaire={() => {
+          const selectedMonths = getWeightLossProgramMonths();
+          const cartGuard = canAddProductWithCartRules(
+            cartItems,
+            WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
+          );
+
+          if (!cartGuard.allowed) {
+            toastAlert(
+              cartGuard.message ?? "Unable to add product to cart.",
+              false,
+            );
+            return;
+          }
+
+          const existingCartItem = cartItems.find(
+            (item) => item.productId === WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+          );
+
+          if (!existingCartItem) {
+            dispatch(
+              addProductToCart({
+                product: WEIGHT_LOSS_PROGRAM_PRODUCT,
+                qty: selectedMonths,
+              }),
+            );
+          } else {
+            dispatch(
+              setQty({
+                productId: WEIGHT_LOSS_PROGRAM_PRODUCT.id,
+                qty: selectedMonths,
+              }),
+            );
+          }
+
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(
+              WEIGHT_LOSS_PROGRAM_PREFILL_SOURCE_KEY,
+              "card-flow",
+            );
+          }
+
+          setIsWeightLossModalOpen(false);
+          router.push("/surveys?step=1");
+        }}
+      />
       <HeroSection
         hero={hero}
         onGetStarted={() => {

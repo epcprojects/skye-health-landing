@@ -415,7 +415,7 @@ const peptideTreatmentCards: TreatmentSliderItem[] = [
   },
   {
     id: 2,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.peptideProductImage,
     productTitle: "CJC-1295",
     productDescription:
       "Designed to support recovery, sleep quality, energy, and body composition.",
@@ -633,7 +633,7 @@ const OptimizeeverythingCards: TreatmentSliderItem[] = [
   },
   {
     id: 2,
-    productImage: images.landingpageimages.ProductImage,
+    productImage: images.landingpageimages.gplProductImage,
     productTitle: "CJC-1295",
     productDescription:
       "Designed to support recovery, sleep quality, energy, and body composition.",
@@ -1200,34 +1200,34 @@ const differenceCards = [
 ];
 const faqItems: FAQItem[] = [
   {
-    question: "What does the $199/month include?",
+    question: "Where is Skye Health available?",
     answer:
-      "Your monthly plan includes physician-guided care, a personalized treatment plan, ongoing support, and regular progress reviews. Medication costs may vary depending on your prescription.",
+      "Skye Health currently provides care to patients in all 50 states, although some treatments may not be available everywhere.Because healthcare regulations vary by state, certain therapies may require a live physician visit or may not yet be offered where you live. If that's the case, we'll let you know before you begin treatment. Our goal is simple: provide the same personalized, physician-guided care—wherever you call home.",
   },
   {
-    question: "Do I need insurance?",
+    question: "Is lab testing available in my state?",
     answer:
-      "No. Skye works entirely without insurance, so there are no claims, no prior authorizations, and no coverage surprises. You pay one flat monthly price.",
+      "For most patients, yes. Skye Health currently offers at-home blood collection kits for eligible lab testing. If your physician orders labs that can be completed at home, we'll ship everything you need directly to your door, along with simple collection instructions.",
   },
   {
-    question: "How do I know if I'm eligible?",
+    question: "What if my labs can't be collected at home?",
     answer:
-      "You will complete a brief medical questionnaire and consult with a licensed provider. Your provider will review your health history and determine whether treatment is appropriate for you.",
+      "Some laboratory tests require a traditional blood draw. As we continue expanding our services, Skye Health will be adding nationwide laboratory collection options for these tests. If your treatment requires a lab that isn't currently available through our at-home collection program, our Care Team will let you know before your order is placed and discuss the next steps with you.",
   },
   {
-    question: "How fast will I get my treatment?",
+    question: "Is every state supported?",
     answer:
-      "Once your provider approves the prescription, it is sent to an accredited pharmacy for fulfillment. Delivery times may vary, but most treatments are shipped shortly after approval.",
+      "Availability depends on your state's regulations, and the specific laboratory tests your physician orders. While most patients can use our at-home collection kits, there may be a few exceptions based on where you live or the type of testing required. If we aren't able to offer your required labs in your state, we'll let you know before you begin care.",
   },
   {
-    question: "I'm already on a GLP-1. Can I switch to Skye?",
+    question: "How will I know if I need labs?",
     answer:
-      "Yes, you may be able to switch to Skye. Your provider will review your current medication, dosage, treatment history, and health goals before recommending the next step.",
+      "Not every treatment requires laboratory testing. If labs are recommended, your physician will explain which tests are needed and whether they can be completed with an at-home collection kit. If you have questions about lab availability, our Support Team is happy to help through your secure patient portal.",
   },
   {
-    question: "Can I cancel anytime?",
+    question: "Can I request a specific medication?",
     answer:
-      "Yes. You can cancel your membership at any time. Contact our support team before your next billing or prescription processing date to avoid additional charges.",
+      "You're welcome to share your goals and preferences with your physician. However, treatment decisions are based on your medical history, current health, and clinical judgment. If a medication isn't appropriate for you, your physician will discuss alternative options. At Skye Health, every prescription is issued only after an independent medical evaluation by a licensed physician. Our goal is to recommend the treatment that's right for you—not a one-size-fits-all solution.",
   },
 ];
 const WEIGHT_LOSS_PROGRAM_STORAGE_KEY = "skye-weight-loss-program";
@@ -1387,7 +1387,16 @@ const createBackendSliderProducts = (
   return products.map((product) => ({
     id: product.id,
 
-    productImage: product.primaryImage || images.landingpageimages.ProductImage,
+    productImage:
+      product.primaryImage || product.category.toLowerCase() === "weight loss"
+        ? images.landingpageimages.weightLossProductImage
+        : product.category.toLowerCase() === "weight loss program"
+          ? images.landingpageimages.weightLossProductImage
+          : product.category.toLowerCase() === "hormone program"
+            ? images.landingpageimages.hormonsProductImage
+            : product.category.toLowerCase() === "hormones"
+              ? images.landingpageimages.hormonsProductImage
+              : images.landingpageimages.ProductImage,
 
     productTitle: product.name,
     productDescription: product.description,
@@ -1486,7 +1495,8 @@ export default function Home() {
       return {
         id: product.id,
         title: product.name,
-        image: product.primaryImage || images.landingpageimages.ProductImage,
+        image:
+          product.primaryImage || images.landingpageimages.HormonesProductImage,
         description: product.description,
         price: `${formattedPrice}/month`,
         inStock: product.inStock && !soldOut,
@@ -1526,7 +1536,7 @@ export default function Home() {
       buttonLabel: "Shop peptides",
       backgroundImage: "/images/PeptidesCardBgImage.png",
       backgroundColor: "#AFC6E5",
-      hoverText: "$199 per month",
+      hoverText: "Coming soon",
       hoverBackgroundColor: "#1F3A75",
       onClick: () => {
         console.log("Peptides card clicked");

@@ -31,26 +31,27 @@ const TreatmentSliderCard = ({
         <Image
           src={productImage}
           alt={productTitle}
-          
           className="object-contain w-53 h-53  xl:w-80 xl:h-80"
         />
       </div>
 
       <div className="flex flex-col gap-5 xl:gap-6 px-1 pb-3 xl:pb-0">
         <div className="flex flex-col xl:gap-2 gap-3">
-         <div className="flex flex-col gap-0.5 xl:gap-2">
-           <h3 className="text-xl xl:text-2xl font-medium xl:leading-7 text-[#0F1D3A]">
-            {productTitle}
-          </h3>
+          <div className="flex flex-col gap-0.5 xl:gap-2">
+            <h3 className="text-xl xl:text-2xl font-medium xl:leading-7 text-[#0F1D3A]">
+              {productTitle}
+            </h3>
 
-          <p className="text-sm font-light xl:leading-[100%] text-[#0F1D3A]">
-            {productDescription}
-          </p>
-         </div>
+            <p className="text-sm font-light xl:leading-[100%] text-[#0F1D3A]">
+              {productDescription}
+            </p>
+          </div>
 
-          <p className="text-sm font-medium xl:leading-7 text-[#0F1D3A]">
-            {productPrice}
-          </p>
+          {productTitle === "Hormone Program" ? null : (
+            <p className="text-sm font-medium xl:leading-7 text-[#0F1D3A]">
+              {productPrice}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap xl:gap-3 gap-2">

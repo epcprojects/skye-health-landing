@@ -122,7 +122,7 @@ const navItems: MobileNavItem[] = navItemsConfig.map((item) => {
 
             <div className="hidden xl:flex flex-row gap-2">
               <Link
-                href="/products"
+                href="/?start=weight-loss"
                 className="rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white"
               >
                 Get started
