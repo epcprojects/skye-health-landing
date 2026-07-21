@@ -1384,7 +1384,7 @@ const categoryMatches = (product: ProductType, categories: string[]) => {
 const createBackendSliderProducts = (
   products: ProductType[],
   productImageBg: string,
-  onProductClick: () => void,
+  onProductClick: (product: ProductType) => void,
 ): TreatmentSliderProduct[] => {
   return products.map((product) => ({
     id: product.id,
@@ -1405,8 +1405,8 @@ const createBackendSliderProducts = (
     productPrice: formatProductPrice(product.price),
     productImageBg,
 
-    onGetStarted: onProductClick,
-    onShopNow: onProductClick,
+    onGetStarted: () => onProductClick(product),
+    onShopNow: () => onProductClick(product),
   }));
 };
 export default function Home() {
@@ -1430,11 +1430,14 @@ export default function Home() {
     normalizeText(product?.category) === "weight loss program" ||
     (normalizeText(product?.category) === "weight loss" &&
       normalizeText(product?.subCategory) === "glp-1");
+  const openWeightLossProgramModal = () => {
+    setPendingWeightLossProduct(null);
+    setIsWeightLossModalOpen(true);
+  };
 
   useEffect(() => {
     const openWeightLossFlow = () => {
-      setPendingWeightLossProduct(null);
-      setIsWeightLossModalOpen(true);
+      openWeightLossProgramModal();
     };
 
     window.addEventListener(OPEN_WEIGHT_LOSS_FLOW_EVENT, openWeightLossFlow);
@@ -1605,11 +1608,8 @@ export default function Home() {
   ];
   const featuredWeightLossCard = createFeaturedCard(
     hoverTreatmentCards[0],
-    goToProducts,
-    () => {
-      setPendingWeightLossProduct(null);
-      setIsWeightLossModalOpen(true);
-    },
+    openWeightLossProgramModal,
+    openWeightLossProgramModal,
   );
 
   const featuredPeptideCard = createFeaturedCard(
@@ -1633,7 +1633,7 @@ export default function Home() {
   );
   const staticWeightLossProducts = createStaticSliderProducts(
     hoverTreatmentCards.slice(1),
-    goToProducts,
+    openWeightLossProgramModal,
   );
 
   const staticPeptideProducts = createStaticSliderProducts(
@@ -1668,25 +1668,25 @@ export default function Home() {
   const mappedWeightLossProducts = createBackendSliderProducts(
     weightLossBackendProducts,
     "#CEDCF9",
-    goToProducts,
+    handleProductAction,
   );
 
   const mappedPeptideProducts = createBackendSliderProducts(
     peptideBackendProducts,
     "#FFD6C9",
-    goToProducts,
+    () => goToProducts(),
   );
 
   const mappedOptimizeProducts = createBackendSliderProducts(
     optimizeBackendProducts,
     "#0F1D3A",
-    goToProducts,
+    () => goToProducts(),
   );
 
   const mappedHormoneProducts = createBackendSliderProducts(
     hormoneBackendProducts,
     "#BDE0E3",
-    goToProducts,
+    () => goToProducts(),
   );
   const weightLossProductsToRender =
     !sliderProductsLoading && mappedWeightLossProducts.length > 0
