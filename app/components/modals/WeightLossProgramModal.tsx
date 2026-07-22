@@ -169,7 +169,7 @@ const WeightLossProgramModal = ({
         <div className="mt-6">
           <ThemeButton
             label={`Get started — $${selectedPricing.total}`}
-            onClick={handleNext}
+            onClick={onStartQuestionnaire}
             variant="primaryFilled"
             size="md"
             icon={<ArrowRightIcon />}
@@ -181,48 +181,48 @@ const WeightLossProgramModal = ({
     </div>
   );
 
-  const renderSummary = () => (
-    <div className="px-4 py-3 md:px-8 md:py-6">
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 md:text-2xl">
-          Almost there
-        </h2>
-        <p className="mt-1 text-base text-gray-500">
-          Complete your health questionnaire to finish enrollment.
-        </p>
-      </div>
+  // const renderSummary = () => (
+  //   <div className="px-4 py-3 md:px-8 md:py-6">
+  //     <div>
+  //       <h2 className="text-xl font-semibold text-gray-900 md:text-2xl">
+  //         Almost there
+  //       </h2>
+  //       <p className="mt-1 text-base text-gray-500">
+  //         Complete your health questionnaire to finish enrollment.
+  //       </p>
+  //     </div>
 
-      <div className="mt-3 space-y-1">
-        {summarySections.map((section) => (
-          <div
-            key={section}
-            className="flex items-center gap-2 border-b border-[#E7EAF0] py-2 text-sm text-gray-600"
-          >
-            <span>{section}</span>
-          </div>
-        ))}
-      </div>
+  //     <div className="mt-3 space-y-1">
+  //       {summarySections.map((section) => (
+  //         <div
+  //           key={section}
+  //           className="flex items-center gap-2 border-b border-[#E7EAF0] py-2 text-sm text-gray-600"
+  //         >
+  //           <span>{section}</span>
+  //         </div>
+  //       ))}
+  //     </div>
 
-      <p className="mt-2 text-sm text-gray-600">+ 10 more questions</p>
+  //     <p className="mt-2 text-sm text-gray-600">+ 10 more questions</p>
 
-      <div className="mt-3 flex items-center gap-2 pt-3 md:flex-row flex-col-reverse">
-        <ThemeButton
-          label="Back"
-          onClick={handleBack}
-          variant="outlinedBluish"
-          className="w-full rounded-full! py-2.5! md:w-auto"
-        />
-        <ThemeButton
-          label="Start questionnaire"
-          onClick={onStartQuestionnaire}
-          variant="primaryFilled"
-          icon={<ArrowRightIcon />}
-          iconPosition="end"
-          className="w-full"
-        />
-      </div>
-    </div>
-  );
+  //     <div className="mt-3 flex items-center gap-2 pt-3 md:flex-row flex-col-reverse">
+  //       <ThemeButton
+  //         label="Back"
+  //         onClick={handleBack}
+  //         variant="outlinedBluish"
+  //         className="w-full rounded-full! py-2.5! md:w-auto"
+  //       />
+  //       <ThemeButton
+  //         label="Start questionnaire"
+  //         onClick={onStartQuestionnaire}
+  //         variant="primaryFilled"
+  //         icon={<ArrowRightIcon />}
+  //         iconPosition="end"
+  //         className="w-full"
+  //       />
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <AppModal
@@ -236,7 +236,7 @@ loss journey"
       scrollNeeded
     >
       {step === "intro" && renderIntro()}
-      {step === "summary" && renderSummary()}
+      {/* {step === "summary" && renderSummary()} */}
     </AppModal>
   );
 };

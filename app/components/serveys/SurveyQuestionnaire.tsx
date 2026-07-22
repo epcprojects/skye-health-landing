@@ -291,6 +291,57 @@ function sanitizeWeightValue(raw: string) {
   return String(clampedValue);
 }
 
+function sanitizeNumberValue(raw: string) {
+  const cleaned = raw.replace(/[^\d.-]/g, "");
+  const isNegative = cleaned.startsWith("-");
+  const unsignedValue = cleaned.replace(/-/g, "");
+  const [integerPart = "", ...decimalParts] = unsignedValue.split(".");
+  const decimalPart = decimalParts.join("");
+  const normalizedNumber = `${isNegative ? "-" : ""}${integerPart}${
+    decimalParts.length > 0 ? `.${decimalPart}` : ""
+  }`;
+
+  return normalizedNumber;
+}
+
+function isValidNumberAnswer(value?: string) {
+  const trimmedValue = value?.trim() ?? "";
+  if (!trimmedValue) return false;
+
+  return /^-?\d+(\.\d+)?$/.test(trimmedValue);
+}
+
+function isValidDateAnswer(value?: string) {
+  const trimmedValue = value?.trim() ?? "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) return false;
+
+  const parsedDate = new Date(`${trimmedValue}T00:00:00`);
+  return !Number.isNaN(parsedDate.getTime());
+}
+
+function isValidDatetimeAnswer(value?: string) {
+  const trimmedValue = value?.trim() ?? "";
+  if (!trimmedValue) return false;
+
+  return !Number.isNaN(new Date(trimmedValue).getTime());
+}
+
+function toDateTimeLocalValue(value?: string) {
+  const trimmedValue = value?.trim() ?? "";
+  if (!trimmedValue) return "";
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(trimmedValue)) {
+    return trimmedValue;
+  }
+
+  const parsedDate = new Date(trimmedValue);
+  if (Number.isNaN(parsedDate.getTime())) return trimmedValue;
+
+  const pad = (input: number) => String(input).padStart(2, "0");
+  return `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(
+    parsedDate.getDate(),
+  )}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
+}
+
 function findAnswerValueByQuestion(
   survey: SurveyType,
   answers: SurveyAnswers,
@@ -472,7 +523,14 @@ function SurveyQuestion({
     question.questionType === "text" && isHeightQuestion(question);
   const isWeightField =
     question.questionType === "text" && isWeightQuestion(question);
+  const isNumberField = question.questionType === "number";
+  const isDateField = question.questionType === "date";
+  const isDateTimeField = question.questionType === "datetime";
   const heightValue = useMemo(() => parseHeightValue(valueText), [valueText]);
+  const dateTimeLocalValue = useMemo(
+    () => toDateTimeLocalValue(valueText),
+    [valueText],
+  );
   const bmiData = useMemo(() => {
     if (!isWeightField) return null;
 
@@ -760,6 +818,38 @@ function SurveyQuestion({
               )}
             </div>
           ))}
+
+        {isNumberField && (
+          <ThemeInput
+            label=""
+            type="text"
+            inputMode="decimal"
+            value={valueText}
+            onChange={(e) => onTextChange(sanitizeNumberValue(e.target.value))}
+            placeholder="Enter a number"
+            className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8 md:text-lg!"
+          />
+        )}
+
+        {isDateField && (
+          <ThemeInput
+            label=""
+            type="date"
+            value={valueText}
+            onChange={(e) => onTextChange(e.target.value)}
+            className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8 md:text-lg!"
+          />
+        )}
+
+        {isDateTimeField && (
+          <ThemeInput
+            label=""
+            type="datetime-local"
+            value={dateTimeLocalValue}
+            onChange={(e) => onTextChange(e.target.value)}
+            className="w-full rounded-xl! p-3 text-sm! md:px-4! md:py-7! mt-8 md:text-lg!"
+          />
+        )}
       </div>
     </div>
   );
@@ -802,6 +892,15 @@ export function SurveyQuestionnaire({
           return feet.trim().length > 0 && inches.trim().length > 0;
         }
         return hasText;
+
+      case "number":
+        return isValidNumberAnswer(answer.valueText);
+
+      case "date":
+        return isValidDateAnswer(answer.valueText);
+
+      case "datetime":
+        return isValidDatetimeAnswer(answer.valueText);
 
       case "single_select_with_text":
         return hasOptions;

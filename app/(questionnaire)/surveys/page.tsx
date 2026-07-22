@@ -746,17 +746,48 @@ const Page = () => {
     questionId: string;
     questionOptionIds?: string[];
     valueText?: string | null;
+    valueTextnumber?: number | null;
   }[] {
+    const normalizeDatetimeValue = (value?: string) => {
+      const trimmedValue = value?.trim() ?? "";
+      if (!trimmedValue) return null;
+
+      const parsedDate = new Date(trimmedValue);
+      if (Number.isNaN(parsedDate.getTime())) return trimmedValue;
+
+      return parsedDate.toISOString();
+    };
+
     const questions =
       survey.questions
         ?.slice()
         .sort((first, second) => first.position - second.position) ?? [];
     return questions.map((question) => {
       const answer = answers[question.id];
+      const trimmedValueText = answer?.valueText?.trim() ?? "";
+
+      if (question.questionType === "number") {
+        const parsedNumber = Number.parseFloat(trimmedValueText);
+
+        return {
+          questionId: question.id,
+          questionOptionIds: answer?.questionOptionIds ?? [],
+          valueTextnumber: Number.isFinite(parsedNumber) ? parsedNumber : null,
+        };
+      }
+
+      if (question.questionType === "datetime") {
+        return {
+          questionId: question.id,
+          questionOptionIds: answer?.questionOptionIds ?? [],
+          valueText: normalizeDatetimeValue(trimmedValueText),
+        };
+      }
+
       return {
         questionId: question.id,
         questionOptionIds: answer?.questionOptionIds ?? [],
-        valueText: answer?.valueText?.trim() ?? null,
+        valueText: trimmedValueText || null,
       };
     });
   }
@@ -832,8 +863,6 @@ const Page = () => {
           )}`;
         }
       }
-      setSurveyAnswers({});
-      setSurveyFromState(undefined);
       setDeferConfirm(null);
     } catch (error) {
       console.error("Survey submission failed:", error);
@@ -878,6 +907,10 @@ const Page = () => {
   }, [questionCount, stepFromUrl, survey]);
 
   useEffect(() => {
+    if (isRedirecting) {
+      return;
+    }
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSurveyAnswers({});
     setSurveyFromState(undefined);
@@ -900,7 +933,7 @@ const Page = () => {
     setIsEmailModalOpen(false);
     setDeferConfirm(null);
     setSoftStopConfirm(null);
-  }, [surveyFlowKey]);
+  }, [isRedirecting, surveyFlowKey]);
 
   useEffect(() => {
     if (
@@ -915,7 +948,13 @@ const Page = () => {
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsEmailModalOpen(true);
-  }, [currentQuestionIndex, hasCapturedEmail, loading, productIds.length, showInfoPage]);
+  }, [
+    currentQuestionIndex,
+    hasCapturedEmail,
+    loading,
+    productIds.length,
+    showInfoPage,
+  ]);
 
   const router = useRouter();
 
@@ -1179,7 +1218,9 @@ const Page = () => {
 
     const bmiQuestion = findQuestionByBody(survey, "What is your BMI?");
     const visibleQuestionIds = new Set(
-      buildVisibleQuestions(survey, surveyAnswers).map((question) => question.id),
+      buildVisibleQuestions(survey, surveyAnswers).map(
+        (question) => question.id,
+      ),
     );
     const hiddenAnsweredQuestionIds = Object.keys(surveyAnswers).filter(
       (questionId) =>
@@ -1360,16 +1401,13 @@ const Page = () => {
         <div className="container mx-auto max-w-7xl px-4 pt-16 md:pt-24 md:px-8 space-y-12">
           <AppModal
             isOpen={isEmailModalOpen}
-            onClose={() => undefined}
+            onClose={() => router.back()}
             onConfirm={() => {
               void handleEmailConfirm();
             }}
             title="Please enter following."
             confirmLabel={isCreatingProductEmail ? "Continuing..." : "Continue"}
             confirmBtnVarient="primary"
-            hideCancelBtn
-            hideCrossButton
-            disableCloseButton
             outSideClickClose={false}
             scrollNeeded={false}
             bodyPaddingClasses="p-4 md:p-6"
