@@ -398,14 +398,14 @@ function getBmiData(heightRaw: string, weightRaw: string) {
 
   if (!Number.isFinite(bmi) || bmi <= 0) return null;
 
-  let category = "Obesity";
-  if (bmi < 18.5) category = "Underweight";
-  else if (bmi < 25) category = "Normal weight";
-  else if (bmi < 30) category = "Overweight";
+  // let category = "Obesity";
+  // if (bmi < 18.5) category = "Underweight";
+  // else if (bmi < 25) category = "Normal weight";
+  // else if (bmi < 30) category = "Overweight";
 
   return {
     value: bmi.toFixed(1),
-    category,
+    // category,
   };
 }
 
@@ -811,9 +811,9 @@ function SurveyQuestion({
                   <span className="text-2xl font-semibold text-neutral-900 md:text-2xl">
                     BMI = {bmiData.value}
                   </span>{" "}
-                  <span className="text-lg text-neutral-400 md:text-xl">
+                  {/* <span className="text-lg text-neutral-400 md:text-xl">
                     ({bmiData.category})
-                  </span>
+                  </span> */}
                 </div>
               )}
             </div>
