@@ -26,7 +26,11 @@ import { usePathname, useRouter } from "next/navigation";
 const OPEN_WEIGHT_LOSS_FLOW_EVENT = "skye-open-weight-loss-flow";
 const OPEN_WEIGHT_LOSS_FLOW_PENDING_KEY = "skye-open-weight-loss-flow-pending";
 
-const navItemsConfig = [
+const navItemsConfig: ReadonlyArray<{
+  label: string;
+  category: string;
+  href?: string;
+}> = [
   {
     label: "Weight Loss",
     category: "Weight Loss",
@@ -34,20 +38,23 @@ const navItemsConfig = [
   {
     label: "Hormones",
     category: "Hormone Program",
+    href: "/coming-soon",
   },
   {
     label: "Peptides",
     category: "Peptides",
+    href: "/coming-soon",
   },
   {
     label: "Optimize Everything",
     category: "Optimize Everything",
+    href: "/coming-soon",
   },
   {
     label: "Who We Are",
     category: "Who We Are",
   },
-] as const;
+];
 
 const HeaderLatest = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -81,9 +88,11 @@ const HeaderLatest = () => {
 
     return {
       label: item.label,
-      href: matchingCategory
-        ? `/products?category=${encodeURIComponent(matchingCategory)}`
-        : "/products",
+      href: item.href
+        ? item.href
+        : matchingCategory
+          ? `/products?category=${encodeURIComponent(matchingCategory)}`
+          : "/products",
     };
   });
 
@@ -138,21 +147,21 @@ const HeaderLatest = () => {
               </Link>
 
               <Link
-                href="/hormone"
+                href="/coming-soon"
                 className="text-base font-light text-[#0F1D3A]"
               >
                 Hormones
               </Link>
 
               <Link
-                href="/peptide"
+                href="/coming-soon"
                 className="text-base font-light text-[#0F1D3A]"
               >
                 Peptides
               </Link>
 
               <Link
-                href="/optimize-everything"
+                href="/coming-soon"
                 className="text-base font-light text-[#0F1D3A]"
               >
                 Optimize Everything

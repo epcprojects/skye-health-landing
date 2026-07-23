@@ -16,7 +16,7 @@ const menuItems = [
   { label: "Peptides", href: "/peptides" },
   {
     label: "Hormones",
-    href: "/hormones",
+    href: "/coming-soon",
   },
   {
     label: "Vitamins",
@@ -43,12 +43,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {/* <HeaderNew menuItems={menuItems}/> */}
         {/* <Header menuItems={menuItems} /> */}
         {/* <Header /> */}
-        <HeaderLatest/>
+        <HeaderLatest />
       </div>
-     <div className="flex-1"> {children}</div>
+      <div className="flex-1"> {children}</div>
       {/* <Footer menuItems={menuItems} /> */}
       {/* <Footer /> */}
-      <FooterLatest/>
+      <FooterLatest />
     </div>
   );
 }
