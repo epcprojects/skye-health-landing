@@ -56,7 +56,7 @@ const Header = () => {
               onClick={() => {
                 router.push("/products");
               }}
-              className="text-sm cursor-pointer text-white py-1 px-3 rounded-full bg-white/10 hover:bg-primary-light flex flex-row items-center gap-2.5"
+              className="text-sm cursor-pointer text-white py-1 px-3 rounded-full bg-white/10 hover:bg-primary-light transition-colors duration-300 flex flex-row items-center gap-2.5"
             >
               Shop now
               <ArrowRightIcon />
@@ -88,7 +88,7 @@ const Header = () => {
           <div className="flex flex-row  gap-3">
             <Link
               href={"/products"}
-              className="rounded-[5px] hidden whitespace-nowrap bg-white hover:bg-primary-light hover:text-white  py-2 px-5 group font-medium text-sm text-black xl:flex items-center gap-3"
+              className="rounded-[5px] hidden whitespace-nowrap bg-white hover:bg-primary-light hover:text-white transition-colors duration-300  py-2 px-5 group font-medium text-sm text-black xl:flex items-center gap-3"
             >
               Get Started{" "}
             </Link>

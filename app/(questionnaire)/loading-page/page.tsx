@@ -47,7 +47,7 @@ const Page = () => {
           <div className="flex items-end justify-end">
             <Link
               href="/"
-              className="rounded-full  w-fit bg-secondary hover:bg-secondary-dark ps-5 p-2 sm:p-3 group text-white font-medium text-base flex items-center gap-3"
+              className="rounded-full  w-fit bg-secondary hover:bg-secondary-dark transition-colors duration-300 ps-5 p-2 sm:p-3 group text-white font-medium text-base flex items-center gap-3"
             >
               Continue
               <span className="w-7.5 h-7.5 text-secondary -rotate-45 group-hover:rotate-0 transition-all duration-500 rounded-full bg-white flex items-center justify-center">

@@ -63,7 +63,7 @@ export default function CartPopover({
             aria-label="Open shopping cart"
             className={
               triggerClassName ??
-              "relative flex items-center rounded-[5px] border hover:bg-primary-light hover:border-primary-light hover:text-white border-neutral-200 cursor-pointer outline-0 order-2 xl:order-0 justify-center bg-white h-9 w-9"
+              "relative flex items-center rounded-[5px] border hover:bg-primary-light hover:border-primary-light hover:text-white transition-colors duration-300 border-neutral-200 cursor-pointer outline-0 order-2 xl:order-0 justify-center bg-white h-9 w-9"
             }
           >
             {triggerIcon ?? (

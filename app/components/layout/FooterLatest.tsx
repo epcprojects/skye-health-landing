@@ -166,7 +166,7 @@ const FooterLatest = () => {
                 aria-label={social.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-8.75 w-8.75 items-center justify-center rounded-full bg-[#3D74E9] hover:bg-blue-900 text-white"
+                className="flex h-8.75 w-8.75 items-center justify-center rounded-full bg-[#3D74E9] hover:bg-blue-900 transition-colors duration-300 text-white"
               >
                 {social.icon}
               </Link>

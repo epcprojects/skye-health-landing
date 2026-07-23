@@ -98,11 +98,13 @@ const WEIGHT_LOSS_PROGRAM_PRODUCT: ProductType = {
   price: 199,
   quantity: 999,
   inStock: true,
+  hideFromCustomer: false,
   primaryImage: "",
   status: ProductStatusEnum.IN_STOCK,
   form: "",
   strength: "",
   vendor: "Greenwich",
+
   productUnitPricings: [
     {
       id: WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
@@ -125,6 +127,7 @@ const HORMONE_PROGRAM_PRODUCT: ProductType = {
   price: 0,
   quantity: 999,
   inStock: true,
+  hideFromCustomer: false,
   primaryImage: "",
   status: ProductStatusEnum.IN_STOCK,
   form: "",
@@ -363,7 +366,10 @@ export default function Home() {
           const selectedMonths = getWeightLossProgramMonths();
           const targetProductId =
             pendingWeightLossProduct?.id ?? WEIGHT_LOSS_PROGRAM_PRODUCT_ID;
-          const cartGuard = canAddProductWithCartRules(cartItems, targetProductId);
+          const cartGuard = canAddProductWithCartRules(
+            cartItems,
+            targetProductId,
+          );
 
           if (!cartGuard.allowed) {
             toastAlert(
@@ -599,19 +605,19 @@ export default function Home() {
                       toastAlert(
                         cartGuard.message ?? "Unable to add product to cart.",
                         false,
-                    );
-                    return;
-                  }
+                      );
+                      return;
+                    }
 
-                  if (isWeightLossModalProduct(product)) {
-                    setPendingWeightLossProduct(product);
-                    setIsWeightLossModalOpen(true);
-                    return;
-                  }
+                    if (isWeightLossModalProduct(product)) {
+                      setPendingWeightLossProduct(product);
+                      setIsWeightLossModalOpen(true);
+                      return;
+                    }
 
-                  dispatch(addProductToCart({ product }));
-                  toastAlert("Added to Cart Successfully", true);
-                }}
+                    dispatch(addProductToCart({ product }));
+                    toastAlert("Added to Cart Successfully", true);
+                  }}
                 />
               </div>
             ))}

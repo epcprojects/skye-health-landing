@@ -96,7 +96,7 @@ const ExploreOptionsSection = ({
           <button
             type="button"
             onClick={onGetStarted}
-            className="rounded-full bg-[#3D74E9] hover:bg-blue-900 px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
+            className="rounded-full bg-[#3D74E9] hover:bg-blue-900 transition-colors duration-300 px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
           >
             Get started now
           </button>
@@ -104,7 +104,7 @@ const ExploreOptionsSection = ({
           <button
             type="button"
             onClick={onViewTreatments}
-            className="flex flex-row items-center gap-2.5 rounded-full px-5 py-3 ring-1 ring-inset ring-[#0F1D3A] xl:px-8 xl:py-5 bg-tranparent hover:bg-[#0F1D3A] text-[#0F1D3A] hover:text-white"
+            className="flex flex-row items-center gap-2.5 rounded-full px-5 py-3 ring-1 ring-inset ring-[#0F1D3A] xl:px-8 xl:py-5 bg-tranparent hover:bg-[#0F1D3A] text-[#0F1D3A] hover:text-white transition-colors duration-300"
           >
             <span className="text-sm font-medium  xl:text-base">
               View all treatments
