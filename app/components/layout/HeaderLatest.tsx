@@ -127,28 +127,59 @@ const HeaderLatest = () => {
             </Link>
 
             <div className="hidden xl:flex flex-row gap-10">
-              {navItems.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="text-[#0F1D3A] text-base font-light"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              <Link
+                href={
+                  navItems.find((item) => item.label === "Weight Loss")?.href ??
+                  "/products"
+                }
+                className="text-base font-light text-[#0F1D3A]"
+              >
+                Weight Loss
+              </Link>
+
+              <Link
+                href="/hormone"
+                className="text-base font-light text-[#0F1D3A]"
+              >
+                Hormones
+              </Link>
+
+              <Link
+                href="/peptide"
+                className="text-base font-light text-[#0F1D3A]"
+              >
+                Peptides
+              </Link>
+
+              <Link
+                href="/optimize-everything"
+                className="text-base font-light text-[#0F1D3A]"
+              >
+                Optimize Everything
+              </Link>
+
+              <Link
+                href={
+                  navItems.find((item) => item.label === "Who We Are")?.href ??
+                  "/products"
+                }
+                className="text-base font-light text-[#0F1D3A]"
+              >
+                Who We Are
+              </Link>
             </div>
 
             <div className="hidden xl:flex flex-row gap-2">
               <button
                 type="button"
                 onClick={openWeightLossFlow}
-                className="rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white"
+                className="rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white hover:bg-[#2F61CC]"
               >
                 Get started
               </button>
 
               <CartPopover
-                triggerClassName="relative w-12.25 h-12.25 bg-[#0F1D3A] rounded-full flex items-center justify-center cursor-pointer outline-none"
+                triggerClassName="relative w-12.25 h-12.25 bg-[#0F1D3A] hover:bg-black rounded-full flex items-center justify-center cursor-pointer outline-none"
                 triggerIcon={<OutlineShoppingIcon />}
               />
             </div>

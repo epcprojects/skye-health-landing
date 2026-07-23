@@ -1952,13 +1952,13 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={treatmentCards[0].onButtonClick}
-                    className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                    className="flex cursor-pointer items-center gap-2 rounded-full bg-white hover:bg-[#3D74E9] text-[#0F1D3A] hover:text-white  px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
                   >
-                    <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                    <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
                       Start losing weight
                     </span>
 
-                    <NewArrowIcon fill="#0F1D3A" />
+                    <NewArrowIcon fill="currentColor" />
                   </button>
                 </div>
 
@@ -2005,13 +2005,13 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={treatmentCards[1].onButtonClick}
-                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white text-[#0F1D3A] hover:bg-[#3D74E9] hover:text-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
                 >
-                  <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                  <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
                     Shop peptides
                   </span>
 
-                  <NewArrowIcon fill="#0F1D3A" />
+                  <NewArrowIcon fill="currentColor" />
                 </button>
               </div>
 
@@ -2030,13 +2030,13 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={treatmentCards[2].onButtonClick}
-                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white hover:bg-[#3D74E9] text-[#0F1D3A] hover:text-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
                 >
-                  <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                  <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
                     Reserve your spot
                   </span>
 
-                  <NewArrowIcon fill="#0F1D3A" />
+                  <NewArrowIcon fill="currentColor" />
                 </button>
               </div>
 
@@ -2074,13 +2074,13 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={treatmentCards[3].onButtonClick}
-                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white hover:bg-[#3D74E9] text-[#0F1D3A] hover:text-white  px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
                 >
-                  <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                  <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
                     Start your journey
                   </span>
 
-                  <NewArrowIcon fill="#0F1D3A" />
+                  <NewArrowIcon fill="currentColor" />
                 </button>
               </div>
 

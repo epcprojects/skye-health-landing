@@ -29,18 +29,18 @@ const BetterTreatmentSection = ({
         <div className="flex flex-col xl:flex-row items-center gap-2 xl:gap-3">
           <button
             onClick={onGetStarted}
-            className=" cursor-pointer py-3 xl:py-5 px-5 xl:px-8 rounded-full bg-[#3D74E9] text-white text-sm xl:text-base xl:leading-[100%] font-medium"
+            className=" cursor-pointer py-3 xl:py-5 px-5 xl:px-8 rounded-full bg-[#3D74E9] hover:bg-[#2F61CC] text-white text-sm xl:text-base xl:leading-[100%] font-medium"
           >
             Get started now
           </button>
           <button
             onClick={onExploreOptions}
-            className=" cursor-pointer py-3 xl:py-5 px-5 xl:px-8 rounded-full ring ring-inset ring-[#0F1D3A] flex flex-row items-center gap-2.5 "
+            className=" cursor-pointer py-3 xl:py-5 px-5 xl:px-8 bg-transparent hover:bg-[#0F1D3A] rounded-full ring ring-inset ring-[#0F1D3A] flex flex-row items-center gap-2.5 text-[#0F1D3A] hover:text-white "
           >
-            <p className="text-[#0F1D3A] text-sm xl:text-base xl:leading-[100%] font-medium">
+            <p className=" text-sm xl:text-base xl:leading-[100%] font-medium">
               Explore your options
             </p>
-            <NewArrowIcon fill="#0F1D3A" />
+            <NewArrowIcon fill="currentColor" />
           </button>
         </div>
       </div>

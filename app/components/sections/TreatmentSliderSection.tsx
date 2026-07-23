@@ -174,10 +174,10 @@ const TreatmentSliderSection = ({
             onClick={() => {
               cardsSwiperRef.current?.slidePrev();
             }}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center text-white disabled:text-[#0F1D3A] rounded-full disabled:bg-white bg-[#0F1D3A] hover:bg-black transition-opacity disabled:cursor-not-allowed "
           >
             <span className="inline-flex rotate-180">
-              <NewArrowIcon fill="#0F1D3A" />
+              <NewArrowIcon fill="currentColor" />
             </span>
           </button>
 
@@ -228,7 +228,7 @@ const TreatmentSliderSection = ({
             onClick={() => {
               cardsSwiperRef.current?.slideNext();
             }}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] hover:bg-black transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
           >
             <NewArrowIcon fill="white" />
           </button>

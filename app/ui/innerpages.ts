@@ -10,7 +10,9 @@ import SkyHealthOverlayImage from "@/public/images/skyhealthoverlay.png"
 import QualityControlImage from "@/public/images/QualityControlImage.png"
 import PeptideImage from "@/public/images/BiologyPeptides.png"
 import ManufacturingPageImage from "@/public/images/ManufacturingPageImage.png"
+import ComingSoonImage from "@/public/images/ComingSoonImage.png"
 export const  innerImages = {
+    ComingSoonImage,
     ManufacturingPageImage,
     PeptideImage,
     QualityControlImage,

@@ -28,7 +28,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from "@/app/Redux/store";
 import { toastAlert } from "@/app/components/ToastAlert";
-
+import Image from "next/image";
 import {
   canAddProductWithCartRules,
   WEIGHT_LOSS_PROGRAM_PRODUCT_ID,
@@ -47,6 +47,7 @@ import {
   type FeaturedTreatmentSliderCard,
   type TreatmentSliderProduct,
 } from "@/app/components/sections/TreatmentSliderSection";
+import { NewArrowIcon } from "@/public/icons";
 
 const cardColors = {
   productImageBg: "#CEDCF9",
@@ -1800,7 +1801,161 @@ export default function Home() {
         onGetStarted={() => router.push("/products")}
         onViewTreatments={() => router.push("/products")}
       />
-      <TreatmentCardsSection cards={treatmentCards} />
+      {/* <TreatmentCardsSection cards={treatmentCards} /> */}
+      <section className="bg-[#F5F8FE] pt-6 pb-6 xl:pt-20 xl:pb-27">
+        <div className="container mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 lg:grid-cols-2 xl:px-8">
+          <div className="relative grid min-h-55 overflow-hidden rounded-2xl bg-[#AFC6E5] pl-4 xl:min-h-88.5 xl:rounded-4xl xl:pl-12">
+            <div className="col-start-1 row-start-1 block h-full w-full bg-[url('/images/WeightLossBgImage.png')] bg-cover bg-left bg-no-repeat" />
+
+            <div className="relative z-10 col-start-1 row-start-1 flex w-full flex-row items-center justify-between">
+              <div className="relative z-20 flex shrink-0 flex-col items-start gap-4 xl:gap-6">
+                <div className="flex flex-col items-start gap-3 xl:gap-4">
+                  <p className="text-xl font-medium text-white xl:text-[32px]">
+                    Weight loss
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={treatmentCards[0].onButtonClick}
+                    className="flex cursor-pointer items-center gap-2 rounded-full bg-white hover:bg-[#3D74E9] text-[#0F1D3A] hover:text-white  px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                  >
+                    <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
+                      Start losing weight
+                    </span>
+
+                    <NewArrowIcon fill="currentColor" />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center rounded-full bg-[#1F3A75] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                  $199 per month
+                </div>
+              </div>
+
+              <div className="flex h-full min-w-0 flex-1 items-end">
+                <Image
+                  src={images.landingpageimages.WeightLossRowImage}
+                  alt="Weight loss"
+                  className="h-60 w-auto max-w-none object-cover  sm:h-52 xl:h-auto"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="relative min-h-55 overflow-hidden rounded-2xl bg-linear-to-r from-[#F6D9C9] to-[#EF7A5C] xl:min-h-88.5 xl:rounded-4xl">
+            <div className="pointer-events-none absolute inset-y-0 -right-24 xl:-right-60">
+              <Image
+                src="/images/PeptideCardBgImage.png"
+                alt=""
+                aria-hidden="true"
+                width={824}
+                height={354}
+                className="block h-full w-auto max-w-none object-contain"
+              />
+            </div>
+
+            <div className="absolute top-0 -right-12 h-full sm:-right-6 xl:right-10">
+              <Image
+                src={images.landingpageimages.PeptideCardRowImage}
+                alt="Peptides"
+                className="h-full w-auto max-w-none object-contain object-right"
+              />
+            </div>
+
+            <div className="relative z-20 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
+              <div className="flex flex-col items-start gap-3 xl:gap-4">
+                <p className="text-xl font-medium text-white xl:text-[32px]">
+                  Peptides
+                </p>
+
+                <button
+                  type="button"
+                  onClick={treatmentCards[1].onButtonClick}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white text-[#0F1D3A] hover:bg-[#3D74E9] hover:text-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                >
+                  <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
+                    Shop peptides
+                  </span>
+
+                  <NewArrowIcon fill="currentColor" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center rounded-full bg-[#1F3A75] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                $199 per month
+              </div>
+            </div>
+          </div>
+          <div className="relative min-h-55 overflow-hidden rounded-2xl bg-[url('/images/HormonesCardImage.png')] bg-cover bg-center bg-no-repeat xl:min-h-88.5 xl:rounded-4xl">
+            <div className="relative z-10 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
+              <div className="flex flex-col items-start gap-3 xl:gap-4">
+                <p className="text-xl font-medium text-white xl:text-[32px]">
+                  Hormones
+                </p>
+
+                <button
+                  type="button"
+                  onClick={treatmentCards[2].onButtonClick}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white hover:bg-[#3D74E9] text-[#0F1D3A] hover:text-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                >
+                  <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
+                    Reserve your spot
+                  </span>
+
+                  <NewArrowIcon fill="currentColor" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center rounded-full bg-[#8FC0C2] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                Coming Soon
+              </div>
+            </div>
+          </div>
+          <div className="relative min-h-55 overflow-hidden rounded-2xl bg-[#0F1D3A] xl:min-h-88.5 xl:rounded-4xl">
+            <div className="pointer-events-none absolute inset-y-0 right-0">
+              <Image
+                src="/images/OptimizeEverythingBgImage.png"
+                alt=""
+                aria-hidden="true"
+                width={824}
+                height={354}
+                className="block h-full w-auto max-w-none object-contain object-right"
+              />
+            </div>
+
+            <div className="absolute top-0 -right-14 z-10 h-full sm:-right-6 xl:right-0">
+              <Image
+                src={images.landingpageimages.OptimizeEverythingRowImage}
+                alt="Optimize everything"
+                className="h-full w-auto max-w-none object-contain object-right"
+              />
+            </div>
+
+            <div className="relative z-30 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
+              <div className="flex flex-col items-start gap-3 xl:gap-4">
+                <p className="text-xl font-medium text-white xl:text-[32px]">
+                  Optimize everything
+                </p>
+
+                <button
+                  type="button"
+                  onClick={treatmentCards[3].onButtonClick}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white hover:bg-[#3D74E9] text-[#0F1D3A] hover:text-white  px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                >
+                  <span className="whitespace-nowrap text-xs font-medium  sm:text-sm xl:text-base">
+                    Start your journey
+                  </span>
+
+                  <NewArrowIcon fill="currentColor" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center rounded-full bg-[#8FC0C2] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                Coming Soon
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <ExploreOptionsSection
         products={exploreProducts}
         loading={exploreProductsLoading}

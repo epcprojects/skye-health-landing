@@ -53,7 +53,7 @@ const FeaturedTreatmentCard = ({
             <button
               type="button"
               onClick={onGetStarted}
-              className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] px-5 py-3 xl:px-8 xl:py-5 text-sm xl:text-base font-medium  text-white"
+              className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] hover:bg-[#2F61CC] px-5 py-3 xl:px-8 xl:py-5 text-sm xl:text-base font-medium  text-white"
             >
               Get started now
             </button>
@@ -61,13 +61,13 @@ const FeaturedTreatmentCard = ({
             <button
               type="button"
               onClick={onAction}
-              className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full ring ring-inset ring-white px-5 xl:px-8 py-3 xl:py-5 "
+              className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full ring ring-inset ring-white px-5 xl:px-8 py-3 xl:py-5 bg-transparent hover:bg-white text-white hover:text-[#0F1D3A] "
             >
-              <span className="text-sm xl:text-base font-medium  text-white">
+              <span className="text-sm xl:text-base font-medium">
                 {actionLabel}
               </span>
 
-              <NewArrowIcon fill="white" />
+              <NewArrowIcon fill="currentColor" />
             </button>
           </div>
         </div>

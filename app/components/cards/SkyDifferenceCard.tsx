@@ -147,7 +147,7 @@ const SkyDifferenceCard = ({
           type="button"
           onClick={onClick}
           aria-label={`Learn more about ${title}`}
-          className="absolute right-4 bottom-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] transition-transform duration-500  group-hover:scale-105 xl:right-6 xl:bottom-6 xl:h-12 xl:w-12"
+          className="absolute right-4 bottom-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] hover:bg-black transition-transform duration-500  group-hover:scale-105 xl:right-6 xl:bottom-6 xl:h-12 xl:w-12"
         >
           <NewPlusIcon fill="white" />
         </button>

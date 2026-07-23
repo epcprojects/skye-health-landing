@@ -58,7 +58,7 @@ const TreatmentSliderCard = ({
           <button
             type="button"
             onClick={onGetStarted}
-            className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] px-5 xl:px-8 py-3 xl:py-5 text-sm xl:text-base font-medium xl:leading-[100%] text-white"
+            className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] hover:bg-[#2F61CC] px-5 xl:px-8 py-3 xl:py-5 text-sm xl:text-base font-medium xl:leading-[100%] text-white"
           >
             Lets get started
           </button>
@@ -66,13 +66,13 @@ const TreatmentSliderCard = ({
           <button
             type="button"
             onClick={onShopNow}
-            className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full ring ring-inset ring-[#0F1D3A] px-5 xl:px-8 py-3 xl:py-5"
+            className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap rounded-full bg-tranparent hover:bg-[#0F1D3A] ring ring-inset ring-[#0F1D3A] px-5 xl:px-8 py-3 xl:py-5 text-[#0F1D3A] hover:text-white"
           >
-            <span className="text-sm xl:text-base font-medium xl:leading-[100%] text-[#0F1D3A]">
+            <span className="text-sm xl:text-base font-medium xl:leading-[100%] ">
               Shop now
             </span>
 
-            <NewArrowIcon fill="#0F1D3A" />
+            <NewArrowIcon fill="currentColor" />
           </button>
         </div>
       </div>

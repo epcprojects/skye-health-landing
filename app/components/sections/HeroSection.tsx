@@ -53,7 +53,7 @@ const HeroSection = ({
             <button
               type="button"
               onClick={onGetStarted}
-              className="cursor-pointer rounded-full bg-[#0F1D3A] px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
+              className="cursor-pointer rounded-full bg-[#0F1D3A] hover:bg-black px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
             >
               Get started now
             </button>
@@ -61,13 +61,12 @@ const HeroSection = ({
             <button
               type="button"
               onClick={onViewTreatments}
-              className="flex cursor-pointer items-center gap-2.5 rounded-full px-5 py-3 ring-1 ring-inset ring-white xl:px-8 xl:py-5"
+              className="flex group cursor-pointer items-center gap-2.5 rounded-full px-5 py-3 ring-1 ring-inset ring-white bg-transparent text-white hover:text-[#0F1D3A]  hover:bg-white xl:px-8 xl:py-5"
             >
-              <span className="text-sm font-medium text-white xl:text-base">
+              <span className="text-sm font-medium  xl:text-base">
                 View all treatments
               </span>
-
-              <NewArrowIcon fill="white" />
+              <NewArrowIcon fill="currentColor" />
             </button>
           </div>
         </div>
