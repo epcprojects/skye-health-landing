@@ -2113,7 +2113,7 @@ export default function Home() {
         products={weightLossProductsToRender}
       />
 
-      <TreatmentSliderSection
+      {/* <TreatmentSliderSection
         featuredCard={featuredPeptideCard}
         products={peptideProductsToRender}
       />
@@ -2126,7 +2126,7 @@ export default function Home() {
       <TreatmentSliderSection
         featuredCard={featuredHormoneCard}
         products={hormoneProductsToRender}
-      />
+      /> */}
       <BetterTreatmentSection
         onGetStarted={() => {
           goToProducts();
