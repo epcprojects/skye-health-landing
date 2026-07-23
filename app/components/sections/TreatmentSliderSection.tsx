@@ -79,10 +79,7 @@ const TreatmentSliderSection = ({
 
   const activeCardDot = isCardsEnd
     ? totalCardDots - 1
-    : Math.min(
-        Math.floor(activeCardSlide / 2),
-        totalCardDots - 1,
-      );
+    : Math.min(Math.floor(activeCardSlide / 2), totalCardDots - 1);
 
   return (
     <section className="flex flex-col gap-6 xl:gap-13 overflow-hidden bg-[#F5F8FE] pb-6 xl:pb-27">
@@ -94,9 +91,7 @@ const TreatmentSliderSection = ({
             title={featuredCard.title}
             actionLabel={featuredCard.actionLabel}
             backgroundColor={featuredCard.backgroundColor}
-            badgeBackgroundColor={
-              featuredCard.badgeBackgroundColor
-            }
+            badgeBackgroundColor={featuredCard.badgeBackgroundColor}
             onGetStarted={featuredCard.onGetStarted}
             onAction={featuredCard.onAction}
           />
@@ -138,19 +133,14 @@ const TreatmentSliderSection = ({
               title={featuredCard.title}
               actionLabel={featuredCard.actionLabel}
               backgroundColor={featuredCard.backgroundColor}
-              badgeBackgroundColor={
-                featuredCard.badgeBackgroundColor
-              }
+              badgeBackgroundColor={featuredCard.badgeBackgroundColor}
               onGetStarted={featuredCard.onGetStarted}
               onAction={featuredCard.onAction}
             />
           </SwiperSlide>
 
           {products.map((product) => (
-            <SwiperSlide
-              key={product.id}
-              className="xl:w-110! h-auto!"
-            >
+            <SwiperSlide key={product.id} className="xl:w-110! h-auto!">
               <TreatmentSliderCard
                 productImage={product.productImage}
                 productTitle={product.productTitle}
@@ -174,7 +164,7 @@ const TreatmentSliderSection = ({
             onClick={() => {
               cardsSwiperRef.current?.slidePrev();
             }}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center text-white disabled:text-[#0F1D3A] rounded-full disabled:bg-white bg-[#0F1D3A] hover:bg-black transition-opacity disabled:cursor-not-allowed "
+            className="flex h-10 w-10 cursor-pointer items-center justify-center text-white disabled:text-[#0F1D3A] rounded-full disabled:bg-white bg-[#0F1D3A] hover:bg-[#0F1D3A80] transition-opacity disabled:cursor-not-allowed "
           >
             <span className="inline-flex rotate-180">
               <NewArrowIcon fill="currentColor" />
@@ -185,34 +175,23 @@ const TreatmentSliderSection = ({
             {Array.from({
               length: totalCardDots,
             }).map((_, index) => {
-              const isLastDot =
-                index === totalCardDots - 1;
+              const isLastDot = index === totalCardDots - 1;
 
               return (
                 <button
                   key={index}
                   type="button"
                   aria-label={`Go to card group ${index + 1}`}
-                  aria-current={
-                    activeCardDot === index
-                      ? "true"
-                      : undefined
-                  }
+                  aria-current={activeCardDot === index ? "true" : undefined}
                   onClick={() => {
                     if (isLastDot) {
-                      cardsSwiperRef.current?.slideTo(
-                        totalSlides - 1,
-                      );
+                      cardsSwiperRef.current?.slideTo(totalSlides - 1);
                     } else {
-                      cardsSwiperRef.current?.slideTo(
-                        index * 2,
-                      );
+                      cardsSwiperRef.current?.slideTo(index * 2);
                     }
                   }}
                   className={`h-2 w-2 cursor-pointer rounded-full transition-colors duration-300 ${
-                    activeCardDot === index
-                      ? "bg-[#0F1D3A]"
-                      : "bg-[#CEDCF9]"
+                    activeCardDot === index ? "bg-[#0F1D3A]" : "bg-[#CEDCF9]"
                   }`}
                 />
               );
@@ -222,13 +201,11 @@ const TreatmentSliderSection = ({
           <button
             type="button"
             aria-label="Next card"
-            disabled={
-              activeCardSlide === totalSlides - 1
-            }
+            disabled={activeCardSlide === totalSlides - 1}
             onClick={() => {
               cardsSwiperRef.current?.slideNext();
             }}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] hover:bg-black transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] hover:bg-[#0F1D3A80] transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
           >
             <NewArrowIcon fill="white" />
           </button>

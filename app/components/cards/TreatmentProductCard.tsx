@@ -120,7 +120,7 @@ const TreatmentProductCard = ({
             className={`xl:py-4 xl:px-6 py-2.5 px-6 rounded-full text-sm font-medium text-white transition-colors ${
               soldOut
                 ? "bg-[#9CA3AF] cursor-not-allowed"
-                : "bg-[#0F1D3A] cursor-pointer hover:bg-black"
+                : "bg-[#0F1D3A] cursor-pointer hover:bg-[#0F1D3A90]"
             }`}
           >
             {soldOut ? "Sold out" : "Get started"}

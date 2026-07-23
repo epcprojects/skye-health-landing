@@ -58,7 +58,7 @@ const TreatmentSliderCard = ({
           <button
             type="button"
             onClick={onGetStarted}
-            className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] hover:bg-[#2F61CC] px-5 xl:px-8 py-3 xl:py-5 text-sm xl:text-base font-medium xl:leading-[100%] text-white"
+            className="cursor-pointer whitespace-nowrap rounded-full bg-[#3D74E9] hover:bg-blue-900 px-5 xl:px-8 py-3 xl:py-5 text-sm xl:text-base font-medium xl:leading-[100%] text-white"
           >
             Lets get started
           </button>

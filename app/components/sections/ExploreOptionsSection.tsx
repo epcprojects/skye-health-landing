@@ -96,7 +96,7 @@ const ExploreOptionsSection = ({
           <button
             type="button"
             onClick={onGetStarted}
-            className="rounded-full bg-[#3D74E9] hover:bg-[#2F61CC] px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
+            className="rounded-full bg-[#3D74E9] hover:bg-blue-900 px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
           >
             Get started now
           </button>

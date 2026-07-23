@@ -179,7 +179,7 @@ const HeaderLatest = () => {
               </button>
 
               <CartPopover
-                triggerClassName="relative w-12.25 h-12.25 bg-[#0F1D3A] hover:bg-black rounded-full flex items-center justify-center cursor-pointer outline-none"
+                triggerClassName="relative w-12.25 h-12.25 bg-[#0F1D3A] hover:bg-[#0F1D3A80] rounded-full flex items-center justify-center cursor-pointer outline-none"
                 triggerIcon={<OutlineShoppingIcon />}
               />
             </div>

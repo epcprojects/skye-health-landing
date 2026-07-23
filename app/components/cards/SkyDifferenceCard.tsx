@@ -94,8 +94,6 @@
 
 // export default SkyDifferenceCard;
 
-
-
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
@@ -126,7 +124,6 @@ const SkyDifferenceCard = ({
       />
 
       <div className="relative z-10 flex h-full w-full flex-col justify-between">
-
         <div className="flex origin-top-left flex-col gap-3 px-4 pt-5 transition-transform duration-500 group-hover:scale-[1.02] xl:gap-4 xl:p-10">
           <h3 className="text-xl font-semibold leading-[100%] text-[#0F1D3A] transition-colors duration-500 group-hover:text-white xl:text-[32px]">
             {title}
@@ -147,7 +144,7 @@ const SkyDifferenceCard = ({
           type="button"
           onClick={onClick}
           aria-label={`Learn more about ${title}`}
-          className="absolute right-4 bottom-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] hover:bg-black transition-transform duration-500  group-hover:scale-105 xl:right-6 xl:bottom-6 xl:h-12 xl:w-12"
+          className="absolute right-4 bottom-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#0F1D3A] hover:bg-[#0F1D3A80] transition-transform duration-500  group-hover:scale-105 xl:right-6 xl:bottom-6 xl:h-12 xl:w-12"
         >
           <NewPlusIcon fill="white" />
         </button>

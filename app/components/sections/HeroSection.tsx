@@ -53,7 +53,7 @@ const HeroSection = ({
             <button
               type="button"
               onClick={onGetStarted}
-              className="cursor-pointer rounded-full bg-[#0F1D3A] hover:bg-black px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
+              className="cursor-pointer rounded-full bg-[#0F1D3A] hover:bg-[#0F1D3A80] px-5 py-3 text-sm font-medium text-white xl:px-8 xl:py-5 xl:text-base"
             >
               Get started now
             </button>
@@ -71,9 +71,13 @@ const HeroSection = ({
           </div>
         </div>
       </div>
-        <div className="hidden w-full xl:block ">
-             <Image src={images.landingpageimages.heroImage} alt={"hero"} className="absolute right-0 top-[18%] bottom-0"/>
-        </div>
+      <div className="hidden w-full xl:block ">
+        <Image
+          src={images.landingpageimages.heroImage}
+          alt={"hero"}
+          className="absolute right-0 top-[18%] bottom-0"
+        />
+      </div>
       {/* <div className="hidden w-full xl:block">
         <Image
           src={hero.ringImage}

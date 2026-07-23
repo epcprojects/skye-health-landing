@@ -36,13 +36,13 @@ const footerLinkSections = [
 ];
 const socialLinks = [
   {
-    label:"X",
-   href: "https://x.com",
-    icon:<XIcon width="16" height="16" fill="currentColor" />
+    label: "X",
+    href: "https://x.com",
+    icon: <XIcon width="16" height="16" fill="currentColor" />,
   },
   {
     label: "Facebook",
-   href: "https://facebook.com",
+    href: "https://facebook.com",
     icon: <FBIcon fill="currentColor" />,
   },
   {
@@ -147,7 +147,7 @@ const FooterLatest = () => {
                 aria-label={social.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-8.75 w-8.75 items-center justify-center rounded-full bg-[#3D74E9] hover:bg-[#2F61CC] text-white"
+                className="flex h-8.75 w-8.75 items-center justify-center rounded-full bg-[#3D74E9] hover:bg-blue-900 text-white"
               >
                 {social.icon}
               </Link>
