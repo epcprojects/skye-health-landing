@@ -34,6 +34,7 @@ import Image from "next/image";
 import { Images } from "@/app/images";
 import { AlertIcon2, ArrowIcon, CrossIcon } from "@/public/icons";
 import Portal from "@/app/components/portal";
+import CustomCheckbox from "@/app/components/CustomCheckBox";
 import {
   CREATE_CART,
   CreateCartMutationResult,
@@ -524,6 +525,7 @@ const Page = () => {
   const [dateOfBirthTouched, setDateOfBirthTouched] = useState(false);
   const [gender, setGender] = useState("");
   const [stateOfResidence, setStateOfResidence] = useState("");
+  const [hasAcceptedPolicies, setHasAcceptedPolicies] = useState(false);
   const [externalUserId, setExternalUserId] = useState("");
   const [hasCapturedEmail, setHasCapturedEmail] = useState(false);
   const [hasRequestedSurvey, setHasRequestedSurvey] = useState(false);
@@ -925,6 +927,7 @@ const Page = () => {
     setDateOfBirthTouched(false);
     setGender("");
     setStateOfResidence("");
+    setHasAcceptedPolicies(false);
     setExternalUserId("");
     setHasCapturedEmail(false);
     setHasRequestedSurvey(false);
@@ -1252,7 +1255,14 @@ const Page = () => {
     setDateOfBirthTouched(true);
 
     if (!isEmailValid) return;
-    if (!isDateOfBirthValid || !isGenderValid || !stateOfResidence) return;
+    if (
+      !isDateOfBirthValid ||
+      !isGenderValid ||
+      !stateOfResidence ||
+      !hasAcceptedPolicies
+    ) {
+      return;
+    }
 
     if (emailProductIds.length === 0) {
       setEmailSubmissionError("No products were found for this questionnaire.");
@@ -1393,7 +1403,7 @@ const Page = () => {
               />
             </svg>
           </div>
-          <span className="mt-3 block font-semibold">No Servey found...</span>
+          <span className="mt-3 block font-semibold">No Survey found...</span>
         </div>
       )}
 
@@ -1416,6 +1426,7 @@ const Page = () => {
               !isDateOfBirthValid ||
               !isGenderValid ||
               !stateOfResidence ||
+              !hasAcceptedPolicies ||
               isCreatingProductEmail
             }
           >
@@ -1441,7 +1452,6 @@ const Page = () => {
                 autoComplete="email"
                 disabled={isCreatingProductEmail}
               />
-
               <Dropdown
                 label="State of Residence"
                 placeholder="Select your state of residence"
@@ -1454,7 +1464,6 @@ const Page = () => {
                 searchPlaceholder="Search state..."
                 maxMenuHeight={260}
               />
-
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-normal text-black md:text-base">
@@ -1514,7 +1523,6 @@ const Page = () => {
                   <p className="text-sm text-red-500">{dateOfBirthError}</p>
                 )}
               </div>
-
               <div className="space-y-3">
                 <div className="text-sm font-normal text-black md:text-base">
                   Biological sex <span className="text-red-500">*</span>
@@ -1540,6 +1548,48 @@ const Page = () => {
                       </button>
                     );
                   })}
+                </div>
+              </div>{" "}
+              <div className="space-y-2">
+                <div className="flex items-start gap-1">
+                  <CustomCheckbox
+                    id="privacy-policy-consent"
+                    checked={hasAcceptedPolicies}
+                    onChange={setHasAcceptedPolicies}
+                    disabled={isCreatingProductEmail}
+                    direction="flex-row-reverse"
+                    fullWidth="w-fit"
+                    width="w-fit"
+                    label=""
+                    className="items-start pt-0.5"
+                  />
+                  <p className="text-sm  text-neutral-700 md:text-sm">
+                    By clicking “Continue”, I agree to the{" "}
+                    <Link
+                      href="/terms-of-service"
+                      target="_blank"
+                      className="text-primary underline underline-offset-2"
+                    >
+                      Terms and Conditions
+                    </Link>
+                    ,{" "}
+                    <Link
+                      href="/telehealth-consent"
+                      target="_blank"
+                      className="text-primary underline underline-offset-2"
+                    >
+                      Telehealth Consent
+                    </Link>{" "}
+                    and acknowledge the{" "}
+                    <Link
+                      href="/privacy-policy"
+                      target="_blank"
+                      className="text-primary underline underline-offset-2"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
+                  </p>
                 </div>
               </div>
             </div>
