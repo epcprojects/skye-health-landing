@@ -50,6 +50,7 @@ export const ALL_PRODUCTS = gql`
         strength
         vendor
         subCategory
+        hideFromCustomer
         productUnitPricings {
           id
           sku
@@ -90,6 +91,7 @@ export type ProductType = {
   form: string;
   strength: string;
   vendor: string;
+  hideFromCustomer: boolean;
   productUnitPricings?: ProductUnitPricingType[];
 };
 

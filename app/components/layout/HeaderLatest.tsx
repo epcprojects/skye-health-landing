@@ -173,7 +173,7 @@ const HeaderLatest = () => {
               <button
                 type="button"
                 onClick={openWeightLossFlow}
-                className="rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white hover:bg-[#2F61CC]"
+                className="rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white hover:bg-blue-900"
               >
                 Get started
               </button>
