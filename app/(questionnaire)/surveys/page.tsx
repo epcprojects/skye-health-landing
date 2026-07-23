@@ -452,7 +452,13 @@ const sanitizeDatePart = (value: string, maxLength: number) =>
 
 const getDateOfBirthError = (month: string, day: string, year: string) => {
   if (!month && !day && !year) return "";
-  if (month.length !== 2 || day.length !== 2 || year.length !== 4) {
+  if (
+    month.length < 1 ||
+    month.length > 2 ||
+    day.length < 1 ||
+    day.length > 2 ||
+    year.length !== 4
+  ) {
     return "Please enter a valid date of birth.";
   }
 
@@ -498,7 +504,7 @@ const getDateOfBirthError = (month: string, day: string, year: string) => {
 };
 
 const buildDateOfBirthValue = (month: string, day: string, year: string) =>
-  `${year}-${month}-${day}`;
+  `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 
 const Page = () => {
   const productIds = useAppSelector(selectCartProductIds);
@@ -577,8 +583,10 @@ const Page = () => {
   );
   const showDateOfBirthError = dateOfBirthTouched && !!dateOfBirthError;
   const isDateOfBirthValid =
-    dateOfBirthMonth.length === 2 &&
-    dateOfBirthDay.length === 2 &&
+    dateOfBirthMonth.length >= 1 &&
+    dateOfBirthMonth.length <= 2 &&
+    dateOfBirthDay.length >= 1 &&
+    dateOfBirthDay.length <= 2 &&
     dateOfBirthYear.length === 4 &&
     !dateOfBirthError;
   const isGenderValid = gender === "MALE" || gender === "FEMALE";
@@ -1464,7 +1472,7 @@ const Page = () => {
                 searchPlaceholder="Search state..."
                 maxMenuHeight={260}
               />
-              <div className="space-y-3">
+              <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-normal text-black md:text-base">
                     Date of birth <span className="text-red-500">*</span>
@@ -1481,7 +1489,7 @@ const Page = () => {
                     placeholder="MM"
                     value={dateOfBirthMonth}
                     onChange={(e) =>
-                      setDateOfBirthMonth(sanitizeDatePart(e.target.value, 2))
+                      setDateOfBirthMonth(sanitizeDatePart(e.target.value, 1))
                     }
                     onBlur={() => setDateOfBirthTouched(true)}
                     error={showDateOfBirthError}
