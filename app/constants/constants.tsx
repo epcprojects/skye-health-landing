@@ -128,7 +128,7 @@ export const therapyCards = [
   {
     id: "hormones-therapy",
     label: "Hormones ",
-    image: images.landingpageimages.LiveLongerImage,
+    image: images.landingpageimages.LiveLongerImage2,
   },
   {
     id: "better-sex",

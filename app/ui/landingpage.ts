@@ -7,6 +7,7 @@ import YoungerSkinImage from "@/public/images/YoungerSkinImage.png";
 import HealJointsImage from "@/public/images/HealJointsImage.png";
 import SharpFocusImage from "@/public/images/SharpFocusImage.png";
 import LiveLongerImage from "@/public/images/LiveLongerImage.png";
+import LiveLongerImage2 from "@/public/images/LiveLongerImage2.png";
 import SkyHealthBgLogoImage from "@/public/images/SkyHealthBgLogo.png";
 import FooterBgImage from "@/public/images/FooterBgImage.jpg";
 import FooterLogo from "@/public/images/FooterLogo.svg";
@@ -68,5 +69,6 @@ export const landingpageimages = {
   HealJointsImage,
   SharpFocusImage,
   LiveLongerImage,
+  LiveLongerImage2,
   SkyHealthBgLogoImage,
 };
