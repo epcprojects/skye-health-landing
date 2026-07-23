@@ -78,6 +78,25 @@ const FooterLatest = () => {
             Premium Peptides • Performance Forward. Delivering purity you can
             trust to high-performance individuals globally.
           </p>
+
+          <div className="text-[#CEDCF9]">
+            <h2 className="text-base font-medium uppercase leading-[100%] tracking-[3px] text-[#CEDCF9] mb-3">
+              Skye Health Customer Service
+            </h2>
+            <a
+              href="mailto:hello@skyehealth.com"
+              className="text-[#CEDCF9] w-fit font-medium text-base flex items-center gap-4 group hover:underline underline-offset-2 hover:text-secondary cursor-pointer"
+            >
+              hello@skyehealth.com
+            </a>
+
+            <a
+              href="tel:+18057240073"
+              className="text-[#CEDCF9] w-fit font-medium text-base flex items-center gap-4 group hover:underline underline-offset-2 hover:text-secondary cursor-pointer"
+            >
+              805-724-0073
+            </a>
+          </div>
         </div>
 
         {footerLinkSections.map((section) => (
