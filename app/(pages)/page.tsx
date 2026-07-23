@@ -1190,7 +1190,7 @@ const differenceCards = [
     },
   },
 ];
-const faqItems: FAQItem[] = [
+export const faqItems: FAQItem[] = [
   {
     question: "Where is Skye Health available?",
     answer:
@@ -1990,13 +1990,13 @@ export default function Home() {
               />
             </div>
 
-            <div className="absolute top-0 -right-12 h-full sm:-right-6 xl:right-10">
+            {/* <div className="absolute top-0 -right-12 h-full sm:-right-6 xl:right-10">
               <Image
                 src={images.landingpageimages.PeptideCardRowImage}
                 alt="Peptides"
                 className="h-full w-auto max-w-none object-contain object-right"
               />
-            </div>
+            </div> */}
 
             <div className="relative z-20 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
               <div className="flex flex-col items-start gap-3 xl:gap-4">
