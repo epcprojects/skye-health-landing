@@ -16,6 +16,7 @@ interface MobileMenuProps {
   onClose: () => void;
   onOpenCart: () => void;
   cartCount: number;
+   onGetStarted: () => void;
 }
 
 const MobileMenu = ({
@@ -24,6 +25,7 @@ const MobileMenu = ({
   onClose,
   onOpenCart,
   cartCount,
+  onGetStarted,
 }: MobileMenuProps) => {
   return (
     <div className="xl:hidden">
@@ -66,7 +68,7 @@ const MobileMenu = ({
         <nav className="flex flex-1 flex-col gap-1 py-6">
           {navItems.map((item) => (
             <Link
-               key={item.label}
+              key={item.label}
               href={item.href}
               onClick={onClose}
               className="rounded-xl px-4 py-4 text-lg font-medium text-[#0F1D3A] transition-colors hover:bg-[#F5F8FE]"
@@ -77,13 +79,16 @@ const MobileMenu = ({
         </nav>
 
         <div className="flex flex-col gap-3 border-t border-[#CEDCF9] pt-5">
-          <Link
-            href="/products"
-            onClick={onClose}
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              onGetStarted();
+            }}
             className="w-full rounded-full bg-[#3D74E9] px-6 py-4 text-center text-sm font-medium text-white"
           >
             Get started
-          </Link>
+          </button>
 
           <button
             type="button"

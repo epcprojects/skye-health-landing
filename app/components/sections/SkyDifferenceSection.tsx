@@ -10,14 +10,26 @@ import SkyDifferenceCard from "../cards/SkyDifferenceCard";
 
 import "swiper/css";
 
+// export interface SkyDifferenceItem {
+//   id: number;
+//   title: string;
+//   description: string;
+//   image: StaticImageData;
+//   hoverTitle: string;
+//   hoverDescription: string;
+//   hoverImage: StaticImageData;
+//   hoverBackgroundImage?: string;
+//   onClick: () => void;
+// }
+
+// interface SkyDifferenceSectionProps {
+//   differenceCards: SkyDifferenceItem[];
+// }
 export interface SkyDifferenceItem {
   id: number;
   title: string;
   description: string;
-  image: StaticImageData;
-  hoverTitle: string;
-  hoverDescription: string;
-  hoverImage: StaticImageData;
+  image: StaticImageData | string;
   hoverBackgroundImage?: string;
   onClick: () => void;
 }
@@ -105,6 +117,15 @@ const SkyDifferenceSection = ({
                 >
                   <div className="h-full">
                     <SkyDifferenceCard
+                  title={card.title}
+                  description={card.description}
+                  image={card.image}
+                  hoverBackgroundImage={
+                    card.hoverBackgroundImage
+                  }
+                  onClick={card.onClick}
+                />
+                    {/* <SkyDifferenceCard
                       title={card.title}
                       description={card.description}
                       image={card.image}
@@ -113,7 +134,7 @@ const SkyDifferenceSection = ({
                       hoverImage={card.hoverImage}
                       hoverBackgroundImage={card.hoverBackgroundImage}
                       onClick={card.onClick}
-                    />
+                    /> */}
                   </div>
                 </SwiperSlide>
               ))}

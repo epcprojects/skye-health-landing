@@ -163,6 +163,7 @@ const HeaderLatest = () => {
             setIsCartOpen(true);
           }}
           cartCount={count}
+          onGetStarted={openWeightLossFlow}
         />
         <AppModal
           title="Your cart"

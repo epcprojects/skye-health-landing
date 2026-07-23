@@ -47,6 +47,8 @@ import {
   type FeaturedTreatmentSliderCard,
   type TreatmentSliderProduct,
 } from "@/app/components/sections/TreatmentSliderSection";
+import { NewArrowIcon } from "@/public/icons";
+import Image from "next/image";
 
 const cardColors = {
   productImageBg: "#CEDCF9",
@@ -1076,125 +1078,115 @@ const Hormonescards: TreatmentSliderItem[] = [
     },
   },
 ];
+// const differenceCards = [
+//   {
+//     id: 1,
+//     title: "Real Doctors",
+//     description:
+//       "Our providers are trained in peptide therapy, hormone optimization and longevity protocols. Appointments are same day when available. Quick turn around time on shipping after prescription approval.",
+//     image: images.landingpageimages.SkyDifferenceCardImage,
+//     hoverTitle: "Real Doctors",
+//     hoverDescription:
+//       "Our providers are trained in peptide therapy, hormone optimization and longevity protocols. Appointments are same day when available. Quick turn around time on shipping after prescription approval.",
+//     hoverImage: images.landingpageimages.SkyDifferenceCardImage,
+//     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+//     onClick: () => {
+//       console.log("Pharmacy quality card clicked");
+//     },
+//   },
+//   {
+//     id: 2,
+//     title: "Pharmacy Quality",
+//     description:
+//       "Your treatment comes from accredited pharmacies, held to the highest standards of safety and purity.",
+//     image: images.landingpageimages.PharmacyImage,
+//     hoverTitle: "Pharmacy Quality",
+//     hoverDescription:
+//       "Your treatment comes from accredited pharmacies, held to the highest standards of safety and purity.",
+//     hoverImage: images.landingpageimages.PharmacyImage,
+//     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+//     onClick: () => {
+//       console.log("Personalized care card clicked");
+//     },
+//   },
+//   {
+//     id: 3,
+//     title: "No Guesswork",
+//     description:
+//       "No more researching alone. Your physician builds your plan with you and adjusts it as you go.",
+//     image: images.landingpageimages.PharmacyImage,
+//     hoverTitle: "No Guesswork",
+//     hoverDescription:
+//       "No more researching alone. Your physician builds your plan with you and adjusts it as you go.",
+//     hoverImage: images.landingpageimages.NoGuessWorkImage,
+//     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+//     onClick: () => {
+//       console.log("Direct delivery card clicked");
+//     },
+//   },
+//   {
+//     id: 4,
+//     title: "Flexible access",
+//     description:
+//       "Connect with licensed professionals who understand your goals, answer your questions, and guide your care.",
+//     image: images.landingpageimages.PharmacyImage,
+//     hoverTitle: "Flexible access",
+//     hoverDescription:
+//       "Connect with licensed professionals who understand your goals, answer your questions, and guide your care.",
+//     hoverImage: images.landingpageimages.PharmacyImage,
+//     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+//     onClick: () => {
+//       console.log("Ongoing support card clicked");
+//     },
+//   },
+// ];
 const differenceCards = [
   {
     id: 1,
-    title: "Pharmacy Quality",
+    title: "Real Doctors",
     description:
-      "Your treatment comes from accredited pharmacies, held to the highest standards of safety and purity.",
-    image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Real Doctors",
-    hoverDescription:
       "Our providers are trained in peptide therapy, hormone optimization and longevity protocols. Appointments are same day when available. Quick turn around time on shipping after prescription approval.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
+    image: images.landingpageimages.SkyDifferenceCardImage,
     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+
     onClick: () => {
-      console.log("Pharmacy quality card clicked");
+      console.log("Real Doctors card clicked");
     },
   },
   {
     id: 2,
-    title: "Personalized Care",
+    title: "Pharmacy Quality",
     description:
-      "Every treatment plan is designed around your health history, goals, and physician recommendations.",
+      "Your treatment comes from accredited pharmacies, held to the highest standards of safety and purity.",
     image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Built Around You",
-    hoverDescription:
-      "Your care begins with a medical consultation and continues with a treatment plan personalized to your individual needs.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+
     onClick: () => {
-      console.log("Personalized care card clicked");
+      console.log("Pharmacy Quality card clicked");
     },
   },
   {
     id: 3,
-    title: "Direct Delivery",
+    title: "No Guesswork",
     description:
-      "Your prescribed treatment is prepared carefully and delivered directly to your door.",
-    image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Simple and Convenient",
-    hoverDescription:
-      "From physician consultation to prescription delivery, your complete care experience happens from the comfort of home.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
+      "No more researching alone. Your physician builds your plan with you and adjusts it as you go.",
+    image: images.landingpageimages.NoGuessWorkImage,
     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+
     onClick: () => {
-      console.log("Direct delivery card clicked");
+      console.log("No Guesswork card clicked");
     },
   },
   {
     id: 4,
-    title: "Ongoing Support",
+    title: "Flexible access",
     description:
-      "Your care continues after treatment begins with guidance, follow-ups, and ongoing medical support.",
+      "Connect with licensed professionals who understand your goals, answer your questions, and guide your care.",
     image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Here When You Need Us",
-    hoverDescription:
-      "Our care team remains available throughout your treatment journey to answer questions and review your progress.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
     hoverBackgroundImage: "/images/SkyDifferenceBg.png",
+
     onClick: () => {
-      console.log("Ongoing support card clicked");
-    },
-  },
-  {
-    id: 5,
-    title: "Trusted Treatments",
-    description:
-      "Every treatment is selected carefully and prescribed according to your individual medical needs.",
-    image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Quality You Can Trust",
-    hoverDescription:
-      "Our physicians recommend treatments using medical expertise, current research, and established safety standards.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
-    hoverBackgroundImage: "/images/SkyDifferenceBg.png",
-    onClick: () => {
-      console.log("Trusted treatments card clicked");
-    },
-  },
-  {
-    id: 6,
-    title: "Fast Appointments",
-    description:
-      "Connect with an experienced medical provider without waiting weeks for an appointment.",
-    image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Care Without the Wait",
-    hoverDescription:
-      "Same-day appointments may be available, helping you begin your personalized care journey sooner.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
-    hoverBackgroundImage: "/images/SkyDifferenceBg.png",
-    onClick: () => {
-      console.log("Fast appointments card clicked");
-    },
-  },
-  {
-    id: 7,
-    title: "Private and Secure",
-    description:
-      "Your health information and treatment experience are handled with privacy, security, and discretion.",
-    image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Your Privacy Matters",
-    hoverDescription:
-      "Our secure platform protects your information throughout consultations, treatment planning, and ongoing care.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
-    hoverBackgroundImage: "/images/SkyDifferenceBg.png",
-    onClick: () => {
-      console.log("Private and secure card clicked");
-    },
-  },
-  {
-    id: 8,
-    title: "Expert Guidance",
-    description:
-      "Receive clear medical guidance to help you understand your treatment and make informed health decisions.",
-    image: images.landingpageimages.PharmacyImage,
-    hoverTitle: "Guidance at Every Step",
-    hoverDescription:
-      "Our providers explain your options clearly and help you select a treatment plan aligned with your goals.",
-    hoverImage: images.landingpageimages.SkyDifferenceCardImage,
-    hoverBackgroundImage: "/images/SkyDifferenceBg.png",
-    onClick: () => {
-      console.log("Expert guidance card clicked");
+      console.log("Flexible access card clicked");
     },
   },
 ];
@@ -1827,7 +1819,279 @@ export default function Home() {
         onGetStarted={openWeightLossProgramModal}
         onViewTreatments={() => router.push("/products")}
       />
-      <TreatmentCardsSection cards={treatmentCards} />
+      {/* <TreatmentCardsSection cards={treatmentCards} /> */}
+      {/* <section className="bg-[#F5F8FE] pt-6 pb-6 xl:pt-20 xl:pb-27">
+        <div className="container mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 lg:grid-cols-2 xl:px-8">
+          <div className="relative grid min-h-50  rounded-2xl xl:rounded-4xl bg-[#AFC6E5]  pl-3 xl:pl-12 xl:min-h-88.5 overflow-hidden">
+            <div className="col-start-1 row-start-1 block h-full w-full bg-[url('/images/WeightLossBgImage.png')] bg-cover bg-left bg-no-repeat" />
+
+            <div className="relative z-10 col-start-1 row-start-1 flex flex-row items-center">
+              <div className="flex flex-col gap-6 items-start">
+                <div className="flex flex-col items-start gap-4">
+                  <p className="text-xl xl:text-[32px] font-medium text-white">
+                    Weight loss
+                  </p>
+
+                  <button
+                    type="button"
+                    className="bg-white cursor-pointer py-3 px-5 xl:py-5 xl:px-8 rounded-full flex items-center gap-2.5"
+                  >
+                    <span className="text-sm xl:text-base font-medium text-[#0F1D3A]">
+                      Start losing weight
+                    </span>
+                    <NewArrowIcon fill="#0F1D3A" />
+                  </button>
+                </div>
+                <div className="rounded-full px-4 p-2 md:p-4 flex items-center justify-center text-sm font-medium text-white bg-[#1F3A75]">
+                  $ 199 per month
+                </div>
+              </div>
+              <div>
+                <Image
+                  src={images.landingpageimages.WeightLossRowImage}
+                  alt={"row image"}
+                  className="xl:h-auto h-52 "
+                />
+              </div>
+            </div>
+          </div>
+          <div className="relative xl:min-h-88.5 xl:rounded-4xl bg-linear-to-r from-[#F6D9C9] to-[#EF7A5C] overflow-hidden">
+            <div className="absolute -right-60 top-0  bg-[url('/images/PeptideCardBgImage.png')] bg-contain bg-right bg-no-repeat w-full h-full"></div>
+            <div className="absolute top-0 right-10">
+              <Image
+                src={images.landingpageimages.PeptideCardRowImage}
+                alt={"row image"}
+              />
+            </div>
+            <div className="flex flex-col gap-6 items-start px-14 py-18">
+              <div className="flex flex-col items-start gap-4">
+                <p className="text-xl xl:text-[32px] font-medium text-white">
+                  Peptides
+                </p>
+
+                <button
+                  type="button"
+                  className="bg-white cursor-pointer py-3 px-5 xl:py-5 xl:px-8 rounded-full flex items-center gap-2.5"
+                >
+                  <span className="text-sm xl:text-base font-medium text-[#0F1D3A]">
+                    Shop peptides
+                  </span>
+                  <NewArrowIcon fill="#0F1D3A" />
+                </button>
+              </div>
+              <div className="rounded-full px-4 p-2 md:p-4 flex items-center justify-center text-sm font-medium text-white bg-[#1F3A75]">
+                $ 199 per month
+              </div>
+            </div>
+          </div>
+            <div className="relative xl:min-88.5 xl:rounded-4xl bg-[url('/images/HormonesCardImage.png')]">
+                  <div className="flex flex-col gap-6 items-start px-14 py-18">
+              <div className="flex flex-col items-start gap-4">
+                <p className="text-xl xl:text-[32px] font-medium text-white">
+                 Hormones
+                </p>
+
+                <button
+                  type="button"
+                  className="bg-white cursor-pointer py-3 px-5 xl:py-5 xl:px-8 rounded-full flex items-center gap-2.5"
+                >
+                  <span className="text-sm xl:text-base font-medium text-[#0F1D3A]">
+                   Reserve your spot
+                  </span>
+                  <NewArrowIcon fill="#0F1D3A" />
+                </button>
+              </div>
+              <div className="rounded-full px-4 p-2 md:p-4 flex items-center justify-center text-sm font-medium text-white bg-[#8FC0C2]">
+                Coming Soon
+              </div>
+            </div>   
+            </div>
+           <div className="relative xl:min-h-88.5 xl:rounded-4xl bg-[#0F1D3A] overflow-hidden">
+            <div className="absolute right-0 top-0  bg-[url('/images/OptimizeEverythingBgImage.png')] bg-contain bg-right bg-no-repeat w-full h-full"></div>
+            <div className="absolute top-0 right-0 z-10">
+              <Image
+                src={images.landingpageimages.OptimizeEverythingRowImage}
+                alt={"row image"}
+              />
+            </div>
+            <div className="flex flex-col gap-6 items-start px-14 py-18 relative z-30">
+              <div className="flex flex-col items-start gap-4">
+                <p className="text-xl xl:text-[32px] font-medium text-white">
+                 Optimize everything
+                </p>
+
+                <button
+                  type="button"
+                  className="bg-white cursor-pointer py-3 px-5 xl:py-5 xl:px-8 rounded-full flex items-center gap-2.5"
+                >
+                  <span className="text-sm xl:text-base font-medium text-[#0F1D3A]">
+                    Start your journey
+                  </span>
+                  <NewArrowIcon fill="#0F1D3A" />
+                </button>
+              </div>
+                <div className="rounded-full px-4 p-2 md:p-4 flex items-center justify-center text-sm font-medium text-white bg-[#8FC0C2]">
+                Coming Soon
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> */}
+      <section className="bg-[#F5F8FE] pt-6 pb-6 xl:pt-20 xl:pb-27">
+        <div className="container mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 lg:grid-cols-2 xl:px-8">
+          <div className="relative grid min-h-55 overflow-hidden rounded-2xl bg-[#AFC6E5] pl-4 xl:min-h-88.5 xl:rounded-4xl xl:pl-12">
+            <div className="col-start-1 row-start-1 block h-full w-full bg-[url('/images/WeightLossBgImage.png')] bg-cover bg-left bg-no-repeat" />
+
+            <div className="relative z-10 col-start-1 row-start-1 flex w-full flex-row items-center justify-between">
+              <div className="relative z-20 flex shrink-0 flex-col items-start gap-4 xl:gap-6">
+                <div className="flex flex-col items-start gap-3 xl:gap-4">
+                  <p className="text-xl font-medium text-white xl:text-[32px]">
+                    Weight loss
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={treatmentCards[0].onButtonClick}
+                    className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                  >
+                    <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                      Start losing weight
+                    </span>
+
+                    <NewArrowIcon fill="#0F1D3A" />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center rounded-full bg-[#1F3A75] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                  $199 per month
+                </div>
+              </div>
+
+              <div className="flex h-full min-w-0 flex-1 items-end">
+                <Image
+                  src={images.landingpageimages.WeightLossRowImage}
+                  alt="Weight loss"
+                  className="h-60 w-auto max-w-none object-cover  sm:h-52 xl:h-auto"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="relative min-h-55 overflow-hidden rounded-2xl bg-linear-to-r from-[#F6D9C9] to-[#EF7A5C] xl:min-h-88.5 xl:rounded-4xl">
+            <div className="pointer-events-none absolute inset-y-0 -right-24 xl:-right-60">
+              <Image
+                src="/images/PeptideCardBgImage.png"
+                alt=""
+                aria-hidden="true"
+                width={824}
+                height={354}
+                className="block h-full w-auto max-w-none object-contain"
+              />
+            </div>
+
+            <div className="absolute top-0 -right-12 h-full sm:-right-6 xl:right-10">
+              <Image
+                src={images.landingpageimages.PeptideCardRowImage}
+                alt="Peptides"
+                className="h-full w-auto max-w-none object-contain object-right"
+              />
+            </div>
+
+            <div className="relative z-20 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
+              <div className="flex flex-col items-start gap-3 xl:gap-4">
+                <p className="text-xl font-medium text-white xl:text-[32px]">
+                  Peptides
+                </p>
+
+                <button
+                  type="button"
+                  onClick={treatmentCards[1].onButtonClick}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                >
+                  <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                    Shop peptides
+                  </span>
+
+                  <NewArrowIcon fill="#0F1D3A" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center rounded-full bg-[#1F3A75] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                $199 per month
+              </div>
+            </div>
+          </div>
+          <div className="relative min-h-55 overflow-hidden rounded-2xl bg-[url('/images/HormonesCardImage.png')] bg-cover bg-center bg-no-repeat xl:min-h-88.5 xl:rounded-4xl">
+            <div className="relative z-10 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
+              <div className="flex flex-col items-start gap-3 xl:gap-4">
+                <p className="text-xl font-medium text-white xl:text-[32px]">
+                  Hormones
+                </p>
+
+                <button
+                  type="button"
+                  onClick={treatmentCards[2].onButtonClick}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                >
+                  <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                    Reserve your spot
+                  </span>
+
+                  <NewArrowIcon fill="#0F1D3A" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center rounded-full bg-[#8FC0C2] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                Coming Soon
+              </div>
+            </div>
+          </div>
+          <div className="relative min-h-55 overflow-hidden rounded-2xl bg-[#0F1D3A] xl:min-h-88.5 xl:rounded-4xl">
+            <div className="pointer-events-none absolute inset-y-0 right-0">
+              <Image
+                src="/images/OptimizeEverythingBgImage.png"
+                alt=""
+                aria-hidden="true"
+                width={824}
+                height={354}
+                className="block h-full w-auto max-w-none object-contain object-right"
+              />
+            </div>
+
+            <div className="absolute top-0 -right-14 z-10 h-full sm:-right-6 xl:right-0">
+              <Image
+                src={images.landingpageimages.OptimizeEverythingRowImage}
+                alt="Optimize everything"
+                className="h-full w-auto max-w-none object-contain object-right"
+              />
+            </div>
+
+            <div className="relative z-30 flex min-h-55 flex-col items-start justify-center gap-4 px-4 py-6 xl:min-h-88.5 xl:gap-6 xl:px-14 xl:py-18">
+              <div className="flex flex-col items-start gap-3 xl:gap-4">
+                <p className="text-xl font-medium text-white xl:text-[32px]">
+                  Optimize everything
+                </p>
+
+                <button
+                  type="button"
+                  onClick={treatmentCards[3].onButtonClick}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-3 sm:px-5 xl:gap-2.5 xl:px-8 xl:py-5"
+                >
+                  <span className="whitespace-nowrap text-xs font-medium text-[#0F1D3A] sm:text-sm xl:text-base">
+                    Start your journey
+                  </span>
+
+                  <NewArrowIcon fill="#0F1D3A" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center rounded-full bg-[#8FC0C2] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+                Coming Soon
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <ExploreOptionsSection
         products={exploreProducts}
         loading={exploreProductsLoading}

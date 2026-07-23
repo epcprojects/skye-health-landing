@@ -7,8 +7,10 @@ import {
   LinkEdinIcon,
   NewArrowIcon,
   NewPlusIcon,
+  XIcon,
 } from "@/public/icons";
 import { images } from "@/app/ui";
+import { isHmrRefresh } from "next/dist/server/app-render/work-unit-async-storage.external";
 
 const footerLinkSections = [
   {
@@ -34,18 +36,23 @@ const footerLinkSections = [
 ];
 const socialLinks = [
   {
+    label:"X",
+   href: "https://x.com",
+    icon:<XIcon width="16" height="16" fill="currentColor" />
+  },
+  {
     label: "Facebook",
-    href: "#",
+   href: "https://facebook.com",
     icon: <FBIcon fill="currentColor" />,
   },
   {
     label: "Instagram",
-    href: "#",
+    href: "https://instagram.com",
     icon: <InstaIcon fill="currentColor" />,
   },
   {
     label: "LinkedIn",
-    href: "#",
+    href: "https://linkedin.com",
     icon: <LinkEdinIcon fill="currentColor" />,
   },
 ];
@@ -134,7 +141,7 @@ const FooterLatest = () => {
 
           <div className="flex flex-row gap-4">
             {socialLinks.map((social) => (
-              <a
+              <Link
                 key={social.label}
                 href={social.href}
                 aria-label={social.label}
@@ -143,7 +150,7 @@ const FooterLatest = () => {
                 className="flex h-8.75 w-8.75 items-center justify-center rounded-full bg-[#3D74E9] text-white"
               >
                 {social.icon}
-              </a>
+              </Link>
             ))}
           </div>
         </div>

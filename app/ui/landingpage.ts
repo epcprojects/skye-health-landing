@@ -57,8 +57,15 @@ import SkyWhiteDesktopBg from "@/public/images/SkyWhiteDesktopBg.png";
 import heroImage from "@/public/images/HeroImage.png";
 import hormonsProductImage from "@/public/images/hormonsProductImage.png";
 import gplProductImage from "@/public/images/gplProductImage.png";
-
+import NoGuessWorkImage from "@/public/images/NoGuessworkImage.png"
+import WeightLossRowImage from "@/public/images/WeightLossRowImage.png"
+import PeptideCardRowImage from "@/public/images/PeptideCardRowImage.png"
+import OptimizeEverythingRowImage from "@/public/images/OptimizeEverythingRowImage.png"
 export const landingpageimages = {
+  OptimizeEverythingRowImage,
+  PeptideCardRowImage,
+  WeightLossRowImage,
+  NoGuessWorkImage,
   heroImage,
   gplProductImage,
   hormonsProductImage,
