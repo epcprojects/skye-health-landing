@@ -114,7 +114,7 @@ const Page = () => {
                     type="button"
                     className="w-full rounded-full bg-[#3D74E9] px-6 py-4 text-sm font-medium text-white transition-colors duration-300 hover:bg-blue-900 md:text-base"
                   >
-                    Get started now
+                    Send Message
                   </button>
                 </div>
               </div>
