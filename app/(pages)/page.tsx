@@ -2017,7 +2017,7 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-center rounded-full bg-[#8FC0C2] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+              <div className="flex items-center justify-center rounded-full bg-[#EF7A5C] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
                 Coming Soon
               </div>
             </div>
@@ -2086,10 +2086,10 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-center rounded-full bg-[#8FC0C2] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
+              <div className="flex items-center justify-center rounded-full bg-[#092865] px-3 py-2 text-xs font-medium whitespace-nowrap text-white sm:text-sm md:p-4 xl:px-4">
                 Coming Soon
               </div>
-            </div>
+            </div>s
           </div>
         </div>
       </section>
