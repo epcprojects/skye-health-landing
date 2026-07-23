@@ -384,7 +384,7 @@ const Page = () => {
                 setSearchQuery(e.target.value);
               }}
               type="text"
-              placeholder="Search (name or SKU)  e.g. Tesamorelin, PP-2XB..."
+              placeholder="Search (name or SKU)"
               className="py-3 ps-10 px-4 rounded-full placeholder:text-neutral-500 w-full font-medium text-sm sm:text-base border-2 border-neutral-200 focus:ring outline-0 focus:ring-neutral-200"
             />
             <span className="absolute left-3">
@@ -502,8 +502,8 @@ const Page = () => {
               category: p.category,
               stock: p.inStock,
               price:
-                Number( p.price) % 1 === 0
-                  ? Number( p.price)
+                Number(p.price) % 1 === 0
+                  ? Number(p.price)
                   : Number(p.price).toFixed(2),
               image: image || "",
               size: p.strength,

@@ -18,7 +18,7 @@ const footerLinkSections = [
     links: [
       { label: "Home", href: "/" },
       { label: "Products", href: "/products" },
-      { label: "Science", href: "/science" },
+      // { label: "Science", href: "/science" },
       { label: "FAQs", href: "/faqs" },
       { label: "Contact", href: "/contact" },
     ],
@@ -28,9 +28,9 @@ const footerLinkSections = [
     links: [
       { label: "Terms of Service", href: "/terms-of-service" },
       { label: "Privacy Policy", href: "/privacy-policy" },
-      { label: "Lab Certifications", href: "/lab-certifications" },
+      // { label: "Lab Certifications", href: "/lab-certifications" },
       { label: "Returns Policy", href: "/returns-policy" },
-      { label: "Contact", href: "/contact" },
+      // { label: "Contact", href: "/contact" },
     ],
   },
 ];
